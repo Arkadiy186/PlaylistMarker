@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    tools:context=".SettingsActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints"
+        android:layout_marginBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/back_to_main"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="12dp"
+                android:backgroundTint="@color/white"
+                android:text=""
+                app:icon="@drawable/arrow_back_icon"
+                app:iconTint="@color/black_for_text"
+                tools:ignore="ButtonContrast,SpeakableTextPresentCheck" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings"
+                android:textStyle="bold"
+                android:textColor="@color/black_for_text"
+                android:textSize="@dimen/main_screen_text_size" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:padding="@dimen/main_screen_padding_left_right"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dark_theme"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            android:textSize="@dimen/settings_screen"/>
+
+        <Switch
+            android:id="@+id/switch_dark_theme"
+            android:layout_width="@dimen/switch_dark_theme"
+            android:layout_height="@dimen/switch_dark_theme"
+            android:contentDescription="@string/dark_theme_icon"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:padding="@dimen/main_screen_padding_left_right"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/share_application"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            android:textSize="@dimen/settings_screen"/>
+
+        <ImageButton
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@color/white"
+            android:src="@drawable/share_icon"
+            android:contentDescription="@string/share_application_icon"
+            android:elevation="0dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:padding="@dimen/main_screen_padding_left_right"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/message_support"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            android:textSize="@dimen/settings_screen"/>
+
+        <ImageButton
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@color/white"
+        android:src="@drawable/support_icon"
+        android:contentDescription="@string/share_application_icon"
+        android:elevation="0dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:padding="@dimen/main_screen_padding_left_right"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/user_agreement"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            android:textSize="@dimen/settings_screen"/>
+
+        <ImageButton
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@color/white"
+            android:src="@drawable/arrow_forward_icon"
+            android:contentDescription="@string/user_agreement_icon"
+            android:elevation="0dp"/>
+    </LinearLayout>
+</LinearLayout>
