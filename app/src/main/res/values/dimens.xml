@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="main_screen_padding_left_right">16dp</dimen>
+    <dimen name="main_screen_text_size">22sp</dimen>
+    <dimen name="settings_screen">16sp</dimen>
+    <dimen name="activity_settings_size_icon">48dp</dimen>
+    <dimen name="main_layout_height">220dp</dimen>
+    <dimen name="main_margin_top_bottom">8dp</dimen>
+    <dimen name="corner_radius">16dp</dimen>
+    <dimen name="size_button_settings">35dp</dimen>
+    <dimen name="main_activity_padding_icon">10dp</dimen>
+</resources>
