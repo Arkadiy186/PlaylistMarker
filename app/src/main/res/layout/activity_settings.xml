@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?attr/colorSurface"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
     tools:context=".SettingsActivity">
@@ -23,10 +23,8 @@
 
             <ImageButton
                 android:id="@+id/back_to_main"
-                android:layout_width="@dimen/activity_settings_size_icon"
-                android:layout_height="@dimen/activity_settings_size_icon"
+                style="@style/ActivitySettingsImageButtonStyle"
                 android:layout_marginEnd="12dp"
-                android:background="@color/white"
                 android:src="@drawable/arrow_back_icon"
                 android:foreground="?attr/selectableItemBackground"
                 tools:ignore="ButtonContrast,SpeakableTextPresentCheck" />
@@ -35,28 +33,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/settings"
-                android:textStyle="bold"
-                android:textColor="@color/black_for_text"
+                android:fontFamily="@font/ys_display_medium"
+                android:textFontWeight="500"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="@dimen/main_screen_text_size" />
         </LinearLayout>
     </FrameLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:padding="@dimen/main_screen_padding_left_right"
-        android:gravity="center_vertical">
+        style="@style/ActivitySettingsLinearLayoutStyle">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/dark_theme"
-            android:textColor="@color/black"
-            android:textAllCaps="false"
-            android:textSize="@dimen/settings_screen"/>
+            style="@style/ActivitySettingsTextStyle"
+            android:text="@string/dark_theme"/>
 
         <Switch
             android:id="@+id/switch_dark_theme"
@@ -66,80 +55,42 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:padding="@dimen/main_screen_padding_left_right"
-        android:gravity="center_vertical">
+        style="@style/ActivitySettingsLinearLayoutStyle">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/share_application"
-            android:textColor="@color/black"
-            android:textAllCaps="false"
-            android:textSize="@dimen/settings_screen"/>
+            style="@style/ActivitySettingsTextStyle"
+            android:text="@string/share_application"/>
 
         <ImageButton
-            android:layout_width="@dimen/activity_settings_size_icon"
-            android:layout_height="@dimen/activity_settings_size_icon"
-            android:background="@color/white"
+            style="@style/ActivitySettingsImageButtonStyle"
             android:src="@drawable/share_icon"
             android:contentDescription="@string/share_application_icon"
-            android:elevation="0dp"/>
+            />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:padding="@dimen/main_screen_padding_left_right"
-        android:gravity="center_vertical">
+        style="@style/ActivitySettingsLinearLayoutStyle">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/message_support"
-            android:textColor="@color/black"
-            android:textAllCaps="false"
-            android:textSize="@dimen/settings_screen"/>
+            style="@style/ActivitySettingsTextStyle"
+            android:text="@string/message_support"/>
 
         <ImageButton
-            android:layout_width="@dimen/activity_settings_size_icon"
-            android:layout_height="@dimen/activity_settings_size_icon"
-            android:background="@color/white"
+            style="@style/ActivitySettingsImageButtonStyle"
             android:src="@drawable/support_icon"
-            android:contentDescription="@string/share_application_icon"
-            android:elevation="0dp"/>
+            android:contentDescription="@string/share_application_icon" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:padding="@dimen/main_screen_padding_left_right"
-        android:gravity="center_vertical">
+        style="@style/ActivitySettingsLinearLayoutStyle">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/user_agreement"
-            android:textColor="@color/black"
-            android:textAllCaps="false"
-            android:textSize="@dimen/settings_screen"/>
+            style="@style/ActivitySettingsTextStyle"
+            android:text="@string/user_agreement"/>
 
         <ImageButton
-            android:layout_width="@dimen/activity_settings_size_icon"
-            android:layout_height="@dimen/activity_settings_size_icon"
-            android:background="@color/white"
+            style="@style/ActivitySettingsImageButtonStyle"
             android:src="@drawable/arrow_forward_icon"
-            android:contentDescription="@string/user_agreement_icon"
-            android:elevation="0dp"/>
+            android:contentDescription="@string/user_agreement_icon" />
     </LinearLayout>
 </LinearLayout>

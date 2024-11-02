@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ActivityMainButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:backgroundTint">?attr/colorOnSurface</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/main_screen_text_size</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="iconPadding">@dimen/main_activity_padding_icon</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconTint">?attr/colorOnSecondary</item>
+        <item name="cornerRadius">@dimen/corner_radius</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/main_layout_height</item>
+        <item name="android:lineHeight">@dimen/activity_main_line_height_size_text</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="ActivitySettingsLinearLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:padding">@dimen/main_screen_padding_left_right</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="ActivitySettingsTextStyle">
+        <item name="android:layout_width">@dimen/activity_settings_text_width</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/settings_screen</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineHeight">@dimen/activity_settings_line_height_size_text</item>
+    </style>
+    <style name="ActivitySettingsImageButtonStyle">
+        <item name="android:layout_width">@dimen/activity_settings_size_icon</item>
+        <item name="android:layout_height">@dimen/activity_settings_size_icon</item>
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:tint">?attr/colorOnSurface</item>
+    </style>
+</resources>

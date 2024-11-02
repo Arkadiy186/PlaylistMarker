@@ -3,6 +3,12 @@
     <style name="Base.Theme.PlaylistMarker" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/blue</item> <!-- фон для main activity -->
+        <item name="colorOnPrimary">@color/white</item> <!-- цвет текста на фоне colorPrimary -->
+        <item name="colorSecondary">@color/white</item> <!-- цвет фона кнопок -->
+        <item name="colorOnSecondary">@color/black_for_text</item> <!-- Цвет текста и иконок на кнопках -->
+        <item name="colorSurface">@color/white</item>  <!-- Белый фон для настройки активности -->
+        <item name="colorOnSurface">@color/black_for_text</item>  <!-- Черный текст на белом фоне -->
     </style>
 
     <style name="Theme.PlaylistMarker" parent="Base.Theme.PlaylistMarker" />

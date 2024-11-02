@@ -3,5 +3,11 @@
     <style name="Base.Theme.PlaylistMarker" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/black_for_text</item> <!-- цвет фона -->
+        <item name="colorOnPrimary">@color/white</item> <!-- цвет текста на фоне colorPrimary -->
+        <item name="colorSecondary">@color/white</item> <!-- цвет фона кнопок -->
+        <item name="colorOnSecondary">@color/black_for_text</item> <!-- цвет текста и иконок на кнопках -->
+        <item name="colorSurface">@color/black_for_text</item> <!-- черный фон для настройки активности-->
+        <item name="colorOnSurface">@color/white</item> <!-- белый цвет на черном фоне для настройки активности -->
     </style>
 </resources>
