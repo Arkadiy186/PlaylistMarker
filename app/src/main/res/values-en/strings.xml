@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Playlist marker</string>
     <string name="search">Search</string>
     <string name="media_library">Media Library</string>
     <string name="settings">Settings</string>
@@ -12,4 +11,9 @@
     <string name="dark_theme_icon">Icon for Dark Theme</string>
     <string name="message_support_icon">Icon for Message Support</string>
     <string name="user_agreement_icon">Icon for User Agreement</string>
+    <string name="message_support_text_default">Thanks to the developers and devs for a cool app!</string>
+    <string name="recommend_android_developer">I recommend the Android Development course at https://practicum.yandex.ru/android-developer/</string>
+    <string name="message_support_text_theme">Message to Playlist Maker app developers and contributors</string>
+    <string name="message_support_error_email">Mail client not found</string>
+    <string name="user_agreement_error">Browser not found</string>
 </resources>

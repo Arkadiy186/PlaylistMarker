@@ -26,7 +26,6 @@
                 style="@style/ActivitySettingsImageButtonStyle"
                 android:layout_marginEnd="12dp"
                 android:src="@drawable/arrow_back_icon"
-                android:foreground="?attr/selectableItemBackground"
                 tools:ignore="ButtonContrast,SpeakableTextPresentCheck" />
 
             <TextView
@@ -62,6 +61,7 @@
             android:text="@string/share_application"/>
 
         <ImageButton
+            android:id="@+id/shareButton"
             style="@style/ActivitySettingsImageButtonStyle"
             android:src="@drawable/share_icon"
             android:contentDescription="@string/share_application_icon"
@@ -76,6 +76,7 @@
             android:text="@string/message_support"/>
 
         <ImageButton
+            android:id="@+id/supportImageButton"
             style="@style/ActivitySettingsImageButtonStyle"
             android:src="@drawable/support_icon"
             android:contentDescription="@string/share_application_icon" />
@@ -89,6 +90,7 @@
             android:text="@string/user_agreement"/>
 
         <ImageButton
+            android:id="@+id/userAgreementImageButton"
             style="@style/ActivitySettingsImageButtonStyle"
             android:src="@drawable/arrow_forward_icon"
             android:contentDescription="@string/user_agreement_icon" />

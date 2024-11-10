@@ -11,4 +11,11 @@
     <string name="dark_theme_icon">Иконка для "Темная тема"</string>
     <string name="message_support_icon">Иконка для "Написать в поддержку"</string>
     <string name="user_agreement_icon">Иконка для "Пользовательское соглашение"</string>
+    <string name="url_android_developer" translatable="false">https://practicum.yandex.ru/android-developer/</string>
+    <string name="message_support_text_theme">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="message_support_text_default">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="message_support_error_email">Почтовый клиент не найден</string>
+    <string name="user_agreement_url" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="user_agreement_error">Браузер не найден</string>
+    <string name="recommend_android_developer">Рекомендую курс по Андроид-Разработке по ссылке: https://practicum.yandex.ru/android-developer/</string>
 </resources>
