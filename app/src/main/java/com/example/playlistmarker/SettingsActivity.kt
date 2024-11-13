@@ -6,19 +6,21 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.appbar.MaterialToolbar
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
-        val backToMainButton = findViewById<ImageButton>(R.id.back_to_main)
-        backToMainButton.setOnClickListener {
+        val backToMainfromSettings = findViewById<MaterialToolbar>(R.id.activitySettingsToolbar)
+        backToMainfromSettings.setNavigationOnClickListener {
             finish()
         }
 

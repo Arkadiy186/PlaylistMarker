@@ -17,5 +17,6 @@
     <string name="message_support_error_email">Почтовый клиент не найден</string>
     <string name="user_agreement_url" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
     <string name="user_agreement_error">Браузер не найден</string>
+    <string name="activity_search_title">Поиск</string>
     <string name="recommend_android_developer">Рекомендую курс по Андроид-Разработке по ссылке: https://practicum.yandex.ru/android-developer/</string>
 </resources>

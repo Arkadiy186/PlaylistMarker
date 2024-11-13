@@ -5,4 +5,5 @@
     <color name="black_for_text">#1A1B22</color>
     <color name="black">#000000</color>
     <color name="grey">#AEAFB4</color>
+    <color name="edit_text_color">#E6E8EB</color>
 </resources>
