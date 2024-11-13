@@ -65,7 +65,7 @@
     <style name="ActivitySettingsImageButtonStyle">
         <item name="android:layout_width">@dimen/activity_settings_size_icon</item>
         <item name="android:layout_height">@dimen/activity_settings_size_icon</item>
-        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:background">@color/white</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
 
@@ -84,7 +84,7 @@
         <item name="android:paddingStart">@dimen/edit_text_icon</item>
         <item name="android:paddingBottom">11dp</item>
         <item name="android:drawableTint">@color/grey</item>
-        <item name="android:background">@drawable/edit_text_corner</item>
+        <item name="android:background">@drawable/edit_text_corner_light</item>
         <item name="android:textColorHint">@color/grey</item>
         <item name="android:drawablePadding">@dimen/main_margin_top_bottom</item>
         <item name="android:maxLines">1</item>

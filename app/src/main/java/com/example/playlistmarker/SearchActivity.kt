@@ -16,6 +16,24 @@ import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity() {
 
+    private var textValue : String = TEXT_DEF
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(TEXT_AMOUNT, textValue)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        textValue = savedInstanceState.getString(TEXT_AMOUNT, TEXT_DEF)
+        findViewById<EditText>(R.id.inputEditText).setText(textValue)
+    }
+
+    companion object {
+        const val TEXT_AMOUNT = "TEXT_AMOUNT"
+        const val TEXT_DEF = ""
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)

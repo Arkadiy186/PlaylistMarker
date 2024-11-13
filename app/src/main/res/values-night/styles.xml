@@ -86,7 +86,7 @@
         <item name="android:paddingStart">@dimen/edit_text_icon</item>
         <item name="android:paddingBottom">11dp</item>
         <item name="android:drawableTint">@color/black</item>
-        <item name="android:background">@drawable/edit_text_corner</item>
+        <item name="android:background">@drawable/edit_text_corner_dark</item>
         <item name="android:textColorHint">@color/black</item>
         <item name="android:drawablePadding">@dimen/main_margin_top_bottom</item>
         <item name="android:maxLines">1</item>
