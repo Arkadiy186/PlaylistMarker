@@ -1,9 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SearchActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/activitySearchToolbar"
+        style="@style/ToolbarStyle"
+        app:navigationIcon="@drawable/arrow_back_icon"
+        app:title="@string/activity_search_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/searchContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/main_screen_padding_left_right"
+        android:paddingVertical="@dimen/main_margin_top_bottom"
+        app:layout_constraintTop_toBottomOf="@id/activitySearchToolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <EditText
+            style="@style/EditTextActivitySearch"
+            android:id="@+id/inputEditText"
+            android:hint="@string/search"
+            android:drawableStart="@drawable/search_icon_small"
+            android:textCursorDrawable="@drawable/cursor"
+            tools:ignore="MissingConstraints" />
+
+        <ImageButton
+            android:id="@+id/clearButton"
+            style="@style/imageButtonEditTextActivitySearch"
+            android:foreground="?attr/selectableItemBackground"/>
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

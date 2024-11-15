@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ActivityMainButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/main_screen_text_size</item>
+        <item name="android:textColor">@color/black_for_text</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="iconPadding">@dimen/main_activity_padding_icon</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconTint">@color/black_for_text</item>
+        <item name="cornerRadius">@dimen/corner_radius</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/main_layout_height</item>
+        <item name="android:lineHeight">@dimen/activity_main_line_height_size_text</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="ActivitySettingsLinearLayoutStyle">
+        <item name="android:layout_width">@dimen/activity_settings_text_width</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@color/black_for_text</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginTop">@dimen/main_screen_padding_left_right</item>
+    </style>
+
+    <style name="ActivitySettingsTextStyle">
+        <item name="android:layout_width">@dimen/activity_settings_text_width</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/settings_screen</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:paddingStart">@dimen/main_screen_padding_left_right</item>
+        <item name="android:lineHeight">@dimen/activity_settings_line_height_size_text</item>
+    </style>
+
+    <style name="ActivitySettingsStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:paddingVertical">@dimen/twenty_one_dp</item>
+        <item name="android:paddingHorizontal">@dimen/main_screen_padding_left_right</item>
+        <item name="android:textSize">@dimen/settings_screen</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:drawableTint">@color/white</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="ToolbarStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="navigationIconTint">@color/white</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="titleTextAppearance">@style/ToolbarTitleTextAppearance</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+    </style>
+
+    <style name="ToolbarTitleTextAppearance">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/main_screen_text_size</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ActivitySettingsImageButtonStyle">
+        <item name="android:layout_width">@dimen/activity_settings_size_icon</item>
+        <item name="android:layout_height">@dimen/activity_settings_size_icon</item>
+        <item name="android:background">@color/black_for_text</item>
+        <item name="android:tint">@color/white</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="SettingsStyle">
+        <item name="android:background">@color/black_for_text</item>
+    </style>
+
+    <style name="MainStyle">
+        <item name="android:background">@color/black_for_text</item>
+    </style>
+
+    <style name="EditTextActivitySearch">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingTop">11dp</item>
+        <item name="android:paddingStart">@dimen/edit_text_icon</item>
+        <item name="android:paddingBottom">11dp</item>
+        <item name="android:drawableTint">@color/black_for_text</item>
+        <item name="android:background">@drawable/edit_text_corner_dark</item>
+        <item name="android:textColorHint">@color/black_for_text</item>
+        <item name="android:drawablePadding">@dimen/main_margin_top_bottom</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/black_for_text</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textSize">@dimen/settings_screen</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="imageButtonEditTextActivitySearch">
+        <item name="android:padding">@dimen/edit_text_icon</item>
+        <item name="android:tint">@color/black_for_text</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:src">@drawable/clear_icon_dark</item>
+        <item name="backgroundTint">@color/white</item>
+    </style>
+</resources>
