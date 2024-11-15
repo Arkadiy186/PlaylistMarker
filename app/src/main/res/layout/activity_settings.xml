@@ -1,91 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/SettingsStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".SettingsActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/activitySettingsToolbar"
+        android:id="@+id/activity_settings_toolbar"
         style="@style/ToolbarStyle"
         app:navigationIcon="@drawable/arrow_back_icon"
         app:title="@string/settings"
         tools:ignore="MissingConstraints" />
 
-    <LinearLayout
-        android:id="@+id/darkThemeLayout"
-        style="@style/ActivitySettingsLinearLayoutStyle"
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/activity_settings_dark_theme"
+        style="@style/ActivitySettingsStyle"
         android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/activitySettingsToolbar"
-        tools:ignore="MissingConstraints">
+        android:paddingEnd="15dp"
+        app:thumbTint="@color/switch_thumb_color"
+        app:trackTint="@color/switch_track_color"
+        android:text="@string/dark_theme"
+        android:contentDescription="@string/dark_theme_icon" />
 
-        <TextView
-            android:id="@+id/darkThemeText"
-            style="@style/ActivitySettingsTextStyle"
-            android:text="@string/dark_theme" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/activity_settings_share_app"
+        style="@style/ActivitySettingsStyle"
+        android:drawableEnd="@drawable/share_icon"
+        android:paddingEnd="16dp"
+        android:text="@string/share_application"
+        android:contentDescription="@string/share_application_icon"/>
 
-        <Switch
-            android:id="@+id/switch_dark_theme"
-            android:layout_width="@dimen/activity_settings_size_icon"
-            android:layout_height="@dimen/activity_settings_size_icon"
-            android:contentDescription="@string/dark_theme_icon" />
-    </LinearLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/activity_settings_message_support"
+        style="@style/ActivitySettingsStyle"
+        android:drawableEnd="@drawable/support_icon"
+        android:paddingEnd="14dp"
+        android:text="@string/message_support"
+        android:contentDescription="@string/message_support_icon"/>
 
-    <LinearLayout
-        android:id="@+id/shareAppLayout"
-        style="@style/ActivitySettingsLinearLayoutStyle"
-        app:layout_constraintTop_toBottomOf="@id/darkThemeLayout"
-        tools:ignore="MissingConstraints">
-
-        <TextView
-            android:id="@+id/shareAppText"
-            style="@style/ActivitySettingsTextStyle"
-            android:text="@string/share_application" />
-
-        <ImageButton
-            android:id="@+id/shareButton"
-            style="@style/ActivitySettingsImageButtonStyle"
-            android:src="@drawable/share_icon"
-            android:contentDescription="@string/share_application_icon" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/supportLayout"
-        style="@style/ActivitySettingsLinearLayoutStyle"
-        app:layout_constraintTop_toBottomOf="@id/shareAppLayout"
-        tools:ignore="MissingConstraints">
-
-        <TextView
-            android:id="@+id/supportText"
-            style="@style/ActivitySettingsTextStyle"
-            android:text="@string/message_support" />
-
-        <ImageButton
-            android:id="@+id/supportImageButton"
-            style="@style/ActivitySettingsImageButtonStyle"
-            android:src="@drawable/support_icon"
-            android:contentDescription="@string/share_application_icon" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/userAgreementLayout"
-        style="@style/ActivitySettingsLinearLayoutStyle"
-        app:layout_constraintTop_toBottomOf="@id/supportLayout"
-        tools:ignore="MissingConstraints">
-
-        <TextView
-            android:id="@+id/userAgreementText"
-            style="@style/ActivitySettingsTextStyle"
-            android:text="@string/user_agreement" />
-
-        <ImageButton
-            android:id="@+id/userAgreementImageButton"
-            style="@style/ActivitySettingsImageButtonStyle"
-            android:src="@drawable/arrow_forward_icon"
-            android:contentDescription="@string/user_agreement_icon" />
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/activity_settings_user_agreement"
+        style="@style/ActivitySettingsStyle"
+        android:paddingEnd="20dp"
+        android:drawableEnd="@drawable/arrow_forward_icon"
+        android:text="@string/user_agreement"
+        android:contentDescription="@string/user_agreement_icon"/>
+</LinearLayout>

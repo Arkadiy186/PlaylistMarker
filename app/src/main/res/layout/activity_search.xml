@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:id="@+id/searchContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,19 +31,14 @@
             android:id="@+id/inputEditText"
             android:hint="@string/search"
             android:drawableStart="@drawable/search_icon_small"
+            android:textCursorDrawable="@drawable/cursor"
             tools:ignore="MissingConstraints" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/edit_text_color"
-        android:textColor="@color/black"
-        android:text="Очистить"
-        app:layout_constraintTop_toBottomOf="@id/searchContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp" />
+        <ImageButton
+            android:id="@+id/clearButton"
+            style="@style/imageButtonEditTextActivitySearch"
+            android:foreground="?attr/selectableItemBackground"/>
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

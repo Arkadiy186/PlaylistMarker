@@ -14,4 +14,6 @@
     <dimen name="activity_settings_text_width">0dp</dimen>
     <dimen name="activity_main_line_height_size_text">25.78sp</dimen>
     <dimen name="activity_settings_line_height_size_text">18.75sp</dimen>
+    <dimen name="activity_main_toolbar_margin">-16dp</dimen>
+    <dimen name="twenty_one_dp">21dp</dimen>
 </resources>

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,9 @@ import androidx.core.view.isVisible
 import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity() {
+
+    private lateinit var inputEditText : EditText
+    private lateinit var clearButton : ImageButton
 
     private var textValue : String = TEXT_DEF
 
@@ -43,8 +47,8 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        val inputEditText = findViewById<EditText>(R.id.inputEditText)
-        val clearButton = findViewById<Button>(R.id.resetButton)
+        inputEditText = findViewById(R.id.inputEditText)
+        clearButton = findViewById(R.id.clearButton)
 
         clearButton.isVisible = !inputEditText.text.isNullOrEmpty()
 
