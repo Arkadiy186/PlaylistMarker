@@ -1,8 +1,9 @@
-package com.example.playlistmarker
+package com.example.playlistmarker.trackrecyclerview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmarker.R
 
 class TrackAdapter (private val tracks : ArrayList<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
