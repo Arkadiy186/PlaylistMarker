@@ -90,4 +90,35 @@
         <item name="backgroundTint">@color/edit_text_color</item>
     </style>
 
+    <style name="trackNameItemStyle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/settings_screen</item>
+        <item name="android:layout_weight">400</item>
+        <item name="android:lineHeight">@dimen/activity_settings_line_height_size_text</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lines">1</item>
+    </style>
+    
+    <style name="trackArtistAndTimeItemStyle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:layout_weight">400</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:lineHeight">12.89sp</item>
+        <item name="android:textColor">@color/grey</item>
+    </style>
+    
+    <style name="trackIconArrowForwardItemStyle">
+        <item name="android:layout_height">@dimen/icon_size</item>
+        <item name="android:layout_width">@dimen/icon_size</item>
+        <item name="android:src">@drawable/arrow_forward_icon</item>
+        <item name="android:tint">@color/grey</item>
+        <item name="android:layout_marginEnd">@dimen/edit_text_padding_start</item>
+        <item name="android:scaleType">center</item>
+    </style>
+
 </resources>

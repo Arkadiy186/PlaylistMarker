@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="61dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/imageViewItemTrack"
+        android:layout_width="@dimen/image_size_album_track"
+        android:layout_height="@dimen/image_size_album_track"
+        android:layout_marginEnd="@dimen/main_margin_top_bottom"
+        android:layout_marginStart="13dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_placeholder"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/main_margin_top_bottom"
+        android:paddingVertical="14dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/trackNameItem"
+            style="@style/trackNameItemStyle"
+            tools:text="Yesterday (Remastered 2009)"/>
+
+        <TextView
+            android:id="@+id/trackArtistAndTimeItem"
+            style="@style/trackArtistAndTimeItemStyle"
+            tools:text="The Beatles • 2:55"/>
+    </LinearLayout>
+
+    <ImageView
+        style="@style/trackIconArrowForwardItemStyle"
+        tools:ignore="ContentDescription" />
+</LinearLayout>
