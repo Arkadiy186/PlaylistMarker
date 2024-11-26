@@ -22,13 +22,20 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val cornerRadius = dpToPx(2f, itemView.context)
 
-        Glide.with(itemView)
-            .load(model.artworkUrl100)
-            .fitCenter()
-            .placeholder(R.drawable.ic_placeholder)
-            .transform(RoundedCorners(cornerRadius))
-            .into(itemImageViewTrack)
+        if (!model.artworkUrl100.isNullOrEmpty()) {
+            Glide.with(itemView)
+                .load(model.artworkUrl100)
+                .fitCenter()
+                .placeholder(R.drawable.ic_placeholder)
+                .transform(RoundedCorners(cornerRadius))
+                .into(itemImageViewTrack)
 
+        } else {
+            Glide.with(itemView)
+                .load(R.drawable.ic_placeholder)
+                .transform(RoundedCorners(cornerRadius))
+                .into(itemImageViewTrack)
+        }
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {
