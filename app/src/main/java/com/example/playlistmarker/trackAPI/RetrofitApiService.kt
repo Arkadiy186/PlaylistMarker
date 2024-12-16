@@ -12,5 +12,5 @@ object RetrofitApiService {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val itunesApiService = retrofit.create(TrackAPI::class.java)
+    val itunesApiService = retrofit.create(TrackAPI::class.java)
 }
