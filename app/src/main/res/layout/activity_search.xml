@@ -32,6 +32,8 @@
             android:hint="@string/search"
             android:drawableStart="@drawable/search_icon_small"
             android:textCursorDrawable="@drawable/cursor"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             tools:ignore="MissingConstraints" />
 
         <ImageButton

@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.playlistmarker"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.playlistmarker"
@@ -47,4 +47,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 }

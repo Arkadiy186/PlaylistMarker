@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.R
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -18,7 +20,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(model : Track) {
         itemTrackName.text = model.trackName
-        itemTrackArtistAndTime.text = "${model.artistName} • ${model.trackTime}"
+        itemTrackArtistAndTime.text = "${model.artistName} • ${SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime)}"
 
         val cornerRadius = dpToPx(2f, itemView.context)
 
