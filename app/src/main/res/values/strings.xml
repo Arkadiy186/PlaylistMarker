@@ -19,4 +19,7 @@
     <string name="user_agreement_error">Браузер не найден</string>
     <string name="activity_search_title">Поиск</string>
     <string name="recommend_android_developer">Рекомендую курс по Андроид-Разработке по ссылке: https://practicum.yandex.ru/android-developer/</string>
+    <string name="not_found_songs">Ничего не нашлось</string>
+    <string name="internet_problems">Проблемы со связью\n\n Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="internet_problems_button">Обновить</string>
 </resources>

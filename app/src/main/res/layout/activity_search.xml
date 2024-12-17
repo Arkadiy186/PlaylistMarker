@@ -32,6 +32,8 @@
             android:hint="@string/search"
             android:drawableStart="@drawable/search_icon_small"
             android:textCursorDrawable="@drawable/cursor"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             tools:ignore="MissingConstraints" />
 
         <ImageButton
@@ -40,12 +42,36 @@
             android:foreground="?attr/selectableItemBackground"/>
     </FrameLayout>
 
+    <LinearLayout
+        android:id="@+id/placeholderError"
+        style="@style/placeholderErrorStyle"
+        app:layout_constraintTop_toBottomOf="@id/searchContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/placeholderErrorImage"
+            style="@style/placeholderErrorImageStyle"
+            android:src="@drawable/no_internet"/>
+
+        <TextView
+            android:id="@+id/placeholderErrorText"
+            style="@style/placeholderErrorTextStyle"
+            android:text="@string/internet_problems"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/placeholderErrorButton"
+            style="@style/placeholderErrorButtonStyle"
+            android:text="@string/internet_problems_button"/>
+    </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/searchContainer"
+        app:layout_constraintTop_toBottomOf="@id/placeholderError"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
