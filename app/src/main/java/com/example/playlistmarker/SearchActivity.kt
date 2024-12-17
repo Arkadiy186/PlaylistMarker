@@ -85,6 +85,7 @@ class SearchActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             hideKeyboard(clearButton)
             inputEditText.clearFocus()
+            showListWithoutPlaceholder()
         }
 
         inputEditText.addTextChangedListener(object : TextWatcher {
@@ -93,6 +94,11 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = !s.isNullOrEmpty()
+                if (s.isNullOrEmpty()) {
+                    trackList.clear()
+                    adapter.notifyDataSetChanged()
+                    showListWithoutPlaceholder()
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {

@@ -18,6 +18,6 @@
     <string name="message_support_error_email">Mail client not found</string>
     <string name="user_agreement_error">Browser not found</string>
     <string name="not_found_songs">Nothing was found</string>
-    <string name="internet_problems">Connection problem  Download failed. Check the Internet connection</string>
+    <string name="internet_problems">Connection problem\n\n  Download failed. Check the Internet connection</string>
     <string name="internet_problems_button">Update</string>
 </resources>
