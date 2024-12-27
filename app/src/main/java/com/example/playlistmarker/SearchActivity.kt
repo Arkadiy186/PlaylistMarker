@@ -31,6 +31,7 @@ import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
+    private lateinit var backToMainFromSearchActivity : MaterialToolbar
     private lateinit var inputEditText : EditText
     private lateinit var clearButton : ImageButton
     private lateinit var rwTrackList : RecyclerView
@@ -64,11 +65,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val backToMainFromSearchActivity = findViewById<MaterialToolbar>(R.id.activitySearchToolbar)
-        backToMainFromSearchActivity.setNavigationOnClickListener {
-            finish()
-        }
-
+        backToMainFromSearchActivity = findViewById(R.id.activitySearchToolbar)
         inputEditText = findViewById(R.id.inputEditText)
         clearButton = findViewById(R.id.clearButton)
         rwTrackList = findViewById(R.id.recyclerView)
@@ -76,6 +73,10 @@ class SearchActivity : AppCompatActivity() {
         placeholderImage = findViewById(R.id.placeholderErrorImage)
         placeholderText = findViewById(R.id.placeholderErrorText)
         placeholderButton = findViewById(R.id.placeholderErrorButton)
+
+        backToMainFromSearchActivity.setNavigationOnClickListener {
+            finish()
+        }
 
         clearButton.isVisible = !inputEditText.text.isNullOrEmpty()
 
