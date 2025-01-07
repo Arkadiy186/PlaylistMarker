@@ -19,4 +19,6 @@
     <dimen name="icon_size">24dp</dimen>
     <dimen name="image_size_album_track">45dp</dimen>
     <dimen name="placeholderSizeImage">120dp</dimen>
+    <dimen name="text_size_19sp">19sp</dimen>
+    <dimen name="line_height_22.27sp">22.27sp</dimen>
 </resources>
