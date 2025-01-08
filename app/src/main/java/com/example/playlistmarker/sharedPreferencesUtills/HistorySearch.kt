@@ -40,10 +40,4 @@ class HistorySearch(private val sharedPreferences: SharedPreferences) {
         val historyJson = Gson().toJson(history)
         sharedPreferences.edit().putString(HISTORY_KEY, historyJson).apply()
     }
-
-    fun removeTrackFromHistory(track: Track) {
-        val currentHistory = getHistory()
-        currentHistory.remove(track)
-        saveHistory(currentHistory)
-    }
 }

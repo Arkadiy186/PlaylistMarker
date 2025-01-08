@@ -8,6 +8,7 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -44,9 +45,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderImage: ImageView
     private lateinit var placeholderText: TextView
     private lateinit var placeholderButton: com.google.android.material.button.MaterialButton
-    private lateinit var historySearchView : LinearLayout
     private lateinit var historySearchText : TextView
-    private lateinit var historySearchRW : RecyclerView
     private lateinit var historySearchButton : com.google.android.material.button.MaterialButton
 
     private val trackList = ArrayList<Track>()
@@ -110,33 +109,33 @@ class SearchActivity : AppCompatActivity() {
         placeholderImage = findViewById(R.id.placeholderErrorImage)
         placeholderText = findViewById(R.id.placeholderErrorText)
         placeholderButton = findViewById(R.id.placeholderErrorButton)
-        historySearchView = findViewById(R.id.historySearchView)
         historySearchText = findViewById(R.id.historySearchTextView)
-        historySearchRW = findViewById(R.id.historySearchRecycler)
-        historySearchButton = findViewById(R.id.historySearchButton)
-
+        historySearchButton = findViewById(R.id.historySearchButtonView)
 
         backToMainFromSearchActivity.setNavigationOnClickListener {
             finish()
         }
 
+        if (historyTrack.isNotEmpty()) {
+            historyLoad()
+            historySetVisibility(true)
+        } else {
+            historySetVisibility(false)
+        }
+
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                if (inputEditText.text.isEmpty() && historyTrack.isNotEmpty()) {
-                    historySearchView.visibility = View.VISIBLE
-                    rwTrackList.visibility = View.GONE
-                } else {
-                    showListWithoutPlaceholder()
-                }
+            if (hasFocus && inputEditText.text.isEmpty() && historyTrack.isNotEmpty()) {
+                historySetVisibility(true)
             } else {
-                if (historyTrack.isNotEmpty()) {
-                    historySearchView.visibility = View.VISIBLE
-                    placeholder.visibility = View.GONE
-                    rwTrackList.visibility = View.GONE
-                } else {
-                    placeholderSetVisibility(false, "", R.drawable.not_found, R.drawable.not_found_dark, R.string.not_found_songs)
-                }
+                historySetVisibility(false)
             }
+        }
+
+        historySearchButton.setOnClickListener {
+            historySearch.clearHistory()
+            historyTrack.clear()
+            historyAdapter.notifyDataSetChanged()
+            historySetVisibility(false)
         }
 
         clearButton.isVisible = !inputEditText.text.isNullOrEmpty()
@@ -146,21 +145,6 @@ class SearchActivity : AppCompatActivity() {
             trackList.clear()
             searchAdapter.notifyDataSetChanged()
             hideKeyboard(clearButton)
-            inputEditText.clearFocus()
-
-            if (historyTrack.isNotEmpty()) {
-                historyLoad()
-                rwTrackList.visibility = View.GONE
-                historySearchView.visibility = View.VISIBLE
-            } else {
-                showListWithoutPlaceholder()
-            }
-        }
-
-        historySearchButton.setOnClickListener {
-            historySearch.clearHistory()
-            historyTrack.clear()
-            historyAdapter.notifyDataSetChanged()
         }
 
         inputEditText.addTextChangedListener(object : TextWatcher {
@@ -169,22 +153,14 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = !s.isNullOrEmpty()
-                if (s.isNullOrEmpty()) {
-                    if (historyTrack.isNotEmpty()) {
-                        historySearchView.visibility = View.VISIBLE
-                        rwTrackList.visibility = View.GONE
-                        placeholder.visibility = View.GONE
-                    } else {
-                        if (inputEditText.hasFocus()) {
-                            showListWithoutPlaceholder()
-                        } else {
-                            placeholderSetVisibility(false, "", R.drawable.not_found, R.drawable.not_found_dark, R.string.not_found_songs)
-                        }
-                    }
+                if (inputEditText.hasFocus() && s?.isEmpty() == true && historyTrack.isNotEmpty()) {
+                    historySetVisibility(true)
                 } else {
-                    historySearchView.visibility = View.GONE
-                    rwTrackList.visibility = View.VISIBLE
-                    placeholder.visibility = View.GONE
+                    historySetVisibility(false)
+                }
+
+                if (s.isNullOrEmpty()) {
+                    showListWithoutPlaceholder()
                 }
                 historyLoad()
             }
@@ -196,8 +172,6 @@ class SearchActivity : AppCompatActivity() {
         rwTrackList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rwTrackList.adapter = searchAdapter
 
-        historySearchRW.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        historySearchRW.adapter = historyAdapter
 
         inputEditText.setOnEditorActionListener { _, actionID, _ ->
             if (actionID == EditorInfo.IME_ACTION_DONE) {
@@ -209,7 +183,7 @@ class SearchActivity : AppCompatActivity() {
 
         placeholderButton.setOnClickListener {
             val query = inputEditText.text.toString()
-            if (isInternetAvailable() == true) {
+            if (isInternetAvailable()) {
                 if (query.isEmpty()) {
                     if (trackList.isNotEmpty()) {
                         showListWithoutPlaceholder()
@@ -229,7 +203,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun historyLoad() {
         historyTrack.clear()
         historyTrack.addAll(historySearch.getHistory())
@@ -239,31 +212,35 @@ class SearchActivity : AppCompatActivity() {
     private fun isInternetAvailable(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = connectivityManager.activeNetwork
-        val networkCapabilites = connectivityManager.getNetworkCapabilities(activeNetwork)
-        return networkCapabilites?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun trackSearch(inputSong: String) {
+        historySetVisibility(false)
         RetrofitApiService.itunesApiService.search(inputSong).enqueue(object : Callback<TrackResponse> {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+                Log.d("TrackSearch", "API Response: ${response.body()}")
                 if (response.code() == 200) {
                     trackList.clear()
                     showListWithoutPlaceholder()
-
 
                     if (response.body()?.results?.isNotEmpty() == true) {
                         trackList.addAll(response.body()?.results!!)
                         searchAdapter.notifyDataSetChanged()
                     } else {
+                        Log.d("TrackSearch", "No tracks found")
                         placeholderSetVisibility(false, "", R.drawable.not_found, R.drawable.not_found_dark, R.string.not_found_songs)
                     }
                 } else {
+                    Log.e("TrackResponse", "Error code: ${response.code()}")
                     showErrorInternet()
                 }
             }
 
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                Log.e("TrackSearch", "Request failed: ${t.message}")
                 showErrorInternet()
             }
         })
@@ -282,15 +259,27 @@ class SearchActivity : AppCompatActivity() {
         if(isNotVisible) {
             placeholder.visibility = View.GONE
             rwTrackList.visibility = View.VISIBLE
-            historySearchView.visibility = View.GONE
         }else {
             trackList.clear()
             placeholder.visibility = View.VISIBLE
             rwTrackList.visibility = View.GONE
-            historySearchView.visibility = View.GONE
             placeholderButton.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
             placeholderImage.setImageResource(imageRes)
             placeholderText.setText(textRes)
+        }
+    }
+
+    private fun historySetVisibility(isVisible: Boolean) {
+        if (isVisible) {
+            rwTrackList.adapter = historyAdapter
+            historySearchText.visibility = View.VISIBLE
+            historySearchButton.visibility = View.VISIBLE
+            rwTrackList.visibility = View.VISIBLE
+        } else {
+            rwTrackList.adapter = searchAdapter
+            historySearchText.visibility = View.GONE
+            historySearchButton.visibility = View.GONE
+            rwTrackList.visibility = View.GONE
         }
     }
 

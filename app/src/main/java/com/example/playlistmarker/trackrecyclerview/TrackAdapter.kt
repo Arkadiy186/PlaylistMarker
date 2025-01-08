@@ -1,5 +1,6 @@
 package com.example.playlistmarker.trackrecyclerview
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
@@ -15,6 +16,7 @@ class TrackAdapter (private val tracks : ArrayList<Track>, private val onItemCli
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         val track = tracks[position]
+        Log.d("TrackAdapter", "Binding track: ${track.trackName}")
         holder.bind(track)
 
         holder.itemView.setOnClickListener {
