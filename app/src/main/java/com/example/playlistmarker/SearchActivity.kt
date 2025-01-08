@@ -35,6 +35,7 @@ import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
+    private var isRestored = false
     private lateinit var historySearch: HistorySearch
 
     private lateinit var backToMainFromSearchActivity : MaterialToolbar
@@ -70,19 +71,26 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
+        isRestored = true
+        Log.d("SearchActivity", "onRestoreInstanceState: вызвано восстановление экрана")
+
         textValue = savedInstanceState.getString(TEXT_AMOUNT, TEXT_DEF)
-        findViewById<EditText>(R.id.inputEditText).setText(textValue)
+        inputEditText.setText(textValue)
 
         val trackListJson = savedInstanceState.getString("track_list")
-        val historyListJson = savedInstanceState.getString("history_key")
         if (!trackListJson.isNullOrEmpty()) {
             trackList.clear()
             trackList.addAll(Gson().fromJson(trackListJson, Array<Track>::class.java))
         }
-        if (!historyListJson.isNullOrEmpty()) {
-            historyTrack.clear()
-            historyTrack.addAll(Gson().fromJson(historyListJson, Array<Track>::class.java))
+
+        historyLoad()
+
+        if (isRestored && inputEditText.text.isEmpty() && !inputEditText.hasFocus() && historyTrack.isNotEmpty()) {
+            historySetVisibility(true)
+        } else {
+            historySetVisibility(false)
         }
+
         searchAdapter.notifyDataSetChanged()
         historyAdapter.notifyDataSetChanged()
     }
@@ -116,10 +124,7 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        if (historyTrack.isNotEmpty()) {
-            historyLoad()
-            historySetVisibility(true)
-        } else {
+        if (!isRestored && historySearch.getHistory().isNotEmpty()) {
             historySetVisibility(false)
         }
 
@@ -145,6 +150,12 @@ class SearchActivity : AppCompatActivity() {
             trackList.clear()
             searchAdapter.notifyDataSetChanged()
             hideKeyboard(clearButton)
+
+            if (historyTrack.isNotEmpty()) {
+                historySetVisibility(true)
+            } else {
+                historySetVisibility(false)
+            }
         }
 
         inputEditText.addTextChangedListener(object : TextWatcher {
@@ -153,15 +164,18 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = !s.isNullOrEmpty()
-                if (inputEditText.hasFocus() && s?.isEmpty() == true && historyTrack.isNotEmpty()) {
+
+
+                if(inputEditText.hasFocus() && s?.isEmpty() == true && historyTrack.isNotEmpty()) {
                     historySetVisibility(true)
                 } else {
                     historySetVisibility(false)
                 }
 
                 if (s.isNullOrEmpty()) {
-                    showListWithoutPlaceholder()
+                    placeholderSetVisibility(true)
                 }
+
                 historyLoad()
             }
 
@@ -172,10 +186,11 @@ class SearchActivity : AppCompatActivity() {
         rwTrackList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rwTrackList.adapter = searchAdapter
 
-
         inputEditText.setOnEditorActionListener { _, actionID, _ ->
             if (actionID == EditorInfo.IME_ACTION_DONE) {
-                trackSearch(inputEditText.text.toString())
+                if (inputEditText.text.isNotEmpty()) {
+                    trackSearch(inputEditText.text.toString())
+                }
                 inputEditText.clearFocus()
             }
             false
@@ -201,9 +216,10 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         }
+        historyLoad()
     }
 
-    fun historyLoad() {
+    private fun historyLoad() {
         historyTrack.clear()
         historyTrack.addAll(historySearch.getHistory())
         historyAdapter.notifyDataSetChanged()
@@ -221,7 +237,6 @@ class SearchActivity : AppCompatActivity() {
         historySetVisibility(false)
         RetrofitApiService.itunesApiService.search(inputSong).enqueue(object : Callback<TrackResponse> {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
-                Log.d("TrackSearch", "API Response: ${response.body()}")
                 if (response.code() == 200) {
                     trackList.clear()
                     showListWithoutPlaceholder()
@@ -230,56 +245,75 @@ class SearchActivity : AppCompatActivity() {
                         trackList.addAll(response.body()?.results!!)
                         searchAdapter.notifyDataSetChanged()
                     } else {
-                        Log.d("TrackSearch", "No tracks found")
-                        placeholderSetVisibility(false, "", R.drawable.not_found, R.drawable.not_found_dark, R.string.not_found_songs)
+                        showNotFound()
                     }
                 } else {
-                    Log.e("TrackResponse", "Error code: ${response.code()}")
                     showErrorInternet()
                 }
             }
 
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                Log.e("TrackSearch", "Request failed: ${t.message}")
                 showErrorInternet()
             }
         })
     }
 
     private fun showErrorInternet() {
-        placeholderSetVisibility(false, getString(R.string.internet_problems), R.drawable.no_internet, R.drawable.no_internet_dark,R.string.internet_problems)
+        showPlaceholder(text = getString(R.string.internet_problems),
+            lightImageRes = R.drawable.no_internet,
+            darkImageRes = R.drawable.no_internet_dark,
+            textRes = R.string.internet_problems
+        )
+    }
+
+    private fun showNotFound() {
+        showPlaceholder(
+            text = "",
+            lightImageRes = R.drawable.not_found,
+            darkImageRes = R.drawable.not_found_dark,
+            textRes = R.string.not_found_songs
+        )
     }
 
     private fun showListWithoutPlaceholder() {
-        placeholderSetVisibility(true, "", R.drawable.not_found, R.drawable.not_found_dark, R.string.not_found_songs)
+        placeholderSetVisibility (isHidden = true)
     }
 
-    private fun placeholderSetVisibility(isNotVisible: Boolean, text: String, lightImageRes: Int, darkImageRes: Int, textRes: Int) {
-        val imageRes = if (isDark()) darkImageRes else lightImageRes
-        if(isNotVisible) {
+    private fun showPlaceholder(text: String, lightImageRes: Int, darkImageRes: Int, textRes: Int) {
+        placeholderSetVisibility(
+            isHidden = false,
+            text = text,
+            lightImageRes = lightImageRes,
+            darkImageRes = darkImageRes,
+            textRes = textRes
+        )
+    }
+
+    private fun placeholderSetVisibility(isHidden: Boolean, text: String = "", lightImageRes: Int = 0, darkImageRes: Int = 0, textRes: Int = 0) {
+        if (isHidden) {
             placeholder.visibility = View.GONE
             rwTrackList.visibility = View.VISIBLE
-        }else {
-            trackList.clear()
+        } else {
             placeholder.visibility = View.VISIBLE
             rwTrackList.visibility = View.GONE
             placeholderButton.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
-            placeholderImage.setImageResource(imageRes)
+            placeholderImage.setImageResource(if (isDark()) darkImageRes else lightImageRes)
             placeholderText.setText(textRes)
         }
     }
 
     private fun historySetVisibility(isVisible: Boolean) {
+        Log.d("SearchActivity", "historySetVisibility: isVisible = $isVisible")
         if (isVisible) {
             rwTrackList.adapter = historyAdapter
             historySearchText.visibility = View.VISIBLE
-            historySearchButton.visibility = View.VISIBLE
             rwTrackList.visibility = View.VISIBLE
+            historySearchButton.visibility = View.VISIBLE
         } else {
             rwTrackList.adapter = searchAdapter
             historySearchText.visibility = View.GONE
-            historySearchButton.visibility = View.GONE
             rwTrackList.visibility = View.GONE
+            historySearchButton.visibility = View.GONE
         }
     }
 
