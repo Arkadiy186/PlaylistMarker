@@ -3,29 +3,35 @@ package com.example.playlistmarker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.Toast
-import android.widget.Toolbar
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmarker.switcher.ThemeSwitcherApp
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var themeSwitcher : SwitchMaterial
+    private lateinit var backToMainFromSettings : MaterialToolbar
+    private lateinit var shareButton : MaterialTextView
+    private lateinit var supportImageButton : MaterialTextView
+    private lateinit var userAgreementImageButton : MaterialTextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val backToMainfromSettings = findViewById<MaterialToolbar>(R.id.activity_settings_toolbar)
-        backToMainfromSettings.setNavigationOnClickListener {
+        themeSwitcher = findViewById(R.id.activity_settings_dark_theme)
+        backToMainFromSettings = findViewById(R.id.activity_settings_toolbar)
+        shareButton = findViewById(R.id.activity_settings_share_app)
+        supportImageButton = findViewById(R.id.activity_settings_message_support)
+        userAgreementImageButton = findViewById(R.id.activity_settings_user_agreement)
+
+        backToMainFromSettings.setNavigationOnClickListener {
             finish()
         }
 
-        val shareButton = findViewById<MaterialTextView>(R.id.activity_settings_share_app)
         shareButton.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
@@ -34,7 +40,6 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share_application)))
         }
 
-        val supportImageButton = findViewById<MaterialTextView>(R.id.activity_settings_message_support)
         supportImageButton.setOnClickListener {
             val shareSupportIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
@@ -45,12 +50,17 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareSupportIntent)
         }
 
-        val userAgreementImageButton = findViewById<MaterialTextView>(R.id.activity_settings_user_agreement)
         userAgreementImageButton.setOnClickListener {
             val shareUserAgreementIntent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(getString(R.string.user_agreement_url))
             }
             startActivity(shareUserAgreementIntent)
+        }
+
+        themeSwitcher.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, cheched ->
+            (applicationContext as ThemeSwitcherApp).switchTheme(cheched)
         }
     }
 }

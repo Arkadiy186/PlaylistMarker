@@ -22,4 +22,6 @@
     <string name="not_found_songs">Ничего не нашлось</string>
     <string name="internet_problems">Проблемы со связью\n\n Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="internet_problems_button">Обновить</string>
+    <string name="history_search">Вы искали</string>
+    <string name="clear_history_search">Очистить историю</string>
 </resources>

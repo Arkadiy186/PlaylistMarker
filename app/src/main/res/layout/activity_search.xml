@@ -45,6 +45,7 @@
     <LinearLayout
         android:id="@+id/placeholderError"
         style="@style/placeholderErrorStyle"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/searchContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -65,13 +66,35 @@
             android:text="@string/internet_problems_button"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/historySearchTextView"
+        style="@style/historySearchTextViewStyle"
+        android:text="@string/history_search"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/searchContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/placeholderError"
-        tools:ignore="MissingConstraints" />
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/historySearchTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layoutManager="LinearLayoutManager"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/historySearchButtonView"
+            style="@style/historySearchButtonStyle"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:text="@string/clear_history_search"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
