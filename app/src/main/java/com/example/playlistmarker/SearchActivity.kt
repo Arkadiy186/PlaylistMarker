@@ -35,7 +35,6 @@ import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
-    private var isRestored = false
     private lateinit var historySearch: HistorySearch
 
     private lateinit var backToMainFromSearchActivity : MaterialToolbar
@@ -71,7 +70,6 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        isRestored = true
         Log.d("SearchActivity", "onRestoreInstanceState: вызвано восстановление экрана")
 
         textValue = savedInstanceState.getString(TEXT_AMOUNT, TEXT_DEF)
@@ -84,14 +82,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         historyLoad()
-
-        if (isRestored && inputEditText.text.isEmpty() && !inputEditText.hasFocus() && historyTrack.isNotEmpty()) {
-            historySetVisibility(true)
-        } else {
-            historySetVisibility(false)
-        }
-
-        searchAdapter.notifyDataSetChanged()
+        historySetVisibility(inputEditText.text.isEmpty() && !inputEditText.hasFocus() && historyTrack.isNotEmpty())
         historyAdapter.notifyDataSetChanged()
     }
 
@@ -124,16 +115,13 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        if (!isRestored && historySearch.getHistory().isNotEmpty()) {
-            historySetVisibility(false)
+        if (historySearch.getHistory().isNotEmpty()) {
+            Log.d("getHistory()", "historySetVisibility: isVisible = true")
+            historySetVisibility(true)
         }
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && inputEditText.text.isEmpty() && historyTrack.isNotEmpty()) {
-                historySetVisibility(true)
-            } else {
-                historySetVisibility(false)
-            }
+            historySetVisibility(hasFocus && inputEditText.text.isEmpty() && historyTrack.isNotEmpty())
         }
 
         historySearchButton.setOnClickListener {
@@ -222,6 +210,7 @@ class SearchActivity : AppCompatActivity() {
     private fun historyLoad() {
         historyTrack.clear()
         historyTrack.addAll(historySearch.getHistory())
+        Log.d("SearchActivity", "historyLoad: Loaded ${historyTrack.size} items")
         historyAdapter.notifyDataSetChanged()
     }
 
@@ -306,11 +295,13 @@ class SearchActivity : AppCompatActivity() {
         Log.d("SearchActivity", "historySetVisibility: isVisible = $isVisible")
         if (isVisible) {
             rwTrackList.adapter = historyAdapter
+            historyAdapter.notifyDataSetChanged()
             historySearchText.visibility = View.VISIBLE
             rwTrackList.visibility = View.VISIBLE
             historySearchButton.visibility = View.VISIBLE
         } else {
             rwTrackList.adapter = searchAdapter
+            searchAdapter.notifyDataSetChanged()
             historySearchText.visibility = View.GONE
             rwTrackList.visibility = View.GONE
             historySearchButton.visibility = View.GONE

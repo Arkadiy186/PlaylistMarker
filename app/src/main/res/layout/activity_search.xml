@@ -70,6 +70,7 @@
         android:id="@+id/historySearchTextView"
         style="@style/historySearchTextViewStyle"
         android:text="@string/history_search"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/searchContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -93,6 +94,7 @@
             android:id="@+id/historySearchButtonView"
             style="@style/historySearchButtonStyle"
             android:layout_gravity="center_horizontal"
+            android:visibility="gone"
             android:text="@string/clear_history_search"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

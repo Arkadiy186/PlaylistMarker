@@ -11,7 +11,7 @@ class HistorySearch(private val sharedPreferences: SharedPreferences) {
     }
 
     fun addTrackHistory(track: Track) {
-        val currentHistory = getHistory()
+        val currentHistory = getHistory().toMutableList()
         if (currentHistory.contains(track)) {
             currentHistory.remove(track)
         }
@@ -23,20 +23,20 @@ class HistorySearch(private val sharedPreferences: SharedPreferences) {
         saveHistory(currentHistory)
     }
 
-    fun getHistory(): MutableList<Track> {
+    fun getHistory(): List<Track> {
         val historyJson = sharedPreferences.getString(HISTORY_KEY, null)
         return if (historyJson.isNullOrEmpty()) {
             mutableListOf()
         } else {
-            Gson().fromJson(historyJson, Array<Track>::class.java).toMutableList()
+            Gson().fromJson(historyJson, Array<Track>::class.java).toList()
         }
     }
 
     fun clearHistory() {
-        saveHistory(mutableListOf())
+        saveHistory(emptyList())
     }
 
-    private fun saveHistory(history: MutableList<Track>) {
+    private fun saveHistory(history: List<Track>) {
         val historyJson = Gson().toJson(history)
         sharedPreferences.edit().putString(HISTORY_KEY, historyJson).apply()
     }
