@@ -24,4 +24,10 @@
     <string name="internet_problems_button">Обновить</string>
     <string name="history_search">Вы искали</string>
     <string name="clear_history_search">Очистить историю</string>
+    <string name="audioPlayer_track_time">Длительность</string>
+    <string name="audioPlayer_track_album">Альбом</string>
+    <string name="audioPlayer_track_year">Год</string>
+    <string name="audioPlayer_track_genre">Жанр</string>
+    <string name="audioPlayer_track_country">Страна</string>
+    <string name="track_artist_time" translatable="false">%s • %s</string>
 </resources>

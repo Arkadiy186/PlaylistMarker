@@ -41,9 +41,6 @@
         <item name="navigationIconTint">@color/black_for_text</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="titleTextAppearance">@style/ToolbarTitleTextAppearance</item>
-        <item name="layout_constraintTop_toTopOf">parent</item>
-        <item name="layout_constraintStart_toStartOf">parent</item>
-        <item name="layout_constraintEnd_toEndOf">parent</item>
     </style>
 
     <style name="ToolbarTitleTextAppearance">
@@ -209,5 +206,44 @@
         <item name="android:lineHeight">16.41sp</item>
         <item name="android:backgroundTint">@color/black_for_text</item>
         <item name="android:letterSpacing">0</item>
+    </style>
+    
+    <style name="audioPlayerInfoAboutTrackStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:lineHeight">15.24sp</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:layout_marginTop">17dp</item>
+    </style>
+    
+    <style name="audioPlayerCurrentInfoAboutTrack">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:lineHeight">15.24sp</item>
+        <item name="android:textColor">@color/black_for_text</item>
+        <item name="android:layout_marginTop">17dp</item>
+        <item name="android:gravity">end</item>
+    </style>
+
+    <style name="audioPlayerTrackAndAuthorAndTimeStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black_for_text</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineHeight">16.41sp</item>
+    </style>
+
+    <style name="audioPlayerAlbumCoverStyle">
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+    <style name="audioPlayerMainScreenStyle">
+        <item name="android:background">@color/white</item>
     </style>
 </resources>

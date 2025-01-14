@@ -20,24 +20,22 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(model : Track) {
         itemTrackName.text = model.trackName
-        itemTrackArtistAndTime.text = "${model.artistName} • ${SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime)}"
 
+        val trackTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime)
+        itemTrackArtistAndTime.text = itemView.context.getString(R.string.track_artist_time, model.artistName, trackTime)
+
+        loadImage(model.artworkUrl100)
+    }
+
+    private fun loadImage(url: String) {
         val cornerRadius = dpToPx(2f, itemView.context)
 
-        if (!model.artworkUrl100.isNullOrEmpty()) {
-            Glide.with(itemView)
-                .load(model.artworkUrl100)
-                .fitCenter()
-                .placeholder(R.drawable.ic_placeholder)
-                .transform(RoundedCorners(cornerRadius))
-                .into(itemImageViewTrack)
-
-        } else {
-            Glide.with(itemView)
-                .load(R.drawable.ic_placeholder)
-                .transform(RoundedCorners(cornerRadius))
-                .into(itemImageViewTrack)
-        }
+        Glide.with(itemView)
+            .load(url ?: R.drawable.ic_placeholder)
+            .fitCenter()
+            .placeholder(R.drawable.ic_placeholder)
+            .transform(RoundedCorners(cornerRadius))
+            .into(itemImageViewTrack)
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {

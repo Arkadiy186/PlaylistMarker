@@ -2,6 +2,7 @@ package com.example.playlistmarker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -53,10 +54,11 @@ class SearchActivity : AppCompatActivity() {
 
     private val searchAdapter = TrackAdapter(trackList) {
         historySearch.addTrackHistory(it)
+        openAudioPlayer(it)
     }
 
     private val historyAdapter = TrackAdapter(historyTrack) {
-        Toast.makeText(applicationContext, "Player will be soon", Toast.LENGTH_SHORT).show()
+        openAudioPlayer(it)
     }
 
     private var textValue : String = TEXT_DEF
@@ -306,6 +308,13 @@ class SearchActivity : AppCompatActivity() {
             rwTrackList.visibility = View.GONE
             historySearchButton.visibility = View.GONE
         }
+    }
+
+    private fun openAudioPlayer(track: Track) {
+        val intent = Intent(this, AudioPlayerActivity::class.java)
+        intent.putExtra("track", track)
+        intent.putExtra("artworkUrl100", track.artworkUrl100)
+        startActivity(intent)
     }
 
     private fun isDark(): Boolean {
