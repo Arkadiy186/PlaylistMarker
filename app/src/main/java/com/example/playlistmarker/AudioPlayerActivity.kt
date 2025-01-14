@@ -61,7 +61,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             authorTrackTextView.text = track.artistName
             trackTimeTextView.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime)
             collectionNameTextView.text = track.collectionName
-            releaseDateTextView.text = track.releaseDate.toString()
+            releaseDateTextView.text = formatReleaseDate(track.releaseDate)
             primaryGenreNameTextView.text = track.primaryGenreName
             countryTextView.text = track.country
         }
@@ -70,7 +70,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         if (track != null) {
             Glide.with(this)
-                .load(track.artworkUrl100)
+                .load(track.getCoverArtWork())
                 .fitCenter()
                 .placeholder(R.drawable.cover_album_placeholder)
                 .transform(RoundedCorners(cornerRadius))
@@ -93,5 +93,16 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun isDark(): Boolean {
         return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private fun formatReleaseDate(dateString: String) : String {
+        return try {
+            val inputDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+            val outputDate = SimpleDateFormat("yyyy", Locale.getDefault())
+            val date = inputDate.parse(dateString)
+            outputDate.format(date!!)
+        } catch (e: Exception) {
+            dateString
+        }
     }
 }

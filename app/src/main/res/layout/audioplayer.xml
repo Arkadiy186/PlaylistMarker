@@ -47,7 +47,6 @@
 
         <ImageView
             android:id="@+id/albumCover"
-            style="@style/audioPlayerAlbumCoverStyle"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="26dp"
@@ -121,7 +120,7 @@
             app:layout_constraintTop_toBottomOf="@id/playTrackButton"
             app:layout_constraintEnd_toStartOf="@id/topRightGuideline"
             app:layout_constraintStart_toEndOf="@id/topLeftGuideline"
-            tools:text="0:30"/>
+            android:text="0:30"/>
 
         <TextView
             android:id="@+id/trackTimeTitle"
@@ -129,7 +128,7 @@
             android:text="@string/audioPlayer_track_time"
             android:layout_marginTop="39dp"
             app:layout_constraintTag="trackTime"
-            app:layout_constraintStart_toEndOf="@id/topLeftGuideline"
+            app:layout_constraintStart_toEndOf="@id/bottomLeftGuideline"
             app:layout_constraintTop_toBottomOf="@id/currentTimeTrack"/>
 
         <TextView
@@ -137,7 +136,7 @@
             style="@style/audioPlayerInfoAboutTrackStyle"
             android:text="@string/audioPlayer_track_album"
             app:layout_constraintTag="trackAlbum"
-            app:layout_constraintStart_toEndOf="@id/topLeftGuideline"
+            app:layout_constraintStart_toEndOf="@id/bottomLeftGuideline"
             app:layout_constraintTop_toBottomOf="@id/trackTimeTitle"/>
 
         <TextView
@@ -145,7 +144,7 @@
             style="@style/audioPlayerInfoAboutTrackStyle"
             android:text="@string/audioPlayer_track_year"
             app:layout_constraintTag="trackReleaseDate"
-            app:layout_constraintStart_toEndOf="@id/topLeftGuideline"
+            app:layout_constraintStart_toEndOf="@id/bottomLeftGuideline"
             app:layout_constraintTop_toBottomOf="@id/trackAlbumTitle"/>
 
         <TextView
@@ -153,7 +152,7 @@
             style="@style/audioPlayerInfoAboutTrackStyle"
             android:text="@string/audioPlayer_track_genre"
             app:layout_constraintTag="trackGenre"
-            app:layout_constraintStart_toEndOf="@id/topLeftGuideline"
+            app:layout_constraintStart_toEndOf="@id/bottomLeftGuideline"
             app:layout_constraintTop_toBottomOf="@id/trackReleaseDateTitle"/>
 
         <TextView
@@ -162,8 +161,9 @@
             android:text="@string/audioPlayer_track_country"
             android:layout_marginBottom="28dp"
             app:layout_constraintTag="trackCountry"
-            app:layout_constraintStart_toEndOf="@id/topLeftGuideline"
-            app:layout_constraintTop_toBottomOf="@id/trackGenreTitle"/>
+            app:layout_constraintStart_toEndOf="@id/bottomLeftGuideline"
+            app:layout_constraintTop_toBottomOf="@id/trackGenreTitle"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
@@ -179,7 +179,7 @@
             android:layout_marginTop="39dp"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toBottomOf="@id/currentTimeTrack"
-            app:layout_constraintEnd_toStartOf="@id/topRightGuideline"/>
+            app:layout_constraintEnd_toStartOf="@id/bottomRightGuideline"/>
 
         <TextView
             android:id="@+id/trackAlbumCurrentInfo"
@@ -187,7 +187,7 @@
             tools:text="Yesterday (Remastered 2009)"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toBottomOf="@id/trackTimeCurrentInfo"
-            app:layout_constraintEnd_toStartOf="@id/topRightGuideline"/>
+            app:layout_constraintEnd_toStartOf="@id/bottomRightGuideline"/>
 
         <TextView
             android:id="@+id/trackReleaseDateCurrentInfo"
@@ -195,7 +195,7 @@
             tools:text="1965"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toBottomOf="@id/trackAlbumCurrentInfo"
-            app:layout_constraintEnd_toStartOf="@id/topRightGuideline"/>
+            app:layout_constraintEnd_toStartOf="@id/bottomRightGuideline"/>
 
         <TextView
             android:id="@+id/trackGenreCurrentInfo"
@@ -203,7 +203,7 @@
             tools:text="Rock"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toBottomOf="@id/trackReleaseDateCurrentInfo"
-            app:layout_constraintEnd_toStartOf="@id/topRightGuideline"/>
+            app:layout_constraintEnd_toStartOf="@id/bottomRightGuideline"/>
 
         <TextView
             android:id="@+id/trackCountryCurrentInfo"
@@ -212,7 +212,8 @@
             android:layout_marginBottom="28dp"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toBottomOf="@id/trackGenreCurrentInfo"
-            app:layout_constraintEnd_toStartOf="@id/topRightGuideline"/>
-
+            app:layout_constraintEnd_toStartOf="@id/bottomRightGuideline"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

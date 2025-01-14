@@ -41,4 +41,7 @@ data class Track (@SerializedName("trackName") val trackName: String,
         override fun createFromParcel(parcel: Parcel): Track = Track(parcel)
         override fun newArray(size: Int): Array<Track?> = arrayOfNulls(size)
     }
+
+    fun getCoverArtWork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
 }
+

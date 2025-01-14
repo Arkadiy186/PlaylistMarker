@@ -278,10 +278,6 @@
         <item name="android:lineHeight">16.41sp</item>
     </style>
 
-    <style name="audioPlayerAlbumCoverStyle">
-        <item name="cornerRadius">8dp</item>
-    </style>
-
     <style name="audioPlayerMainScreenStyle">
         <item name="android:background">@color/black_for_text</item>
     </style>
