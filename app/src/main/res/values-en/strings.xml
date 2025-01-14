@@ -22,4 +22,9 @@
     <string name="internet_problems_button">Update</string>
     <string name="history_search">You were looking for</string>
     <string name="clear_history_search">Clear history</string>
+    <string name="audioPlayer_track_time">Track duration</string>
+    <string name="audioPlayer_track_album">Album</string>
+    <string name="audioPlayer_track_year">Year</string>
+    <string name="audioPlayer_track_genre">Genre</string>
+    <string name="audioPlayer_track_country">Country</string>
 </resources>

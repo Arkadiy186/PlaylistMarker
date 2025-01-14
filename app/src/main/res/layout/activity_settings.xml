@@ -14,7 +14,9 @@
         style="@style/ToolbarStyle"
         app:navigationIcon="@drawable/arrow_back_icon"
         app:title="@string/settings"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/activity_settings_dark_theme"
