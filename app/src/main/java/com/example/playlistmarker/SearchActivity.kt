@@ -189,8 +189,7 @@ class SearchActivity : AppCompatActivity() {
         rwTrackList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rwTrackList.adapter = searchAdapter
 
-        // отключил DONE на клавиатуре
-        /*inputEditText.setOnEditorActionListener { _, actionID, _ ->
+        inputEditText.setOnEditorActionListener { _, actionID, _ ->
             if (actionID == EditorInfo.IME_ACTION_DONE) {
                 if (inputEditText.text.isNotEmpty()) {
                     trackSearch(inputEditText.text.toString())
@@ -198,7 +197,7 @@ class SearchActivity : AppCompatActivity() {
                 inputEditText.clearFocus()
             }
             false
-        }*/
+        }
 
         placeholderButton.setOnClickListener {
             val query = inputEditText.text.toString()
