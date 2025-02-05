@@ -189,16 +189,6 @@ class SearchActivity : AppCompatActivity() {
         rwTrackList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rwTrackList.adapter = searchAdapter
 
-        inputEditText.setOnEditorActionListener { _, actionID, _ ->
-            if (actionID == EditorInfo.IME_ACTION_DONE) {
-                if (inputEditText.text.isNotEmpty()) {
-                    trackSearch(inputEditText.text.toString())
-                }
-                inputEditText.clearFocus()
-            }
-            false
-        }
-
         placeholderButton.setOnClickListener {
             val query = inputEditText.text.toString()
             if (isInternetAvailable()) {
