@@ -281,4 +281,13 @@
     <style name="audioPlayerMainScreenStyle">
         <item name="android:background">@color/black_for_text</item>
     </style>
+
+    <style name="progressBarStyle">
+        <item name="android:layout_width">@dimen/progressBar</item>
+        <item name="android:layout_height">@dimen/progressBar</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="marginHorizontal">158dp</item>
+        <item name="android:layout_marginTop">140dp</item>
+        <item name="android:layout_marginBottom">508dp</item>
+    </style>
 </resources>

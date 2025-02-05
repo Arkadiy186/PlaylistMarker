@@ -63,7 +63,7 @@
             tools:text="Yesterday (Remastered 2009)"
             android:textSize="@dimen/main_screen_text_size"
             android:lineHeight="@dimen/activity_main_line_height_size_text"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/icon_size"
             app:layout_constraintTop_toBottomOf="@id/albumCover"
             app:layout_constraintEnd_toStartOf="@id/topRightGuideline"
             app:layout_constraintStart_toEndOf="@id/topLeftGuideline"/>
@@ -93,7 +93,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="center"
-            android:src="@drawable/play_light"
+            android:src="@drawable/ic_play"
             android:layout_marginTop="30dp"
             app:layout_constraintTop_toBottomOf="@id/authorTrack"
             app:layout_constraintEnd_toStartOf="@id/topRightGuideline"
@@ -120,7 +120,7 @@
             app:layout_constraintTop_toBottomOf="@id/playTrackButton"
             app:layout_constraintEnd_toStartOf="@id/topRightGuideline"
             app:layout_constraintStart_toEndOf="@id/topLeftGuideline"
-            android:text="0:30"/>
+            tools:text="0:30"/>
 
         <TextView
             android:id="@+id/trackTimeTitle"

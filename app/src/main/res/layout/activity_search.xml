@@ -32,7 +32,7 @@
             android:hint="@string/search"
             android:drawableStart="@drawable/search_icon_small"
             android:textCursorDrawable="@drawable/cursor"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNone"
             android:singleLine="true"
             tools:ignore="MissingConstraints" />
 
@@ -88,6 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:visibility="gone"
             app:layoutManager="LinearLayoutManager"/>
 
         <com.google.android.material.button.MaterialButton
@@ -96,5 +97,11 @@
             android:layout_gravity="center_horizontal"
             android:visibility="gone"
             android:text="@string/clear_history_search"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/progressBarStyle"
+            android:visibility="gone"
+            android:indeterminateTint="@color/blue"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

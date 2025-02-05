@@ -21,7 +21,6 @@ class TrackAdapter (private val tracks : ArrayList<Track>, private val onItemCli
 
         holder.itemView.setOnClickListener {
             onItemClickListener(track)
-            Toast.makeText(holder.itemView.context, "${track.trackName} added to history", Toast.LENGTH_SHORT).show()
         }
     }
 

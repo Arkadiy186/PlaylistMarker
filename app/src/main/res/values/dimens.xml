@@ -21,4 +21,5 @@
     <dimen name="placeholderSizeImage">120dp</dimen>
     <dimen name="text_size_19sp">19sp</dimen>
     <dimen name="line_height_22.27sp">22.27sp</dimen>
+    <dimen name="progressBar">44dp</dimen>
 </resources>

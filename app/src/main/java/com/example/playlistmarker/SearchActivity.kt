@@ -7,6 +7,8 @@ import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -17,12 +19,14 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
 import com.example.playlistmarker.sharedPreferencesUtills.HistorySearch
 import com.example.playlistmarker.trackAPI.RetrofitApiService
 import com.example.playlistmarker.trackAPI.TrackResponse
@@ -48,9 +52,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderButton: com.google.android.material.button.MaterialButton
     private lateinit var historySearchText : TextView
     private lateinit var historySearchButton : com.google.android.material.button.MaterialButton
+    private lateinit var progressBar: ProgressBar
 
     private val trackList = ArrayList<Track>()
     private val historyTrack = ArrayList<Track>()
+    private var mainThreadHandler : Handler? = null
+    private var isAllowed = true
+    private val searchRunnable = Runnable { trackSearch(inputEditText.text.toString()) }
 
     private val searchAdapter = TrackAdapter(trackList) {
         historySearch.addTrackHistory(it)
@@ -59,6 +67,10 @@ class SearchActivity : AppCompatActivity() {
 
     private val historyAdapter = TrackAdapter(historyTrack) {
         openAudioPlayer(it)
+        mainThreadHandler?.postDelayed({
+            historySearch.addTrackHistory(it)
+            historyLoad()
+        }, 800)
     }
 
     private var textValue : String = TEXT_DEF
@@ -92,6 +104,8 @@ class SearchActivity : AppCompatActivity() {
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val TEXT_DEF = ""
         const val SEARCH_NAME_PREFS = "search_name_prefs"
+        const val CLICK_DEBOUNCE_DELAY = 1000L
+        const val SEARCH_DEBOUNCE_DELAY = 3000L
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -101,6 +115,7 @@ class SearchActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences(SEARCH_NAME_PREFS, Context.MODE_PRIVATE)
         historySearch = HistorySearch(sharedPreferences)
+        mainThreadHandler = Handler(Looper.getMainLooper())
 
         backToMainFromSearchActivity = findViewById(R.id.activitySearchToolbar)
         inputEditText = findViewById(R.id.inputEditText)
@@ -112,14 +127,11 @@ class SearchActivity : AppCompatActivity() {
         placeholderButton = findViewById(R.id.placeholderErrorButton)
         historySearchText = findViewById(R.id.historySearchTextView)
         historySearchButton = findViewById(R.id.historySearchButtonView)
+        progressBar = findViewById(R.id.progressBar)
+
 
         backToMainFromSearchActivity.setNavigationOnClickListener {
             finish()
-        }
-
-        if (historySearch.getHistory().isNotEmpty()) {
-            Log.d("getHistory()", "historySetVisibility: isVisible = true")
-            historySetVisibility(true)
         }
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -159,6 +171,7 @@ class SearchActivity : AppCompatActivity() {
                 if(inputEditText.hasFocus() && s?.isEmpty() == true && historyTrack.isNotEmpty()) {
                     historySetVisibility(true)
                 } else {
+                    searchDebounce()
                     historySetVisibility(false)
                 }
 
@@ -175,16 +188,6 @@ class SearchActivity : AppCompatActivity() {
 
         rwTrackList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rwTrackList.adapter = searchAdapter
-
-        inputEditText.setOnEditorActionListener { _, actionID, _ ->
-            if (actionID == EditorInfo.IME_ACTION_DONE) {
-                if (inputEditText.text.isNotEmpty()) {
-                    trackSearch(inputEditText.text.toString())
-                }
-                inputEditText.clearFocus()
-            }
-            false
-        }
 
         placeholderButton.setOnClickListener {
             val query = inputEditText.text.toString()
@@ -225,28 +228,33 @@ class SearchActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun trackSearch(inputSong: String) {
-        historySetVisibility(false)
-        RetrofitApiService.itunesApiService.search(inputSong).enqueue(object : Callback<TrackResponse> {
-            override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
-                if (response.code() == 200) {
-                    trackList.clear()
-                    showListWithoutPlaceholder()
+        if (inputEditText.text.isNotEmpty()) {
+            progressBarSetVisibility(true)
+            historySetVisibility(false)
+            RetrofitApiService.itunesApiService.search(inputSong).enqueue(object : Callback<TrackResponse> {
+                override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+                    progressBarSetVisibility(false)
+                    if (response.code() == 200) {
+                        trackList.clear()
+                        showListWithoutPlaceholder()
 
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        trackList.addAll(response.body()?.results!!)
-                        searchAdapter.notifyDataSetChanged()
+                        if (response.body()?.results?.isNotEmpty() == true) {
+                            trackList.addAll(response.body()?.results!!)
+                            searchAdapter.notifyDataSetChanged()
+                        } else {
+                            showNotFound()
+                        }
                     } else {
-                        showNotFound()
+                        showErrorInternet()
                     }
-                } else {
+                }
+
+                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                    progressBarSetVisibility(false)
                     showErrorInternet()
                 }
-            }
-
-            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                showErrorInternet()
-            }
-        })
+            })
+        }
     }
 
     private fun showErrorInternet() {
@@ -310,11 +318,31 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private fun progressBarSetVisibility(isVisible: Boolean) {
+        if (isVisible) progressBar.show() else progressBar.gone()
+    }
+
     private fun openAudioPlayer(track: Track) {
-        val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra("track", track)
-        intent.putExtra("artworkUrl100", track.artworkUrl100)
-        startActivity(intent)
+        if (clickDebounce()) {
+            val intent = Intent(this, AudioPlayerActivity::class.java)
+            intent.putExtra("track", track)
+            Log.d("SearchActivity", "Передача трека: ${track.trackName}, previewUrl: ${track.previewUrl}")
+            startActivity(intent)
+        }
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isAllowed
+        if (isAllowed) {
+            isAllowed = false
+            mainThreadHandler?.postDelayed({isAllowed = true}, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun searchDebounce() {
+        mainThreadHandler?.removeCallbacks(searchRunnable)
+        mainThreadHandler?.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun isDark(): Boolean {
@@ -324,5 +352,17 @@ class SearchActivity : AppCompatActivity() {
     private fun hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun View.show() {
+        visibility = View.VISIBLE
+    }
+
+    private fun View.gone() {
+        visibility = View.GONE
+    }
+
+    private fun View.hide() {
+        visibility = View.INVISIBLE
     }
 }
