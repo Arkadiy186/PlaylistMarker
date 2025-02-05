@@ -3,8 +3,12 @@ package com.example.playlistmarker
 import android.content.Context
 import android.content.res.Configuration
 import android.icu.text.SimpleDateFormat
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.util.TypedValue
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,9 +18,19 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.trackrecyclerview.Track
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.gson.Gson
+import java.util.Date
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY = 400L
+    }
 
     private lateinit var backButton : MaterialToolbar
     private lateinit var coverAlbum : ImageView
@@ -28,6 +42,27 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var primaryGenreNameTextView : TextView
     private lateinit var countryTextView : TextView
     private lateinit var playButton : ImageView
+    private lateinit var timeTrack : TextView
+
+    private var playerState = STATE_DEFAULT
+    private var mediaPlayer = MediaPlayer()
+    private var url : String = ""
+    private var mainThreadHandler : Handler? = null
+
+    private val updateUiTimer = object : Runnable {
+        override fun run() {
+            if (mediaPlayer.isPlaying) {
+                val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date(mediaPlayer.currentPosition.toLong()))
+
+                runOnUiThread {
+                    timeTrack.text = formattedTime
+                }
+
+                mainThreadHandler?.removeCallbacks(this)
+                mainThreadHandler?.postDelayed(this, DELAY)
+            }
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +79,16 @@ class AudioPlayerActivity : AppCompatActivity() {
         primaryGenreNameTextView = findViewById(R.id.trackGenreCurrentInfo)
         countryTextView = findViewById(R.id.trackCountryCurrentInfo)
         playButton = findViewById(R.id.playTrackButton)
+        timeTrack = findViewById(R.id.currentTimeTrack)
+
+        mainThreadHandler = Handler(Looper.getMainLooper())
 
         backButton.setNavigationOnClickListener {
             finish()
+        }
+
+        playButton.setOnClickListener {
+            playbackControl()
         }
 
         val track = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
@@ -59,16 +101,16 @@ class AudioPlayerActivity : AppCompatActivity() {
         if (track != null) {
             nameTrack.text = track.trackName
             authorTrackTextView.text = track.artistName
-            trackTimeTextView.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime)
+            trackTimeTextView.text = "00:30"
             collectionNameTextView.text = track.collectionName
             releaseDateTextView.text = formatReleaseDate(track.releaseDate)
             primaryGenreNameTextView.text = track.primaryGenreName
             countryTextView.text = track.country
-        }
+            url = track.previewUrl
 
-        val cornerRadius = dpToPx(8f, this)
+            preparePlayer()
 
-        if (track != null) {
+            val cornerRadius = dpToPx(8f, this)
             Glide.with(this)
                 .load(track.getCoverArtWork())
                 .fitCenter()
@@ -76,11 +118,57 @@ class AudioPlayerActivity : AppCompatActivity() {
                 .transform(RoundedCorners(cornerRadius))
                 .into(coverAlbum)
         }
+    }
 
-        if (isDark()) {
-            playButton.setImageResource(R.drawable.play_dark)
-        } else {
-            playButton.setImageResource(R.drawable.play_light)
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+        mainThreadHandler?.removeCallbacks(updateUiTimer)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+        mainThreadHandler?.removeCallbacksAndMessages(null)
+    }
+
+    private fun preparePlayer() {
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playButton.isEnabled = true
+            playerState = STATE_PREPARED
+            setPlayButton()
+        }
+        mediaPlayer.setOnCompletionListener {
+            playerState = STATE_PREPARED
+            setPlayButton()
+            mainThreadHandler?.removeCallbacks(updateUiTimer)
+            timeTrack.text = "00:00"
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playerState = STATE_PLAYING
+        setPlayButton()
+        mainThreadHandler?.post(updateUiTimer)
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playerState = STATE_PAUSED
+        setPlayButton()
+    }
+
+    private fun playbackControl() {
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
         }
     }
 
@@ -93,6 +181,22 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun isDark(): Boolean {
         return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private fun setPlayButton() {
+        if (isDark()) {
+            if (playerState == STATE_PLAYING) {
+                playButton.setImageResource(R.drawable.stop_button_dark)
+            } else if ((playerState == STATE_PAUSED) || (playerState == STATE_PREPARED)) {
+                playButton.setImageResource(R.drawable.play_dark)
+            }
+        } else {
+            if (playerState == STATE_PLAYING) {
+                playButton.setImageResource(R.drawable.stop_button_light)
+            } else if ((playerState == STATE_PAUSED) || (playerState == STATE_PREPARED)) {
+                playButton.setImageResource(R.drawable.play_light)
+            }
+        }
     }
 
     private fun formatReleaseDate(dateString: String) : String {

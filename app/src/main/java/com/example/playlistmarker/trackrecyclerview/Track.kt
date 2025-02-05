@@ -14,7 +14,8 @@ data class Track (@SerializedName("trackName") val trackName: String,
                   @SerializedName("collectionName") val collectionName: String,
                   @SerializedName("releaseDate") val releaseDate: String,
                   @SerializedName("primaryGenreName") val primaryGenreName: String,
-                  @SerializedName("country") val country: String
+                  @SerializedName("country") val country: String,
+                  @SerializedName("previewUrl") val previewUrl : String
 ) : Parcelable {
                       constructor(parcel: Parcel) : this (
                           parcel.readString() ?: "",
@@ -25,6 +26,7 @@ data class Track (@SerializedName("trackName") val trackName: String,
                           parcel.readString() ?: "",
                           parcel.readString() ?: "",
                           parcel.readString() ?: "",
+                          parcel.readString() ?: ""
                       )
 
     override fun describeContents(): Int = 0
@@ -39,6 +41,7 @@ data class Track (@SerializedName("trackName") val trackName: String,
             parcel.writeString(releaseDate)
             parcel.writeString(primaryGenreName)
             parcel.writeString(country)
+            parcel.writeString(previewUrl)
         }
 
         override fun create(parcel: Parcel): Track = Track(parcel)

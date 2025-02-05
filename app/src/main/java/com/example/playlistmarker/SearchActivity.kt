@@ -336,6 +336,7 @@ class SearchActivity : AppCompatActivity() {
         if (clickDebounce()) {
             val intent = Intent(this, AudioPlayerActivity::class.java)
             intent.putExtra("track", track)
+            Log.d("SearchActivity", "Передача трека: ${track.trackName}, previewUrl: ${track.previewUrl}")
             startActivity(intent)
         }
     }
