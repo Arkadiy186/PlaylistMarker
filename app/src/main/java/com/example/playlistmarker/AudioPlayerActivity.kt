@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.util.TypedValue
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,19 +17,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.trackrecyclerview.Track
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.gson.Gson
 import java.util.Date
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
-
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val DELAY = 400L
-    }
 
     private lateinit var backButton : MaterialToolbar
     private lateinit var coverAlbum : ImageView
@@ -179,24 +169,13 @@ class AudioPlayerActivity : AppCompatActivity() {
             context.resources.displayMetrics).toInt()
     }
 
-    private fun isDark(): Boolean {
-        return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-    }
-
     private fun setPlayButton() {
-        if (isDark()) {
-            if (playerState == STATE_PLAYING) {
-                playButton.setImageResource(R.drawable.stop_button_dark)
-            } else if ((playerState == STATE_PAUSED) || (playerState == STATE_PREPARED)) {
-                playButton.setImageResource(R.drawable.play_dark)
-            }
+        val playRes = if (playerState == STATE_PLAYING) {
+            R.drawable.ic_stop
         } else {
-            if (playerState == STATE_PLAYING) {
-                playButton.setImageResource(R.drawable.stop_button_light)
-            } else if ((playerState == STATE_PAUSED) || (playerState == STATE_PREPARED)) {
-                playButton.setImageResource(R.drawable.play_light)
-            }
+            R.drawable.ic_play
         }
+        playButton.setImageResource(playRes)
     }
 
     private fun formatReleaseDate(dateString: String) : String {
@@ -208,5 +187,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         } catch (e: Exception) {
             dateString
         }
+    }
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY = 400L
     }
 }
