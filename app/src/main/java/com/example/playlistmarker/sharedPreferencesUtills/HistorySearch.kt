@@ -5,10 +5,6 @@ import com.example.playlistmarker.trackrecyclerview.Track
 import com.google.gson.Gson
 
 class HistorySearch(private val sharedPreferences: SharedPreferences) {
-    companion object{
-        private const val HISTORY_KEY = "history_key"
-        private const val HISTORY_MAX_SIZE = 10
-    }
 
     fun addTrackHistory(track: Track) {
         val currentHistory = getHistory().toMutableList()
@@ -39,5 +35,10 @@ class HistorySearch(private val sharedPreferences: SharedPreferences) {
     private fun saveHistory(history: List<Track>) {
         val historyJson = Gson().toJson(history)
         sharedPreferences.edit().putString(HISTORY_KEY, historyJson).apply()
+    }
+
+    companion object{
+        private const val HISTORY_KEY = "history_key"
+        private const val HISTORY_MAX_SIZE = 10
     }
 }

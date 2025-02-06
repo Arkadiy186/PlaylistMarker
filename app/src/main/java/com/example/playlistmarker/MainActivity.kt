@@ -20,12 +20,6 @@ class MainActivity : AppCompatActivity() {
         setupButton(R.id.search, SearchActivity::class.java)
         setupButton(R.id.settings, SettingsActivity::class.java)
         setupButton(R.id.media_library, MediaLibraryActivity::class.java)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
     }
 
     private fun <T> setupButton(buttonId: Int, targetActivity: Class<T>) {

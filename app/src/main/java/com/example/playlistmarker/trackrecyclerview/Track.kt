@@ -15,7 +15,7 @@ data class Track (@SerializedName("trackName") val trackName: String,
                   @SerializedName("releaseDate") val releaseDate: String,
                   @SerializedName("primaryGenreName") val primaryGenreName: String,
                   @SerializedName("country") val country: String,
-                  @SerializedName("previewUrl") val previewUrl : String
+                  @SerializedName("previewUrl") val previewUrl: String
 ) : Parcelable {
                       constructor(parcel: Parcel) : this (
                           parcel.readString() ?: "",

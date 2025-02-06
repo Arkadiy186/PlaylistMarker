@@ -22,32 +22,27 @@ import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-    private lateinit var backButton : MaterialToolbar
-    private lateinit var coverAlbum : ImageView
-    private lateinit var nameTrack : TextView
-    private lateinit var authorTrackTextView : TextView
-    private lateinit var trackTimeTextView : TextView
-    private lateinit var collectionNameTextView : TextView
-    private lateinit var releaseDateTextView : TextView
-    private lateinit var primaryGenreNameTextView : TextView
-    private lateinit var countryTextView : TextView
-    private lateinit var playButton : ImageView
-    private lateinit var timeTrack : TextView
+    private lateinit var backButton: MaterialToolbar
+    private lateinit var coverAlbum: ImageView
+    private lateinit var nameTrack: TextView
+    private lateinit var authorTrackTextView: TextView
+    private lateinit var trackTimeTextView: TextView
+    private lateinit var collectionNameTextView: TextView
+    private lateinit var releaseDateTextView: TextView
+    private lateinit var primaryGenreNameTextView: TextView
+    private lateinit var countryTextView: TextView
+    private lateinit var playButton: ImageView
+    private lateinit var timeTrack: TextView
 
     private var playerState = STATE_DEFAULT
     private var mediaPlayer = MediaPlayer()
-    private var url : String = ""
-    private var mainThreadHandler : Handler? = null
+    private var url: String = ""
+    private var mainThreadHandler: Handler? = null
 
     private val updateUiTimer = object : Runnable {
         override fun run() {
             if (mediaPlayer.isPlaying) {
-                val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date(mediaPlayer.currentPosition.toLong()))
-
-                runOnUiThread {
-                    timeTrack.text = formattedTime
-                }
-
+                updateTimeTrack()
                 mainThreadHandler?.removeCallbacks(this)
                 mainThreadHandler?.postDelayed(this, DELAY)
             }
@@ -59,27 +54,11 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.audioplayer)
 
-        backButton = findViewById(R.id.audioPlayerToolbar)
-        coverAlbum = findViewById(R.id.albumCover)
-        nameTrack = findViewById(R.id.titleCover)
-        authorTrackTextView = findViewById(R.id.authorTrack)
-        trackTimeTextView = findViewById(R.id.trackTimeCurrentInfo)
-        collectionNameTextView = findViewById(R.id.trackAlbumCurrentInfo)
-        releaseDateTextView = findViewById(R.id.trackReleaseDateCurrentInfo)
-        primaryGenreNameTextView = findViewById(R.id.trackGenreCurrentInfo)
-        countryTextView = findViewById(R.id.trackCountryCurrentInfo)
-        playButton = findViewById(R.id.playTrackButton)
-        timeTrack = findViewById(R.id.currentTimeTrack)
-
         mainThreadHandler = Handler(Looper.getMainLooper())
 
-        backButton.setNavigationOnClickListener {
-            finish()
-        }
+        initView()
 
-        playButton.setOnClickListener {
-            playbackControl()
-        }
+        setupListeners()
 
         val track = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("track", Track::class.java)
@@ -88,25 +67,10 @@ class AudioPlayerActivity : AppCompatActivity() {
             intent.getParcelableExtra<Track>("track")
         }
 
-        if (track != null) {
-            nameTrack.text = track.trackName
-            authorTrackTextView.text = track.artistName
-            trackTimeTextView.text = "00:30"
-            collectionNameTextView.text = track.collectionName
-            releaseDateTextView.text = formatReleaseDate(track.releaseDate)
-            primaryGenreNameTextView.text = track.primaryGenreName
-            countryTextView.text = track.country
-            url = track.previewUrl
-
+        track?.let {
+            setupTrackInfo(track)
             preparePlayer()
-
-            val cornerRadius = dpToPx(8f, this)
-            Glide.with(this)
-                .load(track.getCoverArtWork())
-                .fitCenter()
-                .placeholder(R.drawable.cover_album_placeholder)
-                .transform(RoundedCorners(cornerRadius))
-                .into(coverAlbum)
+            loadGlideWithCorners(track)
         }
     }
 
@@ -120,6 +84,42 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onDestroy()
         mediaPlayer.release()
         mainThreadHandler?.removeCallbacksAndMessages(null)
+        mainThreadHandler = null
+    }
+
+    private fun initView() {
+        backButton = findViewById(R.id.audioPlayerToolbar)
+        coverAlbum = findViewById(R.id.albumCover)
+        nameTrack = findViewById(R.id.titleCover)
+        authorTrackTextView = findViewById(R.id.authorTrack)
+        trackTimeTextView = findViewById(R.id.trackTimeCurrentInfo)
+        collectionNameTextView = findViewById(R.id.trackAlbumCurrentInfo)
+        releaseDateTextView = findViewById(R.id.trackReleaseDateCurrentInfo)
+        primaryGenreNameTextView = findViewById(R.id.trackGenreCurrentInfo)
+        countryTextView = findViewById(R.id.trackCountryCurrentInfo)
+        playButton = findViewById(R.id.playTrackButton)
+        timeTrack = findViewById(R.id.currentTimeTrack)
+    }
+
+    private fun setupListeners() {
+        backButton.setNavigationOnClickListener {
+            finish()
+        }
+
+        playButton.setOnClickListener {
+            playbackControl()
+        }
+    }
+
+    private fun setupTrackInfo(track: Track) {
+        nameTrack.text = track.trackName
+        authorTrackTextView.text = track.artistName
+        trackTimeTextView.text = "00:30"
+        collectionNameTextView.text = track.collectionName
+        releaseDateTextView.text = formatReleaseDate(track.releaseDate)
+        primaryGenreNameTextView.text = track.primaryGenreName
+        countryTextView.text = track.country
+        url = track.previewUrl
     }
 
     private fun preparePlayer() {
@@ -153,12 +153,8 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun playbackControl() {
         when(playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
+            STATE_PLAYING -> pausePlayer()
+            STATE_PREPARED, STATE_PAUSED -> startPlayer()
         }
     }
 
@@ -178,7 +174,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         playButton.setImageResource(playRes)
     }
 
-    private fun formatReleaseDate(dateString: String) : String {
+    private fun formatReleaseDate(dateString: String): String {
         return try {
             val inputDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
             val outputDate = SimpleDateFormat("yyyy", Locale.getDefault())
@@ -187,6 +183,24 @@ class AudioPlayerActivity : AppCompatActivity() {
         } catch (e: Exception) {
             dateString
         }
+    }
+
+    private fun updateTimeTrack() {
+        val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date(mediaPlayer.currentPosition.toLong()))
+
+        runOnUiThread {
+            timeTrack.text = formattedTime
+        }
+    }
+
+    private fun loadGlideWithCorners(track: Track) {
+        val cornerRadius = dpToPx(8f, this)
+        Glide.with(this)
+            .load(track.getCoverArtWork())
+            .fitCenter()
+            .placeholder(R.drawable.cover_album_placeholder)
+            .transform(RoundedCorners(cornerRadius))
+            .into(coverAlbum)
     }
 
     companion object {

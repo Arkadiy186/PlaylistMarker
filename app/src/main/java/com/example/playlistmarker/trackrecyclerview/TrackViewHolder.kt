@@ -14,11 +14,11 @@ import java.util.Locale
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    private val itemTrackName : TextView = itemView.findViewById(R.id.trackNameItem)
-    private val itemTrackArtistAndTime : TextView = itemView.findViewById(R.id.trackArtistAndTimeItem)
-    private val itemImageViewTrack : ImageView = itemView.findViewById(R.id.imageViewItemTrack)
+    private val itemTrackName: TextView = itemView.findViewById(R.id.trackNameItem)
+    private val itemTrackArtistAndTime: TextView = itemView.findViewById(R.id.trackArtistAndTimeItem)
+    private val itemImageViewTrack: ImageView = itemView.findViewById(R.id.imageViewItemTrack)
 
-    fun bind(model : Track) {
+    fun bind(model: Track) {
         itemTrackName.text = model.trackName
 
         val trackTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime)
@@ -31,7 +31,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cornerRadius = dpToPx(2f, itemView.context)
 
         Glide.with(itemView)
-            .load(url ?: R.drawable.ic_placeholder)
+            .load(url)
             .fitCenter()
             .placeholder(R.drawable.ic_placeholder)
             .transform(RoundedCorners(cornerRadius))
