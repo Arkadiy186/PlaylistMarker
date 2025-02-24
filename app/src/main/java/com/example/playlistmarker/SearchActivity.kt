@@ -3,14 +3,9 @@ package com.example.playlistmarker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -23,20 +18,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmarker.sharedPreferencesUtills.HistorySearch
-import com.example.playlistmarker.trackAPI.RetrofitApiService
-import com.example.playlistmarker.trackAPI.TrackResponse
-import com.example.playlistmarker.trackrecyclerview.Track
+import com.example.playlistmarker.creator.Creator
+import com.example.playlistmarker.data.mappers.TrackDtoMapper
+import com.example.playlistmarker.domain.use_case.HistoryInteractor
+import com.example.playlistmarker.presentation.mapper.TrackMapper
+import com.example.playlistmarker.presentation.model.TrackInfo
+import com.example.playlistmarker.presentation.presenter.SearchPresenter
+import com.example.playlistmarker.presentation.utills.DebounceHelper
+import com.example.playlistmarker.presentation.utills.HideKeyboardHelper
+import com.example.playlistmarker.presentation.utills.SearchStateManager
+import com.example.playlistmarker.presentation.view.SearchView
 import com.example.playlistmarker.trackrecyclerview.TrackAdapter
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class SearchActivity : AppCompatActivity() {
-
-    private lateinit var historySearch: HistorySearch
+class SearchActivity : AppCompatActivity(), SearchView {
 
     private lateinit var backToMainFromSearchActivity: MaterialToolbar
     private lateinit var searchEditText: EditText
@@ -50,35 +45,34 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historySearchButton: com.google.android.material.button.MaterialButton
     private lateinit var progressBar: ProgressBar
 
-    private val searchList = ArrayList<Track>()
-    private val historyTrack = ArrayList<Track>()
-    private var mainThreadHandler: Handler? = null
-    private var isAllowed = true
-    private val searchRunnable = Runnable { trackSearch(searchEditText.text.toString()) }
+    private val historyInteractor: HistoryInteractor by lazy { Creator.provideHistoryInteractor() }
+    private val presenter: SearchPresenter by lazy { Creator.provideSearchPresenter() }
+    private val clickDebounceHelper: DebounceHelper by lazy { Creator.provideClickDebounceHelper() }
+    private val searchDebounceHelper: DebounceHelper by lazy { Creator.provideSearchDebounceHelper() }
+    private val searchStateManager: SearchStateManager by lazy { Creator.provideSearchStateManager() }
+    private val hideKeyboardHelper: HideKeyboardHelper by lazy { Creator.provideHideKeyboardHelper() }
 
-    private val searchAdapter = TrackAdapter(searchList) {
-        historySearch.addTrackHistory(it)
-        openAudioPlayer(it)
-    }
+    private val searchList = ArrayList<TrackInfo>()
+    private val historyTrack = ArrayList<TrackInfo>()
+    private val searchAdapter by lazy { TrackAdapter(searchList, ::onTrackSelected) }
+    private val historyAdapter by lazy { TrackAdapter(historyTrack, ::onTrackSelected) }
 
-    private val historyAdapter = TrackAdapter(historyTrack) {
-        openAudioPlayer(it)
-        mainThreadHandler?.postDelayed({
-            historySearch.addTrackHistory(it)
-            historyLoad()
-        }, 800)
-    }
-
-    private var textValue: String = TEXT_DEF
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        saveSearchState(outState)
+        searchStateManager.saveSearchState(searchEditText.text.toString(), searchList, historyTrack)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        restoreSearchState(savedInstanceState)
+        searchStateManager.restoreSearchState { text, searchHistory, history ->
+            searchEditText.setText(text)
+            searchList.clear()
+            searchList.addAll(searchHistory)
+            historyTrack.clear()
+            historyTrack.addAll(history)
+            historyAdapter.notifyDataSetChanged()
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -86,32 +80,19 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val sharedPreferences = getSharedPreferences(SEARCH_NAME_PREFS, Context.MODE_PRIVATE)
-        historySearch = HistorySearch(sharedPreferences)
-        mainThreadHandler = Handler(Looper.getMainLooper())
-
         initView()
-
         setupListeners()
-
-        clearButton.isVisible = !searchEditText.text.isNullOrEmpty()
-
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                handleSearchTextChange(s)
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })
 
         tracksRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         tracksRecyclerView.adapter = searchAdapter
 
-        historyLoad()
+        presenter.attachView(this)
+        presenter.loadHistory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.detachView(this)
     }
 
     private fun initView() {
@@ -134,113 +115,36 @@ class SearchActivity : AppCompatActivity() {
         }
 
         historySearchButton.setOnClickListener {
-            onHistorySearchButtonClicked()
+            historyInteractor.clearHistory()
+            historyTrack.clear()
+            historyAdapter.notifyDataSetChanged()
+            historySetVisibility(false)
         }
 
         clearButton.setOnClickListener {
-            onClearButtonClicked()
+            searchEditText.setText("")
+            searchList.clear()
+            searchEditText.clearFocus()
+            searchAdapter.notifyDataSetChanged()
+            hideKeyboardHelper.hideKeyboard(clearButton)
+            historySetVisibility(false)
         }
 
         placeholderButton.setOnClickListener {
-            onPlaceholderButtonClicked()
+            presenter.searchTrack(searchEditText.text.toString())
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
             historySetVisibility(hasFocus && searchEditText.text.isEmpty() && historyTrack.isNotEmpty())
         }
-    }
 
-    private fun onHistorySearchButtonClicked() {
-        historySearch.clearHistory()
-        historyTrack.clear()
-        historyAdapter.notifyDataSetChanged()
-        historySetVisibility(false)
-    }
-
-    private fun onClearButtonClicked() {
-        searchEditText.setText("")
-        searchList.clear()
-        searchEditText.clearFocus()
-        searchAdapter.notifyDataSetChanged()
-        hideKeyboard(clearButton)
-
-        historySetVisibility(historyTrack.isNotEmpty())
-    }
-
-    private fun onPlaceholderButtonClicked() {
-        val query = searchEditText.text.toString()
-
-        if (!isInternetAvailable()) {
-            showErrorInternet()
-            return
-        }
-
-        if (query.isNotEmpty()) {
-            trackSearch(query)
-        }
-    }
-
-    private fun historyLoad() {
-        historyTrack.clear()
-        historyTrack.addAll(historySearch.getHistory())
-        Log.d("SearchActivity", "historyLoad: Loaded ${historyTrack.size} items")
-        historyAdapter.notifyDataSetChanged()
-    }
-
-    private fun isInternetAvailable(): Boolean {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = connectivityManager.activeNetwork
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
-        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun trackSearch(inputSong: String) {
-        if (searchEditText.text.isNotEmpty()) {
-            progressBarSetVisibility(true)
-            historySetVisibility(false)
-            RetrofitApiService.itunesApiService.search(inputSong).enqueue(object : Callback<TrackResponse> {
-                override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
-                    progressBarSetVisibility(false)
-                    if (response.code() == 200) {
-                        searchList.clear()
-                        placeholderSetVisibility(isHidden = true)
-
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            searchList.addAll(response.body()?.results!!)
-                            searchAdapter.notifyDataSetChanged()
-                        } else {
-                            showNotFound()
-                        }
-                    } else {
-                        showErrorInternet()
-                    }
-                }
-
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    progressBarSetVisibility(false)
-                    showErrorInternet()
-                }
-            })
-        }
-    }
-
-    private fun showErrorInternet() {
-        placeholderSetVisibility(
-            isHidden = false,
-            text = getString(R.string.internet_problems),
-            imageRes = R.drawable.ic_placeholder_internet,
-            textRes = R.string.internet_problems
-        )
-    }
-
-    private fun showNotFound() {
-        placeholderSetVisibility(
-            isHidden = false,
-            text = "",
-            imageRes = R.drawable.ic_placeholder_not_found,
-            textRes = R.string.not_found_songs
-        )
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                handleSearchTextChange(s)
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     private fun placeholderSetVisibility(isHidden: Boolean, text: String = "", imageRes: Int = 0, textRes: Int = 0) {
@@ -259,7 +163,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun historySetVisibility(isVisible: Boolean) {
-        Log.d("SearchActivity", "historySetVisibility: isVisible = $isVisible")
         if (isVisible) {
             tracksRecyclerView.adapter = historyAdapter
             historyAdapter.notifyDataSetChanged()
@@ -275,31 +178,23 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun progressBarSetVisibility(isVisible: Boolean) {
-        if (isVisible) progressBar.show() else progressBar.gone()
-    }
-
-    private fun openAudioPlayer(track: Track) {
+    private fun onTrackSelected(trackInfo: TrackInfo) {
         if (clickDebounce()) {
-            val intent = Intent(this, AudioPlayerActivity::class.java)
-            intent.putExtra("track", track)
-            Log.d("SearchActivity", "Передача трека: ${track.trackName}, previewUrl: ${track.previewUrl}")
-            startActivity(intent)
+            val track = TrackMapper.mapToDomain(trackInfo)
+            historyInteractor.addTrackHistory(track)
+            val trackDto = TrackDtoMapper.toDto(track)
+            startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
+                putExtra("track", trackDto)
+            })
         }
     }
 
-    private fun clickDebounce() : Boolean {
-        val current = isAllowed
-        if (isAllowed) {
-            isAllowed = false
-            mainThreadHandler?.postDelayed({isAllowed = true}, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
+    private fun clickDebounce(): Boolean {
+        return clickDebounceHelper.clickDebounceRun()
     }
 
     private fun searchDebounce() {
-        mainThreadHandler?.removeCallbacks(searchRunnable)
-        mainThreadHandler?.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        searchDebounceHelper.searchDebounceRun { presenter.searchTrack(searchEditText.text.toString()) }
     }
 
     private fun handleSearchTextChange(s: CharSequence?) {
@@ -322,35 +217,7 @@ class SearchActivity : AppCompatActivity() {
             placeholderSetVisibility(true)
         }
 
-        historyLoad()
-    }
-
-    private fun saveSearchState(outState: Bundle) {
-        outState.putString(TEXT_AMOUNT, textValue)
-        outState.putString("track_list", Gson().toJson(searchList))
-        outState.putString("history_list", Gson().toJson(historyTrack))
-    }
-
-    private fun restoreSearchState(savedInstanceState: Bundle) {
-        Log.d("SearchActivity", "onRestoreInstanceState: вызвано восстановление экрана")
-
-        textValue = savedInstanceState.getString(TEXT_AMOUNT, TEXT_DEF)
-        searchEditText.setText(textValue)
-
-        val searchListJson = savedInstanceState.getString("track_list")
-        if (!searchListJson.isNullOrEmpty()) {
-            searchList.clear()
-            searchList.addAll(Gson().fromJson(searchListJson, Array<Track>::class.java))
-        }
-
-        historyLoad()
-        historySetVisibility(searchEditText.text.isEmpty() && !searchEditText.hasFocus() && historyTrack.isNotEmpty())
-        historyAdapter.notifyDataSetChanged()
-    }
-
-    private fun hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+       presenter.loadHistory()
     }
 
     private fun View.show() {
@@ -365,10 +232,46 @@ class SearchActivity : AppCompatActivity() {
         visibility = View.INVISIBLE
     }
 
+    override fun showTracks(track: List<TrackInfo>) {
+        runOnUiThread {
+            searchList.clear()
+            searchList.addAll(track)
+            searchAdapter.notifyDataSetChanged()
+            placeholderSetVisibility(true)
+        }
+    }
+
+    override fun showLoading(isLoading: Boolean) {
+        progressBar.isVisible = isLoading
+    }
+
+    override fun showNotFound() {
+        placeholderSetVisibility(
+            isHidden = false,
+            text = "",
+            imageRes = R.drawable.ic_placeholder_not_found,
+            textRes = R.string.not_found_songs
+        )
+    }
+
+    override fun showErrorInternet() {
+        placeholderSetVisibility(
+            isHidden = false,
+            text = getString(R.string.internet_problems),
+            imageRes = R.drawable.ic_placeholder_internet,
+            textRes = R.string.internet_problems
+        )
+    }
+
+    override fun showHistory(trackHistory: List<TrackInfo>) {
+        runOnUiThread {
+            historyTrack.clear()
+            historyTrack.addAll(trackHistory)
+            historyAdapter.notifyDataSetChanged()
+        }
+    }
+
     companion object {
-        const val TEXT_AMOUNT = "TEXT_AMOUNT"
-        const val TEXT_DEF = ""
-        const val SEARCH_NAME_PREFS = "search_name_prefs"
         const val CLICK_DEBOUNCE_DELAY = 1000L
         const val SEARCH_DEBOUNCE_DELAY = 3000L
     }

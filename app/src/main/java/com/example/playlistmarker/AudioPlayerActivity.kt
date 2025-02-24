@@ -1,9 +1,7 @@
 package com.example.playlistmarker
 
 import android.content.Context
-import android.content.res.Configuration
 import android.icu.text.SimpleDateFormat
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -15,12 +13,17 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmarker.trackrecyclerview.Track
+import com.example.playlistmarker.creator.Creator
+import com.example.playlistmarker.data.mappers.TrackDtoMapper
+import com.example.playlistmarker.data.model.TrackDto
+import com.example.playlistmarker.domain.use_case.AudioPlayerCallback
+import com.example.playlistmarker.presentation.mapper.TrackInfoDetailsMapper
+import com.example.playlistmarker.presentation.model.TrackInfoDetails
 import com.google.android.material.appbar.MaterialToolbar
 import java.util.Date
 import java.util.Locale
 
-class AudioPlayerActivity : AppCompatActivity() {
+class AudioPlayerActivity : AppCompatActivity(), AudioPlayerCallback {
 
     private lateinit var backButton: MaterialToolbar
     private lateinit var coverAlbum: ImageView
@@ -34,17 +37,16 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var playButton: ImageView
     private lateinit var timeTrack: TextView
 
-    private var playerState = STATE_DEFAULT
-    private var mediaPlayer = MediaPlayer()
-    private var url: String = ""
-    private var mainThreadHandler: Handler? = null
+    private val audioPlayerInteractor by lazy { Creator.provideAudioPlayerInteractor() }
+
+    private var mainThreadHandler = Handler(Looper.getMainLooper())
 
     private val updateUiTimer = object : Runnable {
         override fun run() {
-            if (mediaPlayer.isPlaying) {
+            if (audioPlayerInteractor.getPlayerState() == STATE_PLAYING) {
                 updateTimeTrack()
-                mainThreadHandler?.removeCallbacks(this)
-                mainThreadHandler?.postDelayed(this, DELAY)
+                mainThreadHandler.removeCallbacks(this)
+                mainThreadHandler.postDelayed(this, DELAY)
             }
         }
     }
@@ -54,37 +56,54 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.audioplayer)
 
-        mainThreadHandler = Handler(Looper.getMainLooper())
-
+        Creator.initialize(applicationContext)
         initView()
-
         setupListeners()
 
-        val track = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("track", Track::class.java)
+        val trackDto = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("track", TrackDto::class.java)
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra<Track>("track")
+            intent.getParcelableExtra<TrackDto>("track")
         }
 
-        track?.let {
-            setupTrackInfo(track)
-            preparePlayer()
-            loadGlideWithCorners(track)
+        val track = trackDto?.let { TrackDtoMapper.mapToDomain(it) }
+        val trackInfoDetails = track?.let { TrackInfoDetailsMapper.map(track) }
+
+        trackInfoDetails?.let {
+            setupTrackInfo(it)
+            audioPlayerInteractor.preparePlayer(it)
+            loadGlideWithCorners(it)
         }
+
+        audioPlayerInteractor.setCallback(this)
     }
+
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
-        mainThreadHandler?.removeCallbacks(updateUiTimer)
+        audioPlayerInteractor.pausePlayer()
+        mainThreadHandler.removeCallbacks(updateUiTimer)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
-        mainThreadHandler?.removeCallbacksAndMessages(null)
-        mainThreadHandler = null
+        mainThreadHandler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onPlayerPrepared() {
+        runOnUiThread {
+            playButton.isEnabled = true
+            setPlayButton()
+        }
+    }
+
+    override fun onPlayerCompleted() {
+        runOnUiThread {
+            setPlayButton()
+            timeTrack.text = "00:00"
+            mainThreadHandler.removeCallbacks(updateUiTimer)
+        }
     }
 
     private fun initView() {
@@ -111,7 +130,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupTrackInfo(track: Track) {
+    private fun setupTrackInfo(track: TrackInfoDetails) {
         nameTrack.text = track.trackName
         authorTrackTextView.text = track.artistName
         trackTimeTextView.text = "00:30"
@@ -119,43 +138,24 @@ class AudioPlayerActivity : AppCompatActivity() {
         releaseDateTextView.text = formatReleaseDate(track.releaseDate)
         primaryGenreNameTextView.text = track.primaryGenreName
         countryTextView.text = track.country
-        url = track.previewUrl
-    }
-
-    private fun preparePlayer() {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            playButton.isEnabled = true
-            playerState = STATE_PREPARED
-            setPlayButton()
-        }
-        mediaPlayer.setOnCompletionListener {
-            playerState = STATE_PREPARED
-            setPlayButton()
-            mainThreadHandler?.removeCallbacks(updateUiTimer)
-            timeTrack.text = "00:00"
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playerState = STATE_PLAYING
-        setPlayButton()
-        mainThreadHandler?.post(updateUiTimer)
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        playerState = STATE_PAUSED
-        setPlayButton()
     }
 
     private fun playbackControl() {
-        when(playerState) {
-            STATE_PLAYING -> pausePlayer()
-            STATE_PREPARED, STATE_PAUSED -> startPlayer()
+        when(audioPlayerInteractor.getPlayerState()) {
+            STATE_PLAYING -> {
+                audioPlayerInteractor.pausePlayer()
+                mainThreadHandler.removeCallbacks(updateUiTimer)
+            }
+            STATE_PAUSED, STATE_PREPARED -> {
+                audioPlayerInteractor.startPlayer()
+                mainThreadHandler.post(updateUiTimer)
+            }
+            else -> {
+                audioPlayerInteractor.startPlayer()
+                mainThreadHandler.post(updateUiTimer)
+            }
         }
+        setPlayButton()
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {
@@ -166,7 +166,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun setPlayButton() {
-        val playRes = if (playerState == STATE_PLAYING) {
+        val playRes = if (audioPlayerInteractor.getPlayerState() == STATE_PLAYING) {
             R.drawable.ic_stop
         } else {
             R.drawable.ic_play
@@ -186,14 +186,14 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun updateTimeTrack() {
-        val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date(mediaPlayer.currentPosition.toLong()))
+        val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date())
 
         runOnUiThread {
             timeTrack.text = formattedTime
         }
     }
 
-    private fun loadGlideWithCorners(track: Track) {
+    private fun loadGlideWithCorners(track: TrackInfoDetails) {
         val cornerRadius = dpToPx(8f, this)
         Glide.with(this)
             .load(track.getCoverArtWork())

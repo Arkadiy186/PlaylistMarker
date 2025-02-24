@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.R
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.playlistmarker.domain.model.Track
+import com.example.playlistmarker.presentation.model.TrackInfo
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -18,12 +18,9 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val itemTrackArtistAndTime: TextView = itemView.findViewById(R.id.trackArtistAndTimeItem)
     private val itemImageViewTrack: ImageView = itemView.findViewById(R.id.imageViewItemTrack)
 
-    fun bind(model: Track) {
+    fun bind(model: TrackInfo) {
         itemTrackName.text = model.trackName
-
-        val trackTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime)
-        itemTrackArtistAndTime.text = itemView.context.getString(R.string.track_artist_time, model.artistName, trackTime)
-
+        itemTrackArtistAndTime.text = itemView.context.getString(R.string.track_artist_time, model.artistName, model.trackTime)
         loadImage(model.artworkUrl100)
     }
 

@@ -1,4 +1,4 @@
-package com.example.playlistmarker.sharedPreferencesUtills
+package com.example.playlistmarker.data.sharedpreferences
 
 import android.content.SharedPreferences
 import com.example.playlistmarker.data.model.TrackDto
@@ -37,7 +37,7 @@ class HistorySearch(private val sharedPreferences: SharedPreferences) {
         sharedPreferences.edit().putString(HISTORY_KEY, historyJson).apply()
     }
 
-    companion object{
+    companion object {
         private const val HISTORY_KEY = "history_key"
         private const val HISTORY_MAX_SIZE = 10
     }
