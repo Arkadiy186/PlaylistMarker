@@ -21,12 +21,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.data.mappers.TrackDtoMapper
 import com.example.playlistmarker.domain.use_case.HistoryInteractor
+import com.example.playlistmarker.domain.use_case.SearchStateInteractor
 import com.example.playlistmarker.presentation.mapper.TrackMapper
 import com.example.playlistmarker.presentation.model.TrackInfo
 import com.example.playlistmarker.presentation.presenter.SearchPresenter
-import com.example.playlistmarker.presentation.utills.DebounceHelper
+import com.example.playlistmarker.presentation.ui_state.UiStateHandler
+import com.example.playlistmarker.presentation.utills.DebounceHandler
 import com.example.playlistmarker.presentation.utills.HideKeyboardHelper
-import com.example.playlistmarker.presentation.utills.SearchStateManager
 import com.example.playlistmarker.presentation.view.SearchView
 import com.example.playlistmarker.trackrecyclerview.TrackAdapter
 import com.google.android.material.appbar.MaterialToolbar
@@ -46,11 +47,11 @@ class SearchActivity : AppCompatActivity(), SearchView {
     private lateinit var progressBar: ProgressBar
 
     private val historyInteractor: HistoryInteractor by lazy { Creator.provideHistoryInteractor() }
-    private val presenter: SearchPresenter by lazy { Creator.provideSearchPresenter() }
-    private val clickDebounceHelper: DebounceHelper by lazy { Creator.provideClickDebounceHelper() }
-    private val searchDebounceHelper: DebounceHelper by lazy { Creator.provideSearchDebounceHelper() }
-    private val searchStateManager: SearchStateManager by lazy { Creator.provideSearchStateManager() }
+    private val presenter: SearchPresenter by lazy { Creator.provideSearchPresenter(placeholder, placeholderText, placeholderImage, tracksRecyclerView, placeholderButton, progressBar, this) }
+    private val debounceHandler: DebounceHandler by lazy { Creator.provideDebounceHandler() }
     private val hideKeyboardHelper: HideKeyboardHelper by lazy { Creator.provideHideKeyboardHelper() }
+    private val searchStateInteractor: SearchStateInteractor by lazy { Creator.provideSearchStateInteractor() }
+    private val uiStateHandler: UiStateHandler by lazy { Creator.provideUiStateHandler(placeholder, placeholderText, placeholderImage, tracksRecyclerView, placeholderButton, progressBar,this) }
 
     private val searchList = ArrayList<TrackInfo>()
     private val historyTrack = ArrayList<TrackInfo>()
@@ -60,12 +61,12 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        searchStateManager.saveSearchState(searchEditText.text.toString(), searchList, historyTrack)
+        searchStateInteractor.saveSearchState(searchEditText.text.toString(), searchList, historyTrack)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        searchStateManager.restoreSearchState { text, searchHistory, history ->
+        searchStateInteractor.restoreSearchState { text, searchHistory, history ->
             searchEditText.setText(text)
             searchList.clear()
             searchList.addAll(searchHistory)
@@ -80,8 +81,11 @@ class SearchActivity : AppCompatActivity(), SearchView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        Creator.initialize(applicationContext)
         initView()
         setupListeners()
+
+        clearButton.isVisible = !searchEditText.text.isNullOrEmpty()
 
         tracksRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         tracksRecyclerView.adapter = searchAdapter
@@ -147,21 +151,6 @@ class SearchActivity : AppCompatActivity(), SearchView {
         })
     }
 
-    private fun placeholderSetVisibility(isHidden: Boolean, text: String = "", imageRes: Int = 0, textRes: Int = 0) {
-        if (isHidden) {
-            placeholder.gone()
-            tracksRecyclerView.show()
-        } else {
-            placeholder.show()
-            tracksRecyclerView.gone()
-            placeholderButton.apply {
-                if (text.isEmpty()) gone() else show()
-            }
-            placeholderImage.setImageResource(imageRes)
-            placeholderText.setText(textRes)
-        }
-    }
-
     private fun historySetVisibility(isVisible: Boolean) {
         if (isVisible) {
             tracksRecyclerView.adapter = historyAdapter
@@ -179,22 +168,16 @@ class SearchActivity : AppCompatActivity(), SearchView {
     }
 
     private fun onTrackSelected(trackInfo: TrackInfo) {
-        if (clickDebounce()) {
-            val track = TrackMapper.mapToDomain(trackInfo)
-            historyInteractor.addTrackHistory(track)
-            val trackDto = TrackDtoMapper.toDto(track)
-            startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
-                putExtra("track", trackDto)
-            })
+        if (debounceHandler.handleClickDebounce {
+                val track = TrackMapper.mapToDomain(trackInfo)
+                historyInteractor.addTrackHistory(track)
+                val trackDto = TrackDtoMapper.toDto(track)
+                startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
+                    putExtra("track", trackDto)
+                })
+                true
+            }) {
         }
-    }
-
-    private fun clickDebounce(): Boolean {
-        return clickDebounceHelper.clickDebounceRun()
-    }
-
-    private fun searchDebounce() {
-        searchDebounceHelper.searchDebounceRun { presenter.searchTrack(searchEditText.text.toString()) }
     }
 
     private fun handleSearchTextChange(s: CharSequence?) {
@@ -209,12 +192,14 @@ class SearchActivity : AppCompatActivity(), SearchView {
                 searchAdapter.notifyDataSetChanged()
             }
         } else {
-            searchDebounce()
+            debounceHandler.handleSearchDebounce(s.toString()) {query ->
+                presenter.searchTrack(query)
+            }
             historySetVisibility(false)
         }
 
         if (s.isNullOrEmpty()) {
-            placeholderSetVisibility(true)
+            uiStateHandler.placeholderSetVisibility(true)
         }
 
        presenter.loadHistory()
@@ -237,30 +222,26 @@ class SearchActivity : AppCompatActivity(), SearchView {
             searchList.clear()
             searchList.addAll(track)
             searchAdapter.notifyDataSetChanged()
-            placeholderSetVisibility(true)
+            uiStateHandler.placeholderSetVisibility(isHidden = true)
         }
     }
 
     override fun showLoading(isLoading: Boolean) {
-        progressBar.isVisible = isLoading
+        runOnUiThread {
+            uiStateHandler.showLoading(isLoading)
+        }
     }
 
     override fun showNotFound() {
-        placeholderSetVisibility(
-            isHidden = false,
-            text = "",
-            imageRes = R.drawable.ic_placeholder_not_found,
-            textRes = R.string.not_found_songs
-        )
+        runOnUiThread {
+            uiStateHandler.showNotFound()
+        }
     }
 
     override fun showErrorInternet() {
-        placeholderSetVisibility(
-            isHidden = false,
-            text = getString(R.string.internet_problems),
-            imageRes = R.drawable.ic_placeholder_internet,
-            textRes = R.string.internet_problems
-        )
+        runOnUiThread {
+            uiStateHandler.showErrorInternet(R.string.internet_problems)
+        }
     }
 
     override fun showHistory(trackHistory: List<TrackInfo>) {
