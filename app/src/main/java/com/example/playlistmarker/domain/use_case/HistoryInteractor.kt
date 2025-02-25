@@ -7,4 +7,5 @@ interface HistoryInteractor {
     fun getTrackHistory(): List<Track>
     fun clearHistory()
     fun loadHistory(consumer: (List<Track>) -> Unit)
+    fun getTrackByNameAndArtist(trackName: String, artistName: String): List<Track>
 }

@@ -22,4 +22,12 @@ class HistoryInteractorImpl(private val historyRepository: HistoryRepository) : 
         val history = getTrackHistory()
         consumer(history)
     }
+
+    override fun getTrackByNameAndArtist(trackName: String, artistName: String): List<Track> {
+        val history = getTrackHistory()
+        return history.filter { track ->
+            track.artistName.contains(artistName, ignoreCase = true) &&
+                    track.trackName.contains(trackName, ignoreCase = true)
+        }
+    }
 }

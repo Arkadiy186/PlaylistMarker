@@ -1,13 +1,12 @@
 package com.example.playlistmarker
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -19,11 +18,10 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmarker.creator.Creator
-import com.example.playlistmarker.data.mappers.TrackDtoMapper
 import com.example.playlistmarker.domain.use_case.HistoryInteractor
 import com.example.playlistmarker.domain.use_case.SearchStateInteractor
 import com.example.playlistmarker.presentation.mapper.TrackMapper
-import com.example.playlistmarker.presentation.model.TrackInfo
+import com.example.playlistmarker.presentation.model.TrackInfoDetails
 import com.example.playlistmarker.presentation.presenter.SearchPresenter
 import com.example.playlistmarker.presentation.ui_state.UiStateHandler
 import com.example.playlistmarker.presentation.utills.DebounceHandler
@@ -53,8 +51,8 @@ class SearchActivity : AppCompatActivity(), SearchView {
     private val searchStateInteractor: SearchStateInteractor by lazy { Creator.provideSearchStateInteractor() }
     private val uiStateHandler: UiStateHandler by lazy { Creator.provideUiStateHandler(placeholder, placeholderText, placeholderImage, tracksRecyclerView, placeholderButton, progressBar,this) }
 
-    private val searchList = ArrayList<TrackInfo>()
-    private val historyTrack = ArrayList<TrackInfo>()
+    private val searchList = ArrayList<TrackInfoDetails>()
+    private val historyTrack = ArrayList<TrackInfoDetails>()
     private val searchAdapter by lazy { TrackAdapter(searchList, ::onTrackSelected) }
     private val historyAdapter by lazy { TrackAdapter(historyTrack, ::onTrackSelected) }
 
@@ -167,13 +165,14 @@ class SearchActivity : AppCompatActivity(), SearchView {
         }
     }
 
-    private fun onTrackSelected(trackInfo: TrackInfo) {
+    private fun onTrackSelected(trackInfo: TrackInfoDetails) {
         if (debounceHandler.handleClickDebounce {
                 val track = TrackMapper.mapToDomain(trackInfo)
                 historyInteractor.addTrackHistory(track)
-                val trackDto = TrackDtoMapper.toDto(track)
+
+                Log.d("SearchActivity", "Sending track info to AudioPlayerActivity: $trackInfo")
                 startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
-                    putExtra("track", trackDto)
+                    putExtra("track", trackInfo)
                 })
                 true
             }) {
@@ -217,7 +216,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
         visibility = View.INVISIBLE
     }
 
-    override fun showTracks(track: List<TrackInfo>) {
+    override fun showTracks(track: List<TrackInfoDetails>) {
         runOnUiThread {
             searchList.clear()
             searchList.addAll(track)
@@ -244,7 +243,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
         }
     }
 
-    override fun showHistory(trackHistory: List<TrackInfo>) {
+    override fun showHistory(trackHistory: List<TrackInfoDetails>) {
         runOnUiThread {
             historyTrack.clear()
             historyTrack.addAll(trackHistory)

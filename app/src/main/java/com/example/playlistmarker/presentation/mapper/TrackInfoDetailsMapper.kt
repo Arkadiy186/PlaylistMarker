@@ -14,7 +14,7 @@ object TrackInfoDetailsMapper {
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
-            previewUrl = track.country
+            previewUrl = track.previewUrl
         )
     }
 }

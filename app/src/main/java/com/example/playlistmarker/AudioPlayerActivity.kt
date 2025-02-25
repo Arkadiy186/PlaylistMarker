@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.TypedValue
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,10 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.creator.Creator
-import com.example.playlistmarker.data.mappers.TrackDtoMapper
-import com.example.playlistmarker.data.model.TrackDto
 import com.example.playlistmarker.domain.use_case.AudioPlayerCallback
-import com.example.playlistmarker.presentation.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.presentation.model.TrackInfoDetails
 import com.google.android.material.appbar.MaterialToolbar
 import java.util.Date
@@ -60,20 +58,21 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerCallback {
         initView()
         setupListeners()
 
-        val trackDto = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("track", TrackDto::class.java)
+        val trackInfoDetails = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("track", TrackInfoDetails::class.java)
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra<TrackDto>("track")
+            intent.getParcelableExtra<TrackInfoDetails>("track")
         }
 
-        val track = trackDto?.let { TrackDtoMapper.mapToDomain(it) }
-        val trackInfoDetails = track?.let { TrackInfoDetailsMapper.map(track) }
+        Log.d("AudioPlayerActivity", "Track Info received: $trackInfoDetails")
 
         trackInfoDetails?.let {
             setupTrackInfo(it)
             audioPlayerInteractor.preparePlayer(it)
             loadGlideWithCorners(it)
+        } ?: run {
+            Log.e("AudioPlayerActivity", "Track info is null")
         }
 
         audioPlayerInteractor.setCallback(this)
@@ -103,6 +102,7 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerCallback {
             setPlayButton()
             timeTrack.text = "00:00"
             mainThreadHandler.removeCallbacks(updateUiTimer)
+            audioPlayerInteractor.pausePlayer()
         }
     }
 
@@ -126,11 +126,14 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerCallback {
         }
 
         playButton.setOnClickListener {
+            Log.d("AudioPlayerActivity", "Play button clicked, current state: ${audioPlayerInteractor.getPlayerState()}")
             playbackControl()
         }
     }
 
     private fun setupTrackInfo(track: TrackInfoDetails) {
+        Log.d("AudioPlayerActivity", "Setting up track info for: ${track.trackName}")
+
         nameTrack.text = track.trackName
         authorTrackTextView.text = track.artistName
         trackTimeTextView.text = "00:30"
@@ -138,6 +141,8 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerCallback {
         releaseDateTextView.text = formatReleaseDate(track.releaseDate)
         primaryGenreNameTextView.text = track.primaryGenreName
         countryTextView.text = track.country
+
+        Log.d("AudioPlayerActivity", "Track setup complete: ${track.trackName}")
     }
 
     private fun playbackControl() {
@@ -186,11 +191,14 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerCallback {
     }
 
     private fun updateTimeTrack() {
-        val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date())
+        val currentPosition = audioPlayerInteractor.getCurrentPosition()
+
+        val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date(currentPosition.toLong()))
 
         runOnUiThread {
             timeTrack.text = formattedTime
         }
+        Log.d("AudioPlayerActivity", "Current position: $currentPosition, formatted time: $formattedTime")
     }
 
     private fun loadGlideWithCorners(track: TrackInfoDetails) {

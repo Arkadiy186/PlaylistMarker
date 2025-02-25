@@ -8,4 +8,5 @@ interface AudioPlayerInteractor {
     fun pausePlayer()
     fun getPlayerState(): Int
     fun setCallback(callback: AudioPlayerCallback)
+    fun getCurrentPosition(): Int
 }

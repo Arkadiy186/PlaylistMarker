@@ -9,10 +9,24 @@ class AudioPlayerInteractorImpl(private val mediaPlayer: MediaPlayer) : AudioPla
 
     private var playerState = STATE_DEFAULT
     private var callback: AudioPlayerCallback? = null
+    private var url = ""
 
     override fun preparePlayer(track: TrackInfoDetails) {
-        mediaPlayer.setDataSource(track.previewUrl)
-        mediaPlayer.prepareAsync()
+        url = track.previewUrl
+
+        if (url == "") {
+            callback?.onPlayerCompleted()
+            return
+        }
+
+        try {
+            mediaPlayer.reset()
+            mediaPlayer.setDataSource(url)
+            mediaPlayer.prepareAsync()
+        }catch (e:Exception) {
+            e.printStackTrace()
+            callback?.onPlayerCompleted()
+        }
 
         mediaPlayer.setOnPreparedListener {
             playerState = STATE_PREPARED
@@ -41,6 +55,10 @@ class AudioPlayerInteractorImpl(private val mediaPlayer: MediaPlayer) : AudioPla
 
     override fun setCallback(callback: AudioPlayerCallback) {
         this.callback = callback
+    }
+
+    override fun getCurrentPosition(): Int {
+        return mediaPlayer.currentPosition
     }
 
     companion object {

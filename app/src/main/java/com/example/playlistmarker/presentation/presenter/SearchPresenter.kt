@@ -5,6 +5,7 @@ import com.example.playlistmarker.domain.model.Track
 import com.example.playlistmarker.domain.repository.NetworkRepository
 import com.example.playlistmarker.domain.use_case.HistoryInteractor
 import com.example.playlistmarker.domain.use_case.TrackInteractor
+import com.example.playlistmarker.presentation.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.presentation.mapper.TrackMapper
 import com.example.playlistmarker.presentation.ui_state.UiStateHandler
 import com.example.playlistmarker.presentation.view.SearchView
@@ -43,8 +44,10 @@ class SearchPresenter(
                 if (tracks.isEmpty()) {
                     uiStateHandler.showNotFound()
                 } else {
-                    val trackInfo = tracks.map { TrackMapper.map(it) }
-                    view?.showTracks(trackInfo)
+                    val trackInfoDetails = tracks.map { track ->
+                        TrackInfoDetailsMapper.map(track)
+                    }
+                    view?.showTracks(trackInfoDetails)
                 }
             }
 
@@ -61,7 +64,7 @@ class SearchPresenter(
 
     fun loadHistory() {
         historyInteractor.loadHistory {history ->
-            val trackInfo = history.map { TrackMapper.map(it) }
+            val trackInfo = history.map { TrackInfoDetailsMapper.map(it) }
             view?.showHistory(trackInfo)
         }
     }
