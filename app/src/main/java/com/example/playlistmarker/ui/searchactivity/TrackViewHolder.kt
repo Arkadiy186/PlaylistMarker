@@ -1,4 +1,4 @@
-package com.example.playlistmarker.trackrecyclerview
+package com.example.playlistmarker.ui.searchactivity
 
 import android.content.Context
 import android.util.TypedValue

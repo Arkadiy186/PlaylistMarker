@@ -2,7 +2,7 @@ package com.example.playlistmarker.presentation.utills
 
 import android.os.Handler
 import android.os.Looper
-import com.example.playlistmarker.SearchActivity.Companion.CLICK_DEBOUNCE_DELAY
+import com.example.playlistmarker.ui.searchactivity.SearchActivity.Companion.CLICK_DEBOUNCE_DELAY
 
 class DebounceHelper(private val delayMillis: Long) {
     private var isAllowed = true

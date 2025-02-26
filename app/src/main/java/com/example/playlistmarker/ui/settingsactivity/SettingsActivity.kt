@@ -1,22 +1,27 @@
-package com.example.playlistmarker
+package com.example.playlistmarker.ui.settingsactivity
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmarker.switcher.ThemeSwitcherApp
+import com.example.playlistmarker.R
+import com.example.playlistmarker.creator.Creator
+import com.example.playlistmarker.presentation.presenter.SettingsPresenter
+import com.example.playlistmarker.presentation.presenter.SettingsThemeView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity(), SettingsThemeView {
 
     private lateinit var themeSwitcher: SwitchMaterial
     private lateinit var backToMainFromSettings: MaterialToolbar
     private lateinit var shareButton: MaterialTextView
     private lateinit var supportImageButton: MaterialTextView
     private lateinit var userAgreementImageButton: MaterialTextView
+
+    private val settingsPresenter: SettingsPresenter by lazy { SettingsPresenter(Creator.provideThemeInteractor()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +32,12 @@ class SettingsActivity : AppCompatActivity() {
         setupListeners()
 
         themeSwitcher.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+        settingsPresenter.attachView(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        settingsPresenter.detachView()
     }
 
     private fun initView() {
@@ -54,8 +65,8 @@ class SettingsActivity : AppCompatActivity() {
             onUserAgreementImageButton()
         }
 
-        themeSwitcher.setOnCheckedChangeListener { _, enable ->
-            (applicationContext as ThemeSwitcherApp).switchTheme(enable)
+        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            settingsPresenter.onThemeSwitchClicked(isChecked)
         }
     }
 
@@ -82,5 +93,9 @@ class SettingsActivity : AppCompatActivity() {
             data = Uri.parse(getString(R.string.user_agreement_url))
         }
         startActivity(shareUserAgreementIntent)
+    }
+
+    override fun setThemeState(isDark: Boolean) {
+        themeSwitcher.isChecked = isDark
     }
 }

@@ -1,4 +1,4 @@
-package com.example.playlistmarker
+package com.example.playlistmarker.ui.audioplayeractivity
 
 import android.content.Context
 import android.icu.text.SimpleDateFormat
@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.domain.use_case.AudioPlayerCallback
 import com.example.playlistmarker.presentation.model.TrackInfoDetails

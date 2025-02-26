@@ -10,11 +10,10 @@ class ThemePreferences(private val sharedPreferences: SharedPreferences) {
     }
 
     fun setTheme(isDark: Boolean) {
-        sharedPreferences.edit().putBoolean(NAME_PREFERENCES, isDark).apply()
+        sharedPreferences.edit().putBoolean(KEY_DARK_THEME, isDark).apply()
     }
 
     companion object {
-        private const val NAME_PREFERENCES = "theme_prefs"
         private const val KEY_DARK_THEME = "key_for_dark_theme"
     }
 }

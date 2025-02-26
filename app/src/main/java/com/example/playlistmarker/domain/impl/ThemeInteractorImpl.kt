@@ -8,7 +8,8 @@ class ThemeInteractorImpl(private val themeRepository: ThemeRepository) : ThemeI
         return themeRepository.isDarkThemeEnabled()
     }
 
-    override fun toggleTheme(enable: Boolean) {
+    override fun toggleTheme(enable: Boolean): Boolean {
         themeRepository.setDarkTheme(enable)
+        return enable
     }
 }

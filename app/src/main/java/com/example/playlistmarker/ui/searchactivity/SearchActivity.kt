@@ -1,4 +1,4 @@
-package com.example.playlistmarker
+package com.example.playlistmarker.ui.searchactivity
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmarker.ui.audioplayeractivity.AudioPlayerActivity
+import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.domain.use_case.HistoryInteractor
 import com.example.playlistmarker.domain.use_case.SearchStateInteractor
@@ -27,7 +29,6 @@ import com.example.playlistmarker.presentation.ui_state.UiStateHandler
 import com.example.playlistmarker.presentation.utills.DebounceHandler
 import com.example.playlistmarker.presentation.utills.HideKeyboardHelper
 import com.example.playlistmarker.presentation.view.SearchView
-import com.example.playlistmarker.trackrecyclerview.TrackAdapter
 import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity(), SearchView {
