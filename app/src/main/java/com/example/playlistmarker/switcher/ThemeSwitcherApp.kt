@@ -3,38 +3,23 @@ package com.example.playlistmarker.switcher
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmarker.creator.Creator
+import com.example.playlistmarker.domain.use_case.ThemeInteractor
+import com.example.playlistmarker.presentation.presenter.ThemePresenter
 
 class ThemeSwitcherApp : Application() {
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private var darkTheme = false
+    private val themeInteractor: ThemeInteractor by lazy { Creator.provideThemeInteractor() }
+    private val themePresenter: ThemePresenter by lazy { ThemePresenter() }
 
     override fun onCreate() {
         super.onCreate()
-
-        sharedPreferences = getSharedPreferences(NAME_PREFERENCES, MODE_PRIVATE)
-        darkTheme = sharedPreferences.getBoolean(KEY_DARK_THEME, false)
-        applyTheme(darkTheme)
+        Creator.initialize(applicationContext)
+        themePresenter.applyTheme(themeInteractor.getTheme())
     }
 
-    fun switchTheme(darkTheme: Boolean) {
-        this.darkTheme = darkTheme
-        sharedPreferences.edit().putBoolean(KEY_DARK_THEME, darkTheme).apply()
-        applyTheme(darkTheme)
-    }
-
-    private fun applyTheme(darkTheme: Boolean) {
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkTheme) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
-    }
-
-    companion object {
-        private const val NAME_PREFERENCES = "theme_prefs"
-        private const val KEY_DARK_THEME = "key_for_dark_theme"
+    fun switchTheme(enable: Boolean) {
+        themeInteractor.toggleTheme(enable)
+        themePresenter.applyTheme(themeInteractor.getTheme())
     }
 }

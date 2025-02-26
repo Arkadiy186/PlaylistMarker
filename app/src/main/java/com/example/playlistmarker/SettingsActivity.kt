@@ -54,8 +54,8 @@ class SettingsActivity : AppCompatActivity() {
             onUserAgreementImageButton()
         }
 
-        themeSwitcher.setOnCheckedChangeListener { _, darkTheme ->
-            (applicationContext as ThemeSwitcherApp).switchTheme(darkTheme)
+        themeSwitcher.setOnCheckedChangeListener { _, enable ->
+            (applicationContext as ThemeSwitcherApp).switchTheme(enable)
         }
     }
 

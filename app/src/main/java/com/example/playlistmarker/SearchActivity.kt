@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.domain.use_case.HistoryInteractor
 import com.example.playlistmarker.domain.use_case.SearchStateInteractor
-import com.example.playlistmarker.presentation.mapper.TrackMapper
+import com.example.playlistmarker.presentation.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.presentation.model.TrackInfoDetails
 import com.example.playlistmarker.presentation.presenter.SearchPresenter
 import com.example.playlistmarker.presentation.ui_state.UiStateHandler
@@ -167,7 +167,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
     private fun onTrackSelected(trackInfo: TrackInfoDetails) {
         if (debounceHandler.handleClickDebounce {
-                val track = TrackMapper.mapToDomain(trackInfo)
+                val track = TrackInfoDetailsMapper.mapToDomain(trackInfo)
                 historyInteractor.addTrackHistory(track)
 
                 Log.d("SearchActivity", "Sending track info to AudioPlayerActivity: $trackInfo")

@@ -13,8 +13,10 @@ import com.example.playlistmarker.SearchActivity.Companion.CLICK_DEBOUNCE_DELAY
 import com.example.playlistmarker.SearchActivity.Companion.SEARCH_DEBOUNCE_DELAY
 import com.example.playlistmarker.data.network.RetrofitClientImpl
 import com.example.playlistmarker.data.repository.HistoryRepositoryImpl
+import com.example.playlistmarker.data.repository.ThemeRepositoryImpl
 import com.example.playlistmarker.data.repository.TrackRepositoryImpl
 import com.example.playlistmarker.data.sharedpreferences.HistorySearch
+import com.example.playlistmarker.data.sharedpreferences.ThemePreferences
 import com.example.playlistmarker.data.utills.NetworkRepositoryImpl
 import com.example.playlistmarker.domain.repository.HistoryRepository
 import com.example.playlistmarker.domain.repository.TrackRepository
@@ -23,10 +25,13 @@ import com.example.playlistmarker.domain.impl.AudioPlayerInteractorImpl
 import com.example.playlistmarker.domain.use_case.HistoryInteractor
 import com.example.playlistmarker.domain.impl.HistoryInteractorImpl
 import com.example.playlistmarker.domain.impl.SearchStateInteractorImpl
+import com.example.playlistmarker.domain.impl.ThemeInteractorImpl
 import com.example.playlistmarker.domain.use_case.TrackInteractor
 import com.example.playlistmarker.domain.impl.TrackInteractorImpl
 import com.example.playlistmarker.domain.repository.NetworkRepository
+import com.example.playlistmarker.domain.repository.ThemeRepository
 import com.example.playlistmarker.domain.use_case.SearchStateInteractor
+import com.example.playlistmarker.domain.use_case.ThemeInteractor
 import com.example.playlistmarker.presentation.presenter.SearchPresenter
 import com.example.playlistmarker.presentation.ui_state.UiStateHandler
 import com.example.playlistmarker.presentation.ui_state.UiStateHandlerImpl
@@ -97,6 +102,18 @@ object Creator {
 
     fun provideUiStateHandler(placeholder: LinearLayout, placeholderText: TextView, placeholderImage: ImageView, tracksRecyclerView: RecyclerView, placeholderButton: MaterialButton, progressBar: ProgressBar, activity: AppCompatActivity): UiStateHandler {
         return UiStateHandlerImpl(placeholder, tracksRecyclerView, placeholderImage, placeholderText, placeholderButton, progressBar, activity)
+    }
+
+    fun provideThemeInteractor(): ThemeInteractor {
+        return ThemeInteractorImpl(provideGetThemeRepository())
+    }
+
+    private fun provideGetThemeRepository(): ThemeRepository {
+        return ThemeRepositoryImpl(provideGetThemePreferences())
+    }
+
+    private fun provideGetThemePreferences(): ThemePreferences {
+        return ThemePreferences(getContext().getSharedPreferences("theme_prefs", Context.MODE_PRIVATE))
     }
 
     private fun provideGetHistoryRepository(context: Context): HistoryRepository {

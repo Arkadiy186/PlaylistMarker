@@ -17,4 +17,18 @@ object TrackInfoDetailsMapper {
             previewUrl = track.previewUrl
         )
     }
+
+    fun mapToDomain(trackInfo: TrackInfoDetails): Track {
+        return Track(
+            trackName = trackInfo.trackName,
+            artistName = trackInfo.artistName,
+            trackTime = trackInfo.trackTime,
+            artworkUrl100 = trackInfo.artworkUrl100,
+            collectionName = trackInfo.collectionName,
+            releaseDate = trackInfo.releaseDate,
+            primaryGenreName = trackInfo.primaryGenreName,
+            country = trackInfo.country,
+            previewUrl = trackInfo.previewUrl
+        )
+    }
 }

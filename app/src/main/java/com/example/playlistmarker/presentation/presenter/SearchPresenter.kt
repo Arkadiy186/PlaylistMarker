@@ -6,7 +6,6 @@ import com.example.playlistmarker.domain.repository.NetworkRepository
 import com.example.playlistmarker.domain.use_case.HistoryInteractor
 import com.example.playlistmarker.domain.use_case.TrackInteractor
 import com.example.playlistmarker.presentation.mapper.TrackInfoDetailsMapper
-import com.example.playlistmarker.presentation.mapper.TrackMapper
 import com.example.playlistmarker.presentation.ui_state.UiStateHandler
 import com.example.playlistmarker.presentation.view.SearchView
 
