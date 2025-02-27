@@ -101,7 +101,7 @@
         <item name="android:paddingStart">@dimen/edit_text_icon</item>
         <item name="android:paddingBottom">11dp</item>
         <item name="android:drawableTint">@color/black_for_text</item>
-        <item name="android:background">@drawable/edit_text_corner_dark</item>
+        <item name="android:background">@drawable/edit_text_corner</item>
         <item name="android:textColorHint">@color/black_for_text</item>
         <item name="android:drawablePadding">@dimen/main_margin_top_bottom</item>
         <item name="android:maxLines">1</item>
@@ -118,7 +118,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_gravity">end|center_vertical</item>
-        <item name="android:src">@drawable/clear_icon_dark</item>
+        <item name="android:src">@drawable/ic_clear_edittext</item>
         <item name="backgroundTint">@color/white</item>
     </style>
 

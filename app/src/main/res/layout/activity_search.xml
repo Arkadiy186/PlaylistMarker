@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
+    tools:context=".ui.searchactivity.SearchActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/activitySearchToolbar"
@@ -28,7 +28,7 @@
 
         <EditText
             style="@style/EditTextActivitySearch"
-            android:id="@+id/inputEditText"
+            android:id="@+id/searchEditText"
             android:hint="@string/search"
             android:drawableStart="@drawable/search_icon_small"
             android:textCursorDrawable="@drawable/cursor"
@@ -53,7 +53,7 @@
         <ImageView
             android:id="@+id/placeholderErrorImage"
             style="@style/placeholderErrorImageStyle"
-            android:src="@drawable/no_internet"/>
+            android:src="@drawable/ic_placeholder_internet"/>
 
         <TextView
             android:id="@+id/placeholderErrorText"
