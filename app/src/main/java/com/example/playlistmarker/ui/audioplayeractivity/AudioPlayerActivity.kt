@@ -55,7 +55,6 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.audioplayer)
 
-        Creator.initialize(applicationContext)
         initView()
         setupListeners()
 

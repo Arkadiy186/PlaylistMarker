@@ -27,8 +27,8 @@ class SettingsActivity : AppCompatActivity(), SettingsThemeView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        initView()
 
+        initView()
         setupListeners()
 
         themeSwitcher.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES

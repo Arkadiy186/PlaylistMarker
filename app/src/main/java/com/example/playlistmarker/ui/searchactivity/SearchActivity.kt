@@ -80,7 +80,6 @@ class SearchActivity : AppCompatActivity(), SearchView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        Creator.initialize(applicationContext)
         initView()
         setupListeners()
 
