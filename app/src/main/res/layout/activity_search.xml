@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.searchactivity.SearchActivity">
+    tools:context=".ui.search.activity.SearchActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/activitySearchToolbar"
@@ -66,42 +66,45 @@
             android:text="@string/internet_problems_button"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/historySearchTextView"
-        style="@style/historySearchTextViewStyle"
-        android:text="@string/history_search"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/progressBarStyle"
         android:visibility="gone"
+        android:indeterminateTint="@color/blue"
         app:layout_constraintTop_toBottomOf="@id/searchContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <LinearLayout
+        android:id="@+id/historyLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/historySearchTextView"
+        app:layout_constraintTop_toBottomOf="@id/searchContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/historySearchTextView"
+            style="@style/historySearchTextViewStyle"
+            android:text="@string/history_search"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/searchContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:visibility="gone"
             app:layoutManager="LinearLayoutManager"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/historySearchButtonView"
             style="@style/historySearchButtonStyle"
+            android:visibility="gone"
             android:layout_gravity="center_horizontal"
-            android:visibility="gone"
             android:text="@string/clear_history_search"/>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="@style/progressBarStyle"
-            android:visibility="gone"
-            android:indeterminateTint="@color/blue"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

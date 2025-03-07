@@ -7,10 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.settingsactivity.SettingsActivity">
+    tools:context=".ui.settings.activity.SettingsActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/activity_settings_toolbar"
+        android:id="@+id/settingsToolbar"
         style="@style/ToolbarStyle"
         app:navigationIcon="@drawable/arrow_back_icon"
         app:title="@string/settings"
@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/activity_settings_dark_theme"
+        android:id="@+id/darkTheme"
         style="@style/ActivitySettingsStyle"
         android:layout_marginTop="24dp"
         android:paddingEnd="15dp"
@@ -29,7 +29,7 @@
         android:contentDescription="@string/dark_theme_icon" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/activity_settings_share_app"
+        android:id="@+id/shareApp"
         style="@style/ActivitySettingsStyle"
         android:drawableEnd="@drawable/share_icon"
         android:paddingEnd="16dp"
@@ -37,7 +37,7 @@
         android:contentDescription="@string/share_application_icon"/>
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/activity_settings_message_support"
+        android:id="@+id/messageSupport"
         style="@style/ActivitySettingsStyle"
         android:drawableEnd="@drawable/support_icon"
         android:paddingEnd="14dp"
@@ -45,7 +45,7 @@
         android:contentDescription="@string/message_support_icon"/>
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/activity_settings_user_agreement"
+        android:id="@+id/userAgreement"
         style="@style/ActivitySettingsStyle"
         android:paddingEnd="20dp"
         android:drawableEnd="@drawable/arrow_forward_icon"
