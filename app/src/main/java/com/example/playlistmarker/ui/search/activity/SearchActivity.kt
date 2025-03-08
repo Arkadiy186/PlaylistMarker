@@ -7,16 +7,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmarker.ui.audioplayer.activity.AudioPlayerActivity
 import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
@@ -25,25 +19,30 @@ import com.example.playlistmarker.domain.search.use_cases.HistoryInteractor
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
-import com.example.playlistmarker.ui.search.viewmodel.SearchPresenter
 import com.example.playlistmarker.ui.search.ui_state.UiStateHandler
 import com.example.playlistmarker.ui.search.utills.DebounceHandler
 import com.example.playlistmarker.ui.search.utills.HideKeyboardHelper
-import com.example.playlistmarker.ui.search.viewmodel.SearchView
+import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchView
 import com.example.playlistmarker.ui.search.recyclerview.TrackAdapter
-import com.google.android.material.appbar.MaterialToolbar
+import com.example.playlistmarker.ui.search.ui_state.UiHistoryHandler
+import com.example.playlistmarker.ui.search.ui_state.UiHistoryHandlerImpl
+import com.example.playlistmarker.ui.search.ui_state.UiStateHandlerImpl
+import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryViewModel
+import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
+import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.UiState
 
-class SearchActivity : AppCompatActivity(), SearchView {
+class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-
+    private lateinit var searchViewModel: SearchViewModel
+    private lateinit var historyViewModel: HistoryViewModel
+    private lateinit var uiHistoryHandler: UiHistoryHandler
+    private lateinit var uiStateHandler: UiStateHandler
 
     private val historyInteractor: HistoryInteractor by lazy { Creator.provideHistoryInteractor() }
-    private val presenter: SearchPresenter by lazy { Creator.provideSearchPresenter(binding.placeholderError, binding.placeholderErrorText, binding.placeholderErrorImage, binding.recyclerView, binding.placeholderErrorButton, binding.progressBar, this) }
     private val debounceHandler: DebounceHandler by lazy { Creator.provideDebounceHandler() }
     private val hideKeyboardHelper: HideKeyboardHelper by lazy { Creator.provideHideKeyboardHelper() }
     private val searchStateInteractor: SearchStateInteractor by lazy { Creator.provideSearchStateInteractor() }
-    private val uiStateHandler: UiStateHandler by lazy { Creator.provideUiStateHandler(binding.placeholderError, binding.placeholderErrorText, binding.placeholderErrorImage, binding.recyclerView, binding.placeholderErrorButton, binding.progressBar,this) }
 
     private val searchList = ArrayList<TrackInfoDetails>()
     private val historyTrack = ArrayList<TrackInfoDetails>()
@@ -75,6 +74,12 @@ class SearchActivity : AppCompatActivity(), SearchView {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
+        historyViewModel = ViewModelProvider(this)[HistoryViewModel::class.java]
+
+        uiHistoryHandler = UiHistoryHandlerImpl(binding, this, historyAdapter, searchAdapter)
+        uiStateHandler = UiStateHandlerImpl(binding, this)
+
         setupListeners()
 
         binding.clearButton.isVisible = !binding.searchEditText.text.isNullOrEmpty()
@@ -82,13 +87,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
         binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.recyclerView.adapter = searchAdapter
 
-        presenter.attachView(this)
-        presenter.loadHistory()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        presenter.detachView(this)
+        observeViewModels()
     }
 
     private fun setupListeners() {
@@ -97,10 +96,10 @@ class SearchActivity : AppCompatActivity(), SearchView {
         }
 
         binding.historySearchButtonView.setOnClickListener {
-            historyInteractor.clearHistory()
+            historyViewModel.clearHistory()
             historyTrack.clear()
             historyAdapter.notifyDataSetChanged()
-            historySetVisibility(false)
+            uiHistoryHandler.historySetVisibility(false)
         }
 
         binding.clearButton.setOnClickListener {
@@ -109,40 +108,41 @@ class SearchActivity : AppCompatActivity(), SearchView {
             binding.searchEditText.clearFocus()
             searchAdapter.notifyDataSetChanged()
             hideKeyboardHelper.hideKeyboard(binding.clearButton)
-            historySetVisibility(false)
+            uiHistoryHandler.historySetVisibility(false)
         }
 
         binding.placeholderErrorButton.setOnClickListener {
-            presenter.searchTrack(binding.searchEditText.text.toString())
+            uiStateHandler.placeholderSetVisibility(isHidden = true)
+            searchViewModel.searchTrack(binding.searchEditText.text.toString())
         }
 
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            historySetVisibility(hasFocus && binding.searchEditText.text.isEmpty() && historyTrack.isNotEmpty())
+            if (hasFocus && binding.searchEditText.text.isEmpty()) {
+
+                historyViewModel.loadHistory()
+
+                historyViewModel.historyState.observe(this) { history ->
+
+                    historyTrack.clear()
+                    historyTrack.addAll(history)
+                    historyAdapter.notifyDataSetChanged()
+
+                    val shouldShowHistory = history.isNotEmpty()
+                    uiHistoryHandler.historySetVisibility(shouldShowHistory)
+                }
+            } else {
+                uiHistoryHandler.historySetVisibility(false)
+            }
         }
 
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                Log.d("UiHistoryHandler", "textChanged")
                 handleSearchTextChange(s)
             }
             override fun afterTextChanged(s: Editable?) {}
         })
-    }
-
-    private fun historySetVisibility(isVisible: Boolean) {
-        if (isVisible) {
-            binding.recyclerView.adapter = historyAdapter
-            historyAdapter.notifyDataSetChanged()
-            binding.historySearchTextView.show()
-            binding.recyclerView.show()
-            binding.historySearchButtonView.show()
-        } else {
-            binding.recyclerView.adapter = searchAdapter
-            searchAdapter.notifyDataSetChanged()
-            binding.historySearchTextView.gone()
-            binding.recyclerView.gone()
-            binding.historySearchButtonView.gone()
-        }
     }
 
     private fun onTrackSelected(trackInfo: TrackInfoDetails) {
@@ -165,69 +165,49 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
         if(binding.searchEditText.hasFocus() && s?.isEmpty() == true) {
             if (historyTrack.isNotEmpty()) {
-                historySetVisibility(true)
+                uiHistoryHandler.historySetVisibility(true)
             } else {
                 searchList.clear()
                 searchAdapter.notifyDataSetChanged()
             }
         } else {
             debounceHandler.handleSearchDebounce(s.toString()) {query ->
-                presenter.searchTrack(query)
+                searchViewModel.searchTrack(query)
             }
-            historySetVisibility(false)
+            uiHistoryHandler.historySetVisibility(false)
         }
 
         if (s.isNullOrEmpty()) {
             uiStateHandler.placeholderSetVisibility(true)
         }
-
-       presenter.loadHistory()
     }
 
-    private fun View.show() {
-        visibility = View.VISIBLE
+    private fun observeViewModels() {
+        searchViewModel.searchState.observe(this) { searchState ->
+            when (searchState) {
+                is UiState.NotFound -> {
+                    uiStateHandler.showLoading(false)
+                    uiStateHandler.showNotFound()
+                }
+                is UiState.ErrorInternet -> {
+                    uiStateHandler.showLoading(false)
+                    uiStateHandler.showErrorInternet(searchState.message)
+                }
+                is UiState.Loading -> uiStateHandler.showLoading(searchState.isLoading)
+                is UiState.Content -> {
+                    uiStateHandler.showLoading(false)
+                    showTracks(searchState.tracks)
+                }
+            }
+        }
     }
 
-    private fun View.gone() {
-        visibility = View.GONE
-    }
-
-    private fun View.hide() {
-        visibility = View.INVISIBLE
-    }
-
-    override fun showTracks(track: List<TrackInfoDetails>) {
+    private fun showTracks(track: List<TrackInfoDetails>) {
         runOnUiThread {
             searchList.clear()
             searchList.addAll(track)
             searchAdapter.notifyDataSetChanged()
             uiStateHandler.placeholderSetVisibility(isHidden = true)
-        }
-    }
-
-    override fun showLoading(isLoading: Boolean) {
-        runOnUiThread {
-            uiStateHandler.showLoading(isLoading)
-        }
-    }
-
-    override fun showNotFound() {
-        runOnUiThread {
-            uiStateHandler.showNotFound()
-        }
-    }
-
-    override fun showErrorInternet() {
-        runOnUiThread {
-            uiStateHandler.showErrorInternet(R.string.internet_problems)
-        }
-    }
-
-    override fun showHistory(trackHistory: List<TrackInfoDetails>) {
-        runOnUiThread {
-            historyTrack.clear()
-            historyTrack.addAll(trackHistory)
-            historyAdapter.notifyDataSetChanged()
         }
     }
 

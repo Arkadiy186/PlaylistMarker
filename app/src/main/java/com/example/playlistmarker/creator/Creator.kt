@@ -3,12 +3,6 @@ package com.example.playlistmarker.creator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmarker.ui.search.activity.SearchActivity.Companion.CLICK_DEBOUNCE_DELAY
 import com.example.playlistmarker.ui.search.activity.SearchActivity.Companion.SEARCH_DEBOUNCE_DELAY
 import com.example.playlistmarker.data.search.network.RetrofitClientImpl
@@ -24,23 +18,21 @@ import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.impl.AudioPlayerInteractorImpl
 import com.example.playlistmarker.domain.search.use_cases.HistoryInteractor
 import com.example.playlistmarker.domain.search.impl.HistoryInteractorImpl
+import com.example.playlistmarker.domain.search.impl.NetworkInteractorImpl
 import com.example.playlistmarker.domain.search.impl.SearchStateInteractorImpl
 import com.example.playlistmarker.domain.settings.impl.ThemeInteractorImpl
 import com.example.playlistmarker.domain.search.use_cases.TrackInteractor
 import com.example.playlistmarker.domain.search.impl.TrackInteractorImpl
 import com.example.playlistmarker.domain.search.repository.utills.NetworkRepository
+import com.example.playlistmarker.domain.search.use_cases.NetworkInteractor
 import com.example.playlistmarker.domain.settings.repository.ThemeRepository
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
-import com.example.playlistmarker.ui.search.viewmodel.SearchPresenter
-import com.example.playlistmarker.ui.search.ui_state.UiStateHandler
-import com.example.playlistmarker.ui.search.ui_state.UiStateHandlerImpl
 import com.example.playlistmarker.ui.search.utills.DebounceHandler
 import com.example.playlistmarker.ui.search.utills.DebounceHandlerImpl
 import com.example.playlistmarker.ui.search.utills.DebounceHelper
 import com.example.playlistmarker.ui.search.utills.HideKeyboardHelper
 import com.example.playlistmarker.ui.search.utills.SearchStateManager
-import com.google.android.material.button.MaterialButton
 
 @SuppressLint("StaticFieldLeak")
 object Creator {
@@ -73,8 +65,12 @@ object Creator {
         return ThemeInteractorImpl(provideThemeRepository)
     }
 
-    private fun provideTrackInteractor(): TrackInteractor {
+    fun provideTrackInteractor(): TrackInteractor {
         return TrackInteractorImpl(provideTrackRepository())
+    }
+
+    fun provideNetworkInteractor(): NetworkInteractor {
+        return NetworkInteractorImpl(provideNetworkRepository())
     }
 
     //MARK: - Provide Repositories
@@ -122,15 +118,5 @@ object Creator {
 
     fun provideSearchStateInteractor(): SearchStateInteractor {
         return SearchStateInteractorImpl(provideSearchStateManager())
-    }
-
-    //MARK: - Provide UI Handlers
-    fun provideUiStateHandler(placeholder: LinearLayout, placeholderText: TextView, placeholderImage: ImageView, tracksRecyclerView: RecyclerView, placeholderButton: MaterialButton, progressBar: ProgressBar, activity: AppCompatActivity): UiStateHandler {
-        return UiStateHandlerImpl(placeholder, tracksRecyclerView, placeholderImage, placeholderText, placeholderButton, progressBar, activity)
-    }
-
-    //MARK: - ProvidePresenter
-    fun provideSearchPresenter(placeholder: LinearLayout, placeholderText: TextView, placeholderImage: ImageView, tracksRecyclerView: RecyclerView, placeholderButton: MaterialButton, progressBar: ProgressBar, activity: AppCompatActivity): SearchPresenter {
-        return SearchPresenter(provideTrackInteractor(), provideNetworkRepository(), provideHistoryInteractor(), provideUiStateHandler(placeholder, placeholderText, placeholderImage, tracksRecyclerView, placeholderButton, progressBar, activity))
     }
 }

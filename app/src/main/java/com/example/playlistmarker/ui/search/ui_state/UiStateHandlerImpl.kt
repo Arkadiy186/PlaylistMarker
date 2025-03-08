@@ -9,15 +9,11 @@
     import androidx.appcompat.app.AppCompatActivity
     import androidx.recyclerview.widget.RecyclerView
     import com.example.playlistmarker.R
+    import com.example.playlistmarker.databinding.ActivitySearchBinding
     import com.google.android.material.button.MaterialButton
 
     class UiStateHandlerImpl(
-        private val placeholder: LinearLayout,
-        private val tracksRecyclerView: RecyclerView,
-        private val placeholderImage: ImageView,
-        private val placeholderText: TextView,
-        private val placeholderButton: MaterialButton,
-        private val progressBar: ProgressBar,
+        private val binding: ActivitySearchBinding,
         private val activity: AppCompatActivity
         ) : UiStateHandler {
 
@@ -25,20 +21,20 @@
             if (Thread.currentThread() != Looper.getMainLooper().thread) {
                 activity.runOnUiThread {
                     if (isLoading) {
-                        progressBar.show()
-                        tracksRecyclerView.gone()
+                        binding.progressBar.show()
+                        binding.recyclerView.gone()
                     } else {
-                        progressBar.gone()
-                        tracksRecyclerView.show()
+                        binding.progressBar.gone()
+                        binding.recyclerView.show()
                     }
                 }
             } else {
                 if (isLoading) {
-                    progressBar.show()
-                    tracksRecyclerView.gone()
+                    binding.progressBar.show()
+                    binding.recyclerView.gone()
                 } else {
-                    progressBar.gone()
-                    tracksRecyclerView.show()
+                    binding.progressBar.gone()
+                    binding.recyclerView.show()
                 }
             }
         }
@@ -68,17 +64,19 @@
          override fun placeholderSetVisibility(isHidden: Boolean, text: String, imageRes: Int, textRes: Int) {
              activity.runOnUiThread {
                  if (isHidden) {
-                     placeholder.gone()
-                     tracksRecyclerView.show()
+                     binding.placeholderError.gone()
+                     binding.recyclerView.show()
                  } else {
-                     placeholder.show()
-                     tracksRecyclerView.gone()
-                     placeholderImage.setImageResource(imageRes)
-                     placeholderText.setText(textRes)
+                     binding.historySearchButtonView.gone()
+                     binding.historySearchTextView.gone()
+                     binding.placeholderError.show()
+                     binding.recyclerView.gone()
+                     binding.placeholderErrorImage.setImageResource(imageRes)
+                     binding.placeholderErrorText.setText(textRes)
                      if (text.isEmpty()) {
-                         placeholderButton.gone()
+                         binding.placeholderErrorButton.gone()
                      } else {
-                         placeholderButton.show()
+                         binding.placeholderErrorButton.show()
                      }
                  }
              }

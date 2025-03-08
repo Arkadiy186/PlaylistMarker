@@ -1,4 +1,4 @@
-package com.example.playlistmarker.ui.search.viewmodel
+package com.example.playlistmarker.ui.search.viewmodel.searchviewmodel
 
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 
