@@ -5,20 +5,20 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.databinding.ActivitySettingsBinding
-import com.example.playlistmarker.ui.settings.viewmodel.SettingsPresenter
-import com.example.playlistmarker.ui.settings.viewmodel.SettingsThemeView
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.material.textview.MaterialTextView
+import com.example.playlistmarker.ui.settings.utills.sharing.ExternalNavigatorContract
+import com.example.playlistmarker.ui.settings.utills.sharing.ExternalNavigatorContractImpl
+import com.example.playlistmarker.ui.settings.viewmodel.SettingsViewModel
 
-class SettingsActivity : AppCompatActivity(), SettingsThemeView {
+class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
+    private lateinit var settingsViewModel: SettingsViewModel
+    private lateinit var externalNavigatorContract: ExternalNavigatorContract
 
-    private val settingsPresenter: SettingsPresenter by lazy { SettingsPresenter(Creator.provideThemeInteractor()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,15 +26,13 @@ class SettingsActivity : AppCompatActivity(), SettingsThemeView {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        externalNavigatorContract = ExternalNavigatorContractImpl(this)
+
+        settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
+
         setupListeners()
 
-        binding.darkTheme.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
-        settingsPresenter.attachView(this)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        settingsPresenter.detachView()
+        observeViewModel()
     }
 
     private fun setupListeners() {
@@ -55,36 +53,34 @@ class SettingsActivity : AppCompatActivity(), SettingsThemeView {
         }
 
         binding.darkTheme.setOnCheckedChangeListener { _, isChecked ->
-            settingsPresenter.onThemeSwitchClicked(isChecked)
+            settingsViewModel.onThemeSwitchClicked(isChecked)
         }
     }
 
     private fun onShareButtonClicked() {
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, getString(R.string.recommend_android_developer))
-        }
-        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_application)))
+        externalNavigatorContract.shareApp(getString(R.string.recommend_android_developer), getString(R.string.share_application))
     }
 
     private fun onSupportImageButtonClicked() {
-        val shareSupportIntent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("danilov-av2004@mail.ru"))
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.message_support_text_theme))
-            putExtra(Intent.EXTRA_TEXT, getString(R.string.message_support_text_default))
-        }
-        startActivity(shareSupportIntent)
+        externalNavigatorContract.sendMessageSupport(
+            "danilov-av2004@mail.ru",
+            getString(R.string.message_support_text_theme),
+            getString(R.string.message_support_text_default)
+        )
     }
 
     private fun onUserAgreementImageButton() {
-        val shareUserAgreementIntent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(getString(R.string.user_agreement_url))
-        }
-        startActivity(shareUserAgreementIntent)
+        externalNavigatorContract.openUserAgreement(getString(R.string.user_agreement_url))
     }
 
-    override fun setThemeState(isDark: Boolean) {
-        binding.darkTheme.isChecked = isDark
+    private fun observeViewModel() {
+        settingsViewModel.themeState.observe(this) { isDarkTheme ->
+            binding.darkTheme.isChecked = isDarkTheme
+            if (isDarkTheme) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
     }
 }
