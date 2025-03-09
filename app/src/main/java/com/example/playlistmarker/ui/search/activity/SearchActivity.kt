@@ -25,9 +25,12 @@ import com.example.playlistmarker.ui.search.recyclerview.TrackAdapter
 import com.example.playlistmarker.ui.search.ui_state.UiHistoryHandler
 import com.example.playlistmarker.ui.search.ui_state.UiHistoryHandlerImpl
 import com.example.playlistmarker.ui.search.ui_state.UiStateHandlerImpl
+import com.example.playlistmarker.ui.search.utills.sharing.NavigationContract
+import com.example.playlistmarker.ui.search.utills.sharing.NavigationContractImpl
 import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.UiState
+import com.example.playlistmarker.ui.settings.utills.sharing.ExternalNavigatorContractImpl
 
 class SearchActivity : AppCompatActivity() {
 
@@ -36,6 +39,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyViewModel: HistoryViewModel
     private lateinit var uiHistoryHandler: UiHistoryHandler
     private lateinit var uiStateHandler: UiStateHandler
+    private lateinit var navigationContract: NavigationContract
 
     private val historyInteractor: HistoryInteractor by lazy { Creator.provideHistoryInteractor() }
     private val debounceHandler: DebounceHandler by lazy { Creator.provideDebounceHandler() }
@@ -77,6 +81,8 @@ class SearchActivity : AppCompatActivity() {
 
         uiHistoryHandler = UiHistoryHandlerImpl(binding, this, historyAdapter, searchAdapter)
         uiStateHandler = UiStateHandlerImpl(binding, this)
+
+        navigationContract = NavigationContractImpl(this)
 
         setupListeners()
 
@@ -148,10 +154,7 @@ class SearchActivity : AppCompatActivity() {
                 val track = TrackInfoDetailsMapper.mapToDomain(trackInfo)
                 historyInteractor.addTrackHistory(track)
 
-                Log.d("SearchActivity", "Sending track info to AudioPlayerActivity: $trackInfo")
-                startActivity(Intent(this, AudioPlayerActivity::class.java).apply {
-                    putExtra("track", trackInfo)
-                })
+                navigationContract.openAudioPlayer(trackInfo)
                 true
             }) {
         }
