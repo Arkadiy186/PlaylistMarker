@@ -1,4 +1,4 @@
-package com.example.playlistmarker.ui.search.utills
+package com.example.playlistmarker.ui.search.utills.statemanager
 
 import android.content.SharedPreferences
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails

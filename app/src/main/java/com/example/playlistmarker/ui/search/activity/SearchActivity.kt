@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -20,9 +19,8 @@ import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import com.example.playlistmarker.ui.search.ui_state.UiStateHandler
-import com.example.playlistmarker.ui.search.utills.DebounceHandler
-import com.example.playlistmarker.ui.search.utills.HideKeyboardHelper
-import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchView
+import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
+import com.example.playlistmarker.ui.search.utills.hidekeyboard.HideKeyboardHelper
 import com.example.playlistmarker.ui.search.recyclerview.TrackAdapter
 import com.example.playlistmarker.ui.search.ui_state.UiHistoryHandler
 import com.example.playlistmarker.ui.search.ui_state.UiHistoryHandlerImpl

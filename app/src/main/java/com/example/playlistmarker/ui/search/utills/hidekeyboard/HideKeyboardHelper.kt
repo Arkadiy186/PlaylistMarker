@@ -1,4 +1,4 @@
-package com.example.playlistmarker.ui.search.utills
+package com.example.playlistmarker.ui.search.utills.hidekeyboard
 
 import android.content.Context
 import android.view.View

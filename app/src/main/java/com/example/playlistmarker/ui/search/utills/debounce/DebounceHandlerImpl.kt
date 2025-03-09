@@ -1,4 +1,4 @@
-package com.example.playlistmarker.ui.search.utills
+package com.example.playlistmarker.ui.search.utills.debounce
 
 class DebounceHandlerImpl(
     private val clickDebounceHelper: DebounceHelper,

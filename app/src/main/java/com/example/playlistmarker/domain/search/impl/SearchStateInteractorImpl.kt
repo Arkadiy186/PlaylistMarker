@@ -2,7 +2,7 @@ package com.example.playlistmarker.domain.search.impl
 
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
-import com.example.playlistmarker.ui.search.utills.SearchStateManager
+import com.example.playlistmarker.ui.search.utills.statemanager.SearchStateManager
 
 class SearchStateInteractorImpl(private val searchStateManager: SearchStateManager) :
     SearchStateInteractor {

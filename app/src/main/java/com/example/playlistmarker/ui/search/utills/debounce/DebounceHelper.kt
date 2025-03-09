@@ -1,4 +1,4 @@
-package com.example.playlistmarker.ui.search.utills
+package com.example.playlistmarker.ui.search.utills.debounce
 
 import android.os.Handler
 import android.os.Looper
