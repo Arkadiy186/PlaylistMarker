@@ -17,16 +17,16 @@
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".ui.searchactivity.SearchActivity"
+            android:name=".ui.search.activity.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.medialibraryactivity.MediaLibraryActivity"
+            android:name=".ui.medialibrary.activity.MediaLibraryActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.settingsactivity.SettingsActivity"
+            android:name=".ui.settings.activity.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.mainactivity.MainActivity"
+            android:name=".ui.main.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.audioplayeractivity.AudioPlayerActivity"
+            android:name=".ui.audioplayer.activity.AudioPlayerActivity"
             android:exported="false" />
     </application>
 

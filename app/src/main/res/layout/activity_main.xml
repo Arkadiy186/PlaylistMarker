@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:paddingStart="@dimen/main_screen_padding_left_right"
     android:paddingEnd="@dimen/main_screen_padding_left_right"
-    tools:context=".ui.mainactivity.MainActivity">
+    tools:context=".ui.main.activity.MainActivity">
 
     <Toolbar
         android:layout_width="match_parent"
