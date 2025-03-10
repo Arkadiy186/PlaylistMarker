@@ -7,6 +7,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
@@ -30,12 +31,49 @@ class AudioPlayerViewModel(application: Application) : AndroidViewModel(applicat
     private val _currentTrack = MutableLiveData<TrackInfoDetails>()
     val currentTrack: LiveData<TrackInfoDetails> = _currentTrack
 
+    private val _savedPosition = MutableLiveData<Int>().apply { value = 0 }
+    val savedPosition: LiveData<Int> = _savedPosition
+
+    private val _playerInfo = MediatorLiveData<PlayerInfo>()
+    val playerInfo: LiveData<PlayerInfo> = _playerInfo
+
+    val track = TrackInfoDetails(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "")
+
     init {
         audioPlayerInteractor.setCallback(this)
+
+        val update = {
+            _playerInfo.value = PlayerInfo(
+                _playerState.value ?: UiAudioPlayerState.STATE_DEFAULT,
+                _currentTime.value ?: "00:00",
+                _currentTrack.value ?: track,
+                _savedPosition.value ?: 0
+            )
+        }
+
+        _playerInfo.addSource(playerState) {update()}
+        _playerInfo.addSource(currentTime) {update()}
+        _playerInfo.addSource(currentTrack) {update()}
+        _playerInfo.addSource(savedPosition) {update()}
     }
 
     override fun onPlayerStateChanged(state: UiAudioPlayerState) {
         _playerState.postValue(state)
+
+        if (state == UiAudioPlayerState.STATE_PLAYING) {
+            mainHandlerThread.post(updateUiTimer)
+        } else {
+            mainHandlerThread.removeCallbacks(updateUiTimer)
+        }
     }
 
     override fun onTrackCompletion() {
@@ -62,7 +100,8 @@ class AudioPlayerViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun playTrack() {
-        positionTimeInteractor.getCurrentPosition().let {
+        if (_playerState.value == UiAudioPlayerState.STATE_PLAYING) return
+        loadSavePosition().let {
             audioPlayerInteractor.seekTo(it)
         }
         audioPlayerInteractor.startPlayer()
@@ -86,8 +125,10 @@ class AudioPlayerViewModel(application: Application) : AndroidViewModel(applicat
 
     fun resetTrackTime() {
         positionTimeInteractor.resetPosition()
+        audioPlayerInteractor.stopPlayer()
         _currentTime.postValue("00:00")
-        Log.d("MediaPlayer", "here")
+        Log.d("MediaPlayer", "completed")
+        _playerState.postValue(UiAudioPlayerState.STATE_COMPLETED)
         mainHandlerThread.removeCallbacks(updateUiTimer)
     }
 
@@ -96,11 +137,13 @@ class AudioPlayerViewModel(application: Application) : AndroidViewModel(applicat
         positionTimeInteractor.saveCurrentPosition(currentPosition)
     }
 
-    fun loadSavePosition(): Int {
-        return audioPlayerInteractor.getCurrentPosition()
-    }
-
     fun seekTo(position: Int) {
         audioPlayerInteractor.seekTo(position)
+    }
+
+    private fun loadSavePosition(): Int {
+        val currentPosition = positionTimeInteractor.getCurrentPosition()
+        _savedPosition.postValue(currentPosition)
+        return currentPosition
     }
 }

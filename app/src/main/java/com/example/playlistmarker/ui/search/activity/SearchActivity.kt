@@ -46,8 +46,8 @@ class SearchActivity : AppCompatActivity() {
     private val hideKeyboardHelper: HideKeyboardHelper by lazy { Creator.provideHideKeyboardHelper() }
     private val searchStateInteractor: SearchStateInteractor by lazy { Creator.provideSearchStateInteractor() }
 
-    private val searchList = ArrayList<TrackInfoDetails>()
-    private val historyTrack = ArrayList<TrackInfoDetails>()
+    private val searchList = mutableListOf<TrackInfoDetails>()
+    private val historyTrack = mutableListOf<TrackInfoDetails>()
     private val searchAdapter by lazy { TrackAdapter(searchList, ::onTrackSelected) }
     private val historyAdapter by lazy { TrackAdapter(historyTrack, ::onTrackSelected) }
 

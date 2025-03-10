@@ -4,32 +4,26 @@ import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.util.TypedValue
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.R
-import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.databinding.AudioplayerBinding
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
-import com.example.playlistmarker.ui.audioplayer.impl.AudioPlayerInteractorImpl
 import com.example.playlistmarker.ui.audioplayer.viewmodel.AudioPlayerViewModel
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
-import com.google.android.material.appbar.MaterialToolbar
-import java.util.Date
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: AudioplayerBinding
     private lateinit var audioPlayerViewModel: AudioPlayerViewModel
+
+    private var lastPlayerState: UiAudioPlayerState? = null
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,32 +49,40 @@ class AudioPlayerActivity : AppCompatActivity() {
             audioPlayerViewModel.prepareTrack(it)
             loadGlideWithCorners(it)
 
-            val savedPosition = audioPlayerViewModel.loadSavePosition()
-            if (savedPosition > 0) {
-                audioPlayerViewModel.seekTo(savedPosition)
-                audioPlayerViewModel.playTrack()
-            }
-
-        } ?: run {}
-
-        audioPlayerViewModel.playerState.observe(this) { state ->
-            Log.d("MediaPlayer", "state: ${state}")
-            when(state) {
-                UiAudioPlayerState.STATE_PLAYING -> binding.playTrackButton.setImageResource(R.drawable.ic_stop)
-                UiAudioPlayerState.STATE_STOPPED,
-                UiAudioPlayerState.STATE_COMPLETED -> {
-                    Log.d("MediaPlayer", "image: ${R.drawable.ic_play}")
-                    binding.playTrackButton.setImageResource(R.drawable.ic_play)
-                    audioPlayerViewModel.resetTrackTime()
+            audioPlayerViewModel.savedPosition.observe(this) { savedPosition ->
+                if (savedPosition > 0) {
+                    audioPlayerViewModel.seekTo(savedPosition)
+                    audioPlayerViewModel.playTrack()
                 }
-                UiAudioPlayerState.STATE_PREPARED,
-                UiAudioPlayerState.STATE_PAUSED,
-                UiAudioPlayerState.STATE_DEFAULT -> binding.playTrackButton.setImageResource(R.drawable.ic_play)
             }
         }
 
-        audioPlayerViewModel.currentTime.observe(this) { time ->
-            binding.currentTimeTrack.text = time
+        audioPlayerViewModel.playerInfo.observe(this) { playerInfo ->
+            val newPlayerState = playerInfo.playerState
+            if (newPlayerState != lastPlayerState) {
+                Log.d("MediaPlayer", "state: ${playerInfo.playerState}")
+                lastPlayerState = newPlayerState
+
+                binding.playTrackButton.setImageResource(
+                    when(playerInfo.playerState) {
+                        UiAudioPlayerState.STATE_PLAYING -> R.drawable.ic_stop
+                        UiAudioPlayerState.STATE_STOPPED,
+                        UiAudioPlayerState.STATE_COMPLETED -> {
+                            audioPlayerViewModel.resetTrackTime()
+                            R.drawable.ic_play
+                        }
+                        else -> R.drawable.ic_play
+                    }
+                )
+            }
+            binding.currentTimeTrack.text = playerInfo.currentTime
+            binding.titleCover.text = playerInfo.currentTrack.trackName
+            binding.authorTrack.text = playerInfo.currentTrack.artistName
+            binding.trackTimeCurrentInfo.text = playerInfo.currentTrack.trackTime
+            binding.trackAlbumCurrentInfo.text = playerInfo.currentTrack.collectionName
+            binding.trackReleaseDateCurrentInfo.text = formatReleaseDate(playerInfo.currentTrack.releaseDate)
+            binding.trackGenreCurrentInfo.text = playerInfo.currentTrack.primaryGenreName
+            binding.trackCountryCurrentInfo.text = playerInfo.currentTrack.country
         }
     }
 

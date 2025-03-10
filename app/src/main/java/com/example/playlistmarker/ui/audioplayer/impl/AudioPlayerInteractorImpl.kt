@@ -34,15 +34,14 @@ class AudioPlayerInteractorImpl : AudioPlayerInteractor {
         }
 
         mediaPlayer.setOnPreparedListener {
+            Log.d("MediaPlayer", "onPrepared")
             currentState = UiAudioPlayerState.STATE_PREPARED
         }
 
         mediaPlayer.setOnCompletionListener {
-            Log.d("MediaPlayer", "completed: ${UiAudioPlayerState.STATE_COMPLETED}")
             currentState = UiAudioPlayerState.STATE_COMPLETED
             callback?.onTrackCompletion()
             callback?.onPlayerStateChanged(currentState)
-            Log.d("MediaPlayer", "playerState: ${UiAudioPlayerState.STATE_COMPLETED}")
         }
     }
 
@@ -57,6 +56,7 @@ class AudioPlayerInteractorImpl : AudioPlayerInteractor {
     }
 
     override fun stopPlayer() {
+        Log.d("MediaPlayer", "stopPlayer")
         mediaPlayer.stop()
         currentState = UiAudioPlayerState.STATE_PREPARED
         mediaPlayer.prepareAsync()
