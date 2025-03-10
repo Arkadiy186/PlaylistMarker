@@ -1,7 +1,7 @@
 package com.example.playlistmarker.data.mappers
 
-import com.example.playlistmarker.data.model.TrackDto
-import com.example.playlistmarker.domain.model.Track
+import com.example.playlistmarker.data.search.model.TrackDto
+import com.example.playlistmarker.domain.search.model.Track
 
 object TrackDtoMapper {
 
