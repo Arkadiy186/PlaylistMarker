@@ -62,10 +62,6 @@ object Creator {
         return AudioPlayerInteractorImpl()
     }
 
-    fun provideThemeInteractor(): ThemeInteractor {
-        return ThemeInteractorImpl(provideThemeRepository)
-    }
-
     fun provideTrackInteractor(): TrackInteractor {
         return TrackInteractorImpl(provideTrackRepository())
     }
@@ -89,15 +85,6 @@ object Creator {
 
     private fun provideTrackRepository(): TrackRepository {
         return TrackRepositoryImpl(RetrofitClientImpl())
-    }
-
-    private val provideThemeRepository: ThemeRepository by lazy {
-        ThemeRepositoryImpl(provideThemePreferences)
-    }
-
-
-    private val provideThemePreferences: ThemePreferences by lazy {
-        ThemePreferences(getContext().getSharedPreferences("theme_prefs", Context.MODE_PRIVATE))
     }
 
     private val providePositionTimeRepository: PositionTimeRepository by lazy {
