@@ -15,7 +15,12 @@ import com.example.playlistmarker.domain.settings.impl.ThemeInteractorImpl
 import com.example.playlistmarker.domain.settings.repository.ThemeRepository
 import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateManager
+import com.example.playlistmarker.domain.player.impl.PositionTimeInteractorImpl
+import com.example.playlistmarker.domain.player.repository.PositionTimeRepository
+import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
+import com.example.playlistmarker.domain.player.use_cases.PositionTimeInteractor
 import com.example.playlistmarker.domain.search.repository.SearchStateRepository
+import com.example.playlistmarker.ui.audioplayer.impl.AudioPlayerInteractorImpl
 import org.koin.dsl.module
 
 val useCasesModule = module {
@@ -39,5 +44,14 @@ val useCasesModule = module {
 
     factory<SearchStateInteractor> {
         SearchStateInteractorImpl(get<SearchStateRepository>())
+    }
+
+    //ACTIVITY PLAYER
+    factory<PositionTimeInteractor> {
+        PositionTimeInteractorImpl(get<PositionTimeRepository>())
+    }
+
+    factory<AudioPlayerInteractor> {
+        AudioPlayerInteractorImpl()
     }
 }

@@ -16,12 +16,13 @@ import com.example.playlistmarker.databinding.AudioplayerBinding
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
 import com.example.playlistmarker.ui.audioplayer.viewmodel.AudioPlayerViewModel
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: AudioplayerBinding
-    private lateinit var audioPlayerViewModel: AudioPlayerViewModel
+    private val audioPlayerViewModel: AudioPlayerViewModel by viewModel()
 
     private var lastPlayerState: UiAudioPlayerState? = null
 
@@ -31,8 +32,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         setContentView(R.layout.audioplayer)
         binding = AudioplayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        audioPlayerViewModel = ViewModelProvider(this)[AudioPlayerViewModel::class.java]
 
         setupListeners()
 

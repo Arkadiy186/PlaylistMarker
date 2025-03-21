@@ -2,6 +2,7 @@ package com.example.playlistmarker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.playlistmarker.data.player.sharedpreferences.PositionTime
 import com.example.playlistmarker.data.search.network.RetrofitClient
 import com.example.playlistmarker.data.search.network.RetrofitClientImpl
 import com.example.playlistmarker.data.search.network.TrackAPI
@@ -52,5 +53,15 @@ val dataModule = module {
 
     single {
         SearchStateManager(get<SharedPreferences>(named("search_prefs")))
+    }
+
+    //ACTIVITY PLAYER
+    single<SharedPreferences>(named("player_prefs")) {
+        androidContext()
+            .getSharedPreferences("player_position_prefs", Context.MODE_PRIVATE)
+    }
+
+    single {
+        PositionTime(get<SharedPreferences>(named("player_prefs")))
     }
 }

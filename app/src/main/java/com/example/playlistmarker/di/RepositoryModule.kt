@@ -1,6 +1,8 @@
 package com.example.playlistmarker.di
 
 import android.content.Context
+import com.example.playlistmarker.data.player.impl.PositionTimeRepositoryImpl
+import com.example.playlistmarker.data.player.sharedpreferences.PositionTime
 import com.example.playlistmarker.data.search.impl.HistoryRepositoryImpl
 import com.example.playlistmarker.data.search.impl.SearchStateRepositoryImpl
 import com.example.playlistmarker.data.search.impl.TrackRepositoryImpl
@@ -10,6 +12,7 @@ import com.example.playlistmarker.data.search.sharedpreferences.HistorySearch
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateManager
 import com.example.playlistmarker.data.settings.impl.ThemeRepositoryImpl
 import com.example.playlistmarker.data.settings.sharedpreferences.ThemePreferences
+import com.example.playlistmarker.domain.player.repository.PositionTimeRepository
 import com.example.playlistmarker.domain.search.repository.HistoryRepository
 import com.example.playlistmarker.domain.search.repository.SearchStateRepository
 import com.example.playlistmarker.domain.search.repository.TrackRepository
@@ -38,5 +41,10 @@ val repositoryModule = module {
 
     single<SearchStateRepository> {
         SearchStateRepositoryImpl(get<SearchStateManager>())
+    }
+
+    //ACTIVITY PLAYER
+    single<PositionTimeRepository> {
+        PositionTimeRepositoryImpl(get<PositionTime>())
     }
 }
