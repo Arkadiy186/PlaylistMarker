@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmarker.ui.audioplayer.activity.AudioPlayerActivity
 import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
+import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
 import com.example.playlistmarker.databinding.ActivitySearchBinding
 import com.example.playlistmarker.domain.search.use_cases.HistoryInteractor
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
@@ -31,20 +32,22 @@ import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryVi
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.UiState
 import com.example.playlistmarker.ui.settings.utills.sharing.ExternalNavigatorContractImpl
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var searchViewModel: SearchViewModel
-    private lateinit var historyViewModel: HistoryViewModel
+    private val searchViewModel: SearchViewModel by viewModel()
+    private val historyViewModel: HistoryViewModel by viewModel()
     private lateinit var uiHistoryHandler: UiHistoryHandler
     private lateinit var uiStateHandler: UiStateHandler
     private lateinit var navigationContract: NavigationContract
 
-    private val historyInteractor: HistoryInteractor by lazy { Creator.provideHistoryInteractor() }
+    private val historyInteractor: HistoryInteractor by inject()
     private val debounceHandler: DebounceHandler by lazy { Creator.provideDebounceHandler() }
     private val hideKeyboardHelper: HideKeyboardHelper by lazy { Creator.provideHideKeyboardHelper() }
-    private val searchStateInteractor: SearchStateInteractor by lazy { Creator.provideSearchStateInteractor() }
+    private val searchStateInteractor: SearchStateInteractor by inject()
 
     private val searchList = mutableListOf<TrackInfoDetails>()
     private val historyTrack = mutableListOf<TrackInfoDetails>()
@@ -59,14 +62,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        searchStateInteractor.restoreSearchState { text, searchHistory, history ->
-            binding.searchEditText.setText(text)
-            searchList.clear()
-            searchList.addAll(searchHistory)
-            historyTrack.clear()
-            historyTrack.addAll(history)
-            historyAdapter.notifyDataSetChanged()
-        }
+        searchViewModel.restoreSearchState()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -75,9 +71,6 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
-        historyViewModel = ViewModelProvider(this)[HistoryViewModel::class.java]
 
         uiHistoryHandler = UiHistoryHandlerImpl(binding, this, historyAdapter, searchAdapter)
         uiStateHandler = UiStateHandlerImpl(binding, this)
@@ -184,22 +177,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModels() {
-        searchViewModel.searchState.observe(this) { searchState ->
-            when (searchState) {
-                is UiState.NotFound -> {
-                    uiStateHandler.showLoading(false)
-                    uiStateHandler.showNotFound()
-                }
-                is UiState.ErrorInternet -> {
-                    uiStateHandler.showLoading(false)
-                    uiStateHandler.showErrorInternet(searchState.message)
-                }
-                is UiState.Loading -> uiStateHandler.showLoading(searchState.isLoading)
-                is UiState.Content -> {
-                    uiStateHandler.showLoading(false)
-                    showTracks(searchState.tracks)
-                }
-            }
+        searchViewModel.combinedLiveData.observe(this) { (uiState, searchState) ->
+            uiState?.let { handleUiState(it) }
+            searchState?.let { handleSearchState(it) }
         }
     }
 
@@ -210,6 +190,31 @@ class SearchActivity : AppCompatActivity() {
             searchAdapter.notifyDataSetChanged()
             uiStateHandler.placeholderSetVisibility(isHidden = true)
         }
+    }
+
+    private fun handleUiState(uiState: UiState) {
+        when (uiState) {
+            is UiState.NotFound -> {
+                uiStateHandler.showLoading(false)
+                uiStateHandler.showNotFound()
+            }
+            is UiState.ErrorInternet -> {
+                uiStateHandler.showLoading(false)
+                uiStateHandler.showErrorInternet(uiState.message)
+            }
+            is UiState.Loading -> uiStateHandler.showLoading(uiState.isLoading)
+            is UiState.Content -> {
+                uiStateHandler.showLoading(false)
+                showTracks(uiState.tracks)
+            }
+        }
+    }
+
+    private fun handleSearchState(searchState: SearchStateData) {
+        binding.searchEditText.setText(searchState.searchText)
+        searchList.clear()
+        searchList.addAll(searchState.searchList)
+        searchAdapter.notifyDataSetChanged()
     }
 
     companion object {

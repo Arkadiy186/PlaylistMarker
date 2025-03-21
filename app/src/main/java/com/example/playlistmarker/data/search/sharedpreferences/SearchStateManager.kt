@@ -1,4 +1,4 @@
-package com.example.playlistmarker.ui.search.utills.statemanager
+package com.example.playlistmarker.data.search.sharedpreferences
 
 import android.content.SharedPreferences
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
@@ -13,7 +13,7 @@ class SearchStateManager(private val sharedPreferences: SharedPreferences) {
             .apply()
     }
 
-    fun restoreSearchState(callback: (String, List<TrackInfoDetails>, List<TrackInfoDetails>) -> Unit) {
+    fun restoreSearchState(): SearchStateData {
         val searchText = sharedPreferences.getString("search_text", "") ?: ""
         val searchListJson = sharedPreferences.getString("search_list", "[]")
         val historyListJson = sharedPreferences.getString("history_list", "[]")
@@ -21,6 +21,12 @@ class SearchStateManager(private val sharedPreferences: SharedPreferences) {
         val searchList = Gson().fromJson(searchListJson, Array<TrackInfoDetails>::class.java).toList()
         val historyList = Gson().fromJson(historyListJson, Array<TrackInfoDetails>::class.java).toList()
 
-        callback(searchText, searchList, historyList)
+        return SearchStateData(searchText, searchList, historyList)
     }
 }
+
+data class SearchStateData (
+    val searchText: String,
+    val searchList: List<TrackInfoDetails>,
+    val historyList: List<TrackInfoDetails>
+)

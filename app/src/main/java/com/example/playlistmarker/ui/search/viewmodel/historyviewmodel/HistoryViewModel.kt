@@ -9,8 +9,7 @@ import com.example.playlistmarker.domain.search.use_cases.HistoryInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 
-class HistoryViewModel(application: Application): AndroidViewModel(application) {
-    private val historyInteractor: HistoryInteractor by lazy { Creator.provideHistoryInteractor() }
+class HistoryViewModel(application: Application, private val historyInteractor: HistoryInteractor): AndroidViewModel(application) {
 
     private val _historyStateLiveData = MutableLiveData<List<TrackInfoDetails>>()
     val historyState: LiveData<List<TrackInfoDetails>> = _historyStateLiveData
