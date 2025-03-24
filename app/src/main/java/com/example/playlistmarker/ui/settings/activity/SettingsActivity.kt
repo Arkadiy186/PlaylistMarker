@@ -9,11 +9,12 @@ import com.example.playlistmarker.databinding.ActivitySettingsBinding
 import com.example.playlistmarker.ui.settings.utills.sharing.ExternalNavigatorContract
 import com.example.playlistmarker.ui.settings.utills.sharing.ExternalNavigatorContractImpl
 import com.example.playlistmarker.ui.settings.viewmodel.SettingsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-    private lateinit var settingsViewModel: SettingsViewModel
+    private val settingsViewModel: SettingsViewModel by viewModel()
     private lateinit var externalNavigatorContract: ExternalNavigatorContract
 
 
@@ -24,8 +25,6 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         externalNavigatorContract = ExternalNavigatorContractImpl(this)
-
-        settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
 
         setupListeners()
 

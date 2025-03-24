@@ -1,15 +1,12 @@
 package com.example.playlistmarker.ui.settings.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.playlistmarker.creator.Creator
+import androidx.lifecycle.ViewModel
 import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application) {
+class SettingsViewModel(private val themeInteractor: ThemeInteractor) : ViewModel() {
 
-    private val themeInteractor: ThemeInteractor by lazy { Creator.provideThemeInteractor() }
 
     private val _uiThemeLiveData = MutableLiveData<Boolean>()
     val themeState: LiveData<Boolean> = _uiThemeLiveData

@@ -8,10 +8,8 @@ import com.example.playlistmarker.ui.search.activity.SearchActivity.Companion.CL
 import com.example.playlistmarker.ui.search.activity.SearchActivity.Companion.SEARCH_DEBOUNCE_DELAY
 import com.example.playlistmarker.data.search.network.RetrofitClientImpl
 import com.example.playlistmarker.data.search.impl.HistoryRepositoryImpl
-import com.example.playlistmarker.data.settings.impl.ThemeRepositoryImpl
 import com.example.playlistmarker.data.search.impl.TrackRepositoryImpl
 import com.example.playlistmarker.data.search.sharedpreferences.HistorySearch
-import com.example.playlistmarker.data.settings.sharedpreferences.ThemePreferences
 import com.example.playlistmarker.data.search.impl.utills.NetworkRepositoryImpl
 import com.example.playlistmarker.domain.player.impl.PositionTimeInteractorImpl
 import com.example.playlistmarker.domain.player.repository.PositionTimeRepository
@@ -24,19 +22,16 @@ import com.example.playlistmarker.domain.search.use_cases.HistoryInteractor
 import com.example.playlistmarker.domain.search.impl.HistoryInteractorImpl
 import com.example.playlistmarker.domain.search.impl.NetworkInteractorImpl
 import com.example.playlistmarker.domain.search.impl.SearchStateInteractorImpl
-import com.example.playlistmarker.domain.settings.impl.ThemeInteractorImpl
 import com.example.playlistmarker.domain.search.use_cases.TrackInteractor
 import com.example.playlistmarker.domain.search.impl.TrackInteractorImpl
 import com.example.playlistmarker.domain.search.repository.utills.NetworkRepository
 import com.example.playlistmarker.domain.search.use_cases.NetworkInteractor
-import com.example.playlistmarker.domain.settings.repository.ThemeRepository
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
-import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandlerImpl
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHelper
 import com.example.playlistmarker.ui.search.utills.hidekeyboard.HideKeyboardHelper
-import com.example.playlistmarker.ui.search.utills.statemanager.SearchStateManager
+import com.example.playlistmarker.data.search.sharedpreferences.SearchStateManager
 
 @SuppressLint("StaticFieldLeak")
 object Creator {
@@ -54,24 +49,8 @@ object Creator {
     }
 
     //MARK: - Provide Use Cases (Interactors)
-    fun provideHistoryInteractor(): HistoryInteractor {
-        return HistoryInteractorImpl(provideHistoryRepository(getContext()))
-    }
-
     fun provideAudioPlayerInteractor(): AudioPlayerInteractor {
         return AudioPlayerInteractorImpl()
-    }
-
-    fun provideThemeInteractor(): ThemeInteractor {
-        return ThemeInteractorImpl(provideThemeRepository)
-    }
-
-    fun provideTrackInteractor(): TrackInteractor {
-        return TrackInteractorImpl(provideTrackRepository())
-    }
-
-    fun provideNetworkInteractor(): NetworkInteractor {
-        return NetworkInteractorImpl(provideNetworkRepository())
     }
 
     fun providePositionTimeInteractor(): PositionTimeInteractor {
@@ -79,27 +58,6 @@ object Creator {
     }
 
     //MARK: - Provide Repositories
-    private fun provideNetworkRepository(): NetworkRepository {
-        return NetworkRepositoryImpl(getContext())
-    }
-
-    private fun provideHistoryRepository(context: Context): HistoryRepository {
-        return HistoryRepositoryImpl(HistorySearch(context.getSharedPreferences("search_name_prefs", Context.MODE_PRIVATE)))
-    }
-
-    private fun provideTrackRepository(): TrackRepository {
-        return TrackRepositoryImpl(RetrofitClientImpl())
-    }
-
-    private val provideThemeRepository: ThemeRepository by lazy {
-        ThemeRepositoryImpl(provideThemePreferences)
-    }
-
-
-    private val provideThemePreferences: ThemePreferences by lazy {
-        ThemePreferences(getContext().getSharedPreferences("theme_prefs", Context.MODE_PRIVATE))
-    }
-
     private val providePositionTimeRepository: PositionTimeRepository by lazy {
         PositionTimeRepositoryImpl(PositionTime(getContext().getSharedPreferences("player_position_prefs", Context.MODE_PRIVATE)))
     }
@@ -120,13 +78,5 @@ object Creator {
 
     fun provideHideKeyboardHelper(): HideKeyboardHelper {
         return HideKeyboardHelper
-    }
-
-    private fun provideSearchStateManager(): SearchStateManager {
-        return SearchStateManager(getContext().getSharedPreferences("search_name_prefs", Context.MODE_PRIVATE))
-    }
-
-    fun provideSearchStateInteractor(): SearchStateInteractor {
-        return SearchStateInteractorImpl(provideSearchStateManager())
     }
 }

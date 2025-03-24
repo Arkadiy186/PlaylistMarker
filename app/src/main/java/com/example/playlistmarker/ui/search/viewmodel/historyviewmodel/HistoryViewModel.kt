@@ -4,13 +4,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.domain.search.use_cases.HistoryInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 
-class HistoryViewModel(application: Application): AndroidViewModel(application) {
-    private val historyInteractor: HistoryInteractor by lazy { Creator.provideHistoryInteractor() }
+class HistoryViewModel(private val historyInteractor: HistoryInteractor): ViewModel() {
 
     private val _historyStateLiveData = MutableLiveData<List<TrackInfoDetails>>()
     val historyState: LiveData<List<TrackInfoDetails>> = _historyStateLiveData

@@ -3,21 +3,41 @@ package com.example.playlistmarker.ui.search.viewmodel.searchviewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
+import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
 import com.example.playlistmarker.domain.search.model.Track
 import com.example.playlistmarker.domain.search.use_cases.NetworkInteractor
+import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.domain.search.use_cases.TrackInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 
-class SearchViewModel (application: Application) : AndroidViewModel(application) {
-
-    private val trackInteractor: TrackInteractor by lazy { Creator.provideTrackInteractor() }
-    private val networkInteractor: NetworkInteractor by lazy { Creator.provideNetworkInteractor() }
+class SearchViewModel (
+    private val trackInteractor: TrackInteractor,
+    private val networkInteractor: NetworkInteractor,
+    private val searchStateInteractor: SearchStateInteractor) : ViewModel() {
 
     private val _uiState = MutableLiveData<UiState>()
-    val searchState: LiveData<UiState> = _uiState
+    val uiState: LiveData<UiState> = _uiState
+
+    private val _searchState = MutableLiveData<SearchStateData>()
+    val searchState: LiveData<SearchStateData> = _searchState
+
+    private val _combinedLiveData = MediatorLiveData<Pair<UiState?, SearchStateData?>>()
+    val combinedLiveData: LiveData<Pair<UiState?, SearchStateData?>> = _combinedLiveData
+
+    init {
+        _combinedLiveData.addSource(uiState) {uiStateValue ->
+            _combinedLiveData.value = Pair(uiStateValue, searchState.value)
+        }
+
+        _combinedLiveData.addSource(searchState) { searchStateValue ->
+            _combinedLiveData.value = Pair(uiState.value, searchStateValue)
+        }
+    }
 
     fun searchTrack(query: String) {
         if (query.isEmpty()) return
@@ -50,5 +70,10 @@ class SearchViewModel (application: Application) : AndroidViewModel(application)
                 }
             }
         })
+    }
+
+    fun restoreSearchState() {
+        val restoreStateData = searchStateInteractor.restoreSearchState()
+        _searchState.postValue(restoreStateData)
     }
 }
