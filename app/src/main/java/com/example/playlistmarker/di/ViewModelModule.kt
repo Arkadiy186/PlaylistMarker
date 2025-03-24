@@ -17,20 +17,20 @@ import org.koin.dsl.module
 val viewModelModule = module {
     //ACTIVITY SETTINGS
     factory {
-        SettingsViewModel(get<Application>(), get<ThemeInteractor>())
+        SettingsViewModel(get<ThemeInteractor>())
     }
 
     //ACTIVITY SEARCH
     factory {
-        HistoryViewModel(get<Application>(), get<HistoryInteractor>())
+        HistoryViewModel(get<HistoryInteractor>())
     }
 
     factory {
-        SearchViewModel(get<Application>(), get<TrackInteractor>(), get<NetworkInteractor>(), get<SearchStateInteractor>())
+        SearchViewModel(get<TrackInteractor>(), get<NetworkInteractor>(), get<SearchStateInteractor>())
     }
 
     //ACTIVITY PLAYER
     factory {
-        AudioPlayerViewModel(get<Application>(), get<AudioPlayerInteractor>(), get<PositionTimeInteractor>())
+        AudioPlayerViewModel(get<AudioPlayerInteractor>(), get<PositionTimeInteractor>())
     }
 }

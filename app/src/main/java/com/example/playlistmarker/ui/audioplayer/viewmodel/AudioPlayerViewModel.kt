@@ -1,14 +1,13 @@
 package com.example.playlistmarker.ui.audioplayer.viewmodel
 
-import android.app.Application
 import android.icu.text.SimpleDateFormat
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.PositionTimeInteractor
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
@@ -17,9 +16,8 @@ import java.util.Date
 import java.util.Locale
 
 class AudioPlayerViewModel(
-    application: Application,
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    private val positionTimeInteractor: PositionTimeInteractor) : AndroidViewModel(application), AudioPlayerCallback {
+    private val positionTimeInteractor: PositionTimeInteractor) : ViewModel(), AudioPlayerCallback {
 
     private val _playerState = MutableLiveData<UiAudioPlayerState>().apply { value = UiAudioPlayerState.STATE_DEFAULT }
     val playerState: LiveData<UiAudioPlayerState> = _playerState

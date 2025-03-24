@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
@@ -15,10 +16,9 @@ import com.example.playlistmarker.domain.search.use_cases.TrackInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 
 class SearchViewModel (
-    application: Application,
     private val trackInteractor: TrackInteractor,
     private val networkInteractor: NetworkInteractor,
-    private val searchStateInteractor: SearchStateInteractor) : AndroidViewModel(application) {
+    private val searchStateInteractor: SearchStateInteractor) : ViewModel() {
 
     private val _uiState = MutableLiveData<UiState>()
     val uiState: LiveData<UiState> = _uiState
