@@ -30,4 +30,9 @@
     <string name="audioPlayer_track_genre">Жанр</string>
     <string name="audioPlayer_track_country">Страна</string>
     <string name="track_artist_time" translatable="false">%s • %s</string>
+    <string name="favourite_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="media_library_empty">Ваша медиатека пуста</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="not_created_playlist">Вы не создали\n ни одного плейлиста</string>
 </resources>

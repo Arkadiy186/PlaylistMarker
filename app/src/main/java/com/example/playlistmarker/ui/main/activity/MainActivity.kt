@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmarker.R
-import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
 import com.example.playlistmarker.ui.settings.activity.SettingsActivity
 import com.example.playlistmarker.ui.medialibrary.activity.MediaLibraryActivity
