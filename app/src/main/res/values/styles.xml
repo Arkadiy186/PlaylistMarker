@@ -264,4 +264,18 @@
         <item name="android:gravity">center_horizontal</item>
         <item name="android:layout_marginHorizontal">24dp</item>
     </style>
+
+    <style name="tab_layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabIndicatorColor">@color/black_for_text</item>
+        <item name="tabTextColor">@color/black_for_text</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="tabTextAppearance">@style/CustomTabTextStyle</item>
+    </style>
+
+    <style name="CustomTabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+    </style>
 </resources>

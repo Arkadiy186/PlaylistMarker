@@ -28,7 +28,6 @@
     <string name="audioPlayer_track_genre">Genre</string>
     <string name="audioPlayer_track_country">Country</string>
     <string name="favourite_tracks">Favourite tracks</string>
-    <string name="favourite_tracks">favourite tracks</string>
     <string name="playlists">Playlists</string>
     <string name="media_library_empty">Your media library is empty</string>
     <string name="new_playlist">New playlist</string>
