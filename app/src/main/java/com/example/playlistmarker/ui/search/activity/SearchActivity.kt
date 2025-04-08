@@ -1,16 +1,13 @@
 package com.example.playlistmarker.ui.search.activity
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmarker.ui.audioplayer.activity.AudioPlayerActivity
 import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
@@ -19,19 +16,18 @@ import com.example.playlistmarker.domain.search.use_cases.HistoryInteractor
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
-import com.example.playlistmarker.ui.search.ui_state.UiStateHandler
-import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
-import com.example.playlistmarker.ui.search.utills.hidekeyboard.HideKeyboardHelper
 import com.example.playlistmarker.ui.search.recyclerview.TrackAdapter
 import com.example.playlistmarker.ui.search.ui_state.UiHistoryHandler
 import com.example.playlistmarker.ui.search.ui_state.UiHistoryHandlerImpl
+import com.example.playlistmarker.ui.search.ui_state.UiStateHandler
 import com.example.playlistmarker.ui.search.ui_state.UiStateHandlerImpl
+import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
+import com.example.playlistmarker.ui.search.utills.hidekeyboard.HideKeyboardHelper
 import com.example.playlistmarker.ui.search.utills.sharing.NavigationContract
 import com.example.playlistmarker.ui.search.utills.sharing.NavigationContractImpl
 import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.UiState
-import com.example.playlistmarker.ui.settings.utills.sharing.ExternalNavigatorContractImpl
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
