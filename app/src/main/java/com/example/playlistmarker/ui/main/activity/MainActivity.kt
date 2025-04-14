@@ -32,10 +32,9 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener {_, destination, _ ->
-            when(destination.id) {
-
-            }
+        val destination = intent.getStringExtra("navigate_to")
+        if (destination == "search") {
+            navController.navigate(R.id.searchFragment)
         }
     }
 }

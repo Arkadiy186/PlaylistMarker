@@ -78,8 +78,14 @@ class SearchFragment : Fragment() {
         binding.recyclerView.adapter = searchAdapter
 
         observeViewModels()
+    }
 
-
+    override fun onResume() {
+        super.onResume()
+        binding.searchEditText.clearFocus()
+        binding.searchEditText.setText("")
+        searchList.clear()
+        searchAdapter.notifyDataSetChanged()
     }
 
     private fun setupListeners() {

@@ -58,8 +58,10 @@ class AudioPlayerInteractorImpl : AudioPlayerInteractor {
     override fun stopPlayer() {
         Log.d("MediaPlayer", "stopPlayer")
         mediaPlayer.stop()
-        currentState = UiAudioPlayerState.STATE_PREPARED
+        mediaPlayer.reset()
+        mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
+        currentState = UiAudioPlayerState.STATE_PREPARED
     }
 
     override fun seekTo(position: Int) {

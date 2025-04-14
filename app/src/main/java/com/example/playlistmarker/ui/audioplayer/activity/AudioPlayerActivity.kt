@@ -1,6 +1,7 @@
 package com.example.playlistmarker.ui.audioplayer.activity
 
 import android.content.Context
+import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
@@ -15,6 +16,7 @@ import com.example.playlistmarker.R
 import com.example.playlistmarker.databinding.AudioplayerBinding
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
 import com.example.playlistmarker.ui.audioplayer.viewmodel.AudioPlayerViewModel
+import com.example.playlistmarker.ui.main.activity.MainActivity
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
@@ -104,7 +106,10 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.audioPlayerToolbar.setNavigationOnClickListener {
-            finish()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            intent.putExtra("navigate_to", "search")
+            startActivity(intent)
         }
 
         binding.playTrackButton.setOnClickListener {
