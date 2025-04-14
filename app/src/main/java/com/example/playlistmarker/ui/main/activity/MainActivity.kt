@@ -6,9 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmarker.R
 import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
-import com.example.playlistmarker.ui.settings.activity.SettingsActivity
-import com.example.playlistmarker.ui.medialibrary.activity.MediaLibraryActivity
-import com.example.playlistmarker.ui.search.activity.SearchActivity
+import com.example.playlistmarker.ui.medialibrary.fragments.MediaLibraryFragment
+import com.example.playlistmarker.ui.search.fragment.SearchFragment
+import com.example.playlistmarker.ui.settings.fragment.SettingsFragment
 import com.google.android.material.button.MaterialButton
 import org.koin.android.ext.android.inject
 
@@ -27,9 +27,9 @@ class MainActivity() : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        setupButton(R.id.search, SearchActivity::class.java)
-        setupButton(R.id.settings, SettingsActivity::class.java)
-        setupButton(R.id.media_library, MediaLibraryActivity::class.java)
+        setupButton(R.id.search, SearchFragment::class.java)
+        setupButton(R.id.settings, SettingsFragment::class.java)
+        setupButton(R.id.media_library, MediaLibraryFragment::class.java)
     }
 
     private fun <T> setupButton(buttonId: Int, targetActivity: Class<T>) {

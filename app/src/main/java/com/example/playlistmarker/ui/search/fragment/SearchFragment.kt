@@ -1,17 +1,18 @@
-package com.example.playlistmarker.ui.search.activity
+package com.example.playlistmarker.ui.search.fragment
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
-import com.example.playlistmarker.databinding.ActivitySearchBinding
+import com.example.playlistmarker.databinding.FragmentSearchBinding
 import com.example.playlistmarker.domain.search.use_cases.HistoryInteractor
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
@@ -31,9 +32,9 @@ import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.UiState
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
-    private lateinit var binding: ActivitySearchBinding
+    private lateinit var binding: FragmentSearchBinding
     private val searchViewModel: SearchViewModel by viewModel()
     private val historyViewModel: HistoryViewModel by viewModel()
     private lateinit var uiHistoryHandler: UiHistoryHandler
@@ -50,34 +51,28 @@ class SearchActivity : AppCompatActivity() {
     private val searchAdapter by lazy { TrackAdapter(searchList, ::onTrackSelected) }
     private val historyAdapter by lazy { TrackAdapter(historyTrack, ::onTrackSelected) }
 
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        searchStateInteractor.saveSearchState(binding.searchEditText.text.toString(), searchList, historyTrack)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchViewModel.restoreSearchState()
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         uiHistoryHandler = UiHistoryHandlerImpl(binding, this, historyAdapter, searchAdapter)
         uiStateHandler = UiStateHandlerImpl(binding, this)
 
-        navigationContract = NavigationContractImpl(this)
+        navigationContract = NavigationContractImpl(requireContext())
 
         setupListeners()
 
         binding.clearButton.isVisible = !binding.searchEditText.text.isNullOrEmpty()
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.recyclerView.adapter = searchAdapter
 
         observeViewModels()
@@ -85,7 +80,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.activitySearchToolbar.setNavigationOnClickListener {
-            finish()
+            requireActivity().finish()
         }
 
         binding.historySearchButtonView.setOnClickListener {
@@ -114,7 +109,7 @@ class SearchActivity : AppCompatActivity() {
 
                 historyViewModel.loadHistory()
 
-                historyViewModel.historyState.observe(this) { history ->
+                historyViewModel.historyState.observe(viewLifecycleOwner) { history ->
 
                     historyTrack.clear()
                     historyTrack.addAll(history)
@@ -173,14 +168,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModels() {
-        searchViewModel.combinedLiveData.observe(this) { (uiState, searchState) ->
+        searchViewModel.combinedLiveData.observe(viewLifecycleOwner) { (uiState, searchState) ->
             uiState?.let { handleUiState(it) }
             searchState?.let { handleSearchState(it) }
         }
     }
 
     private fun showTracks(track: List<TrackInfoDetails>) {
-        runOnUiThread {
+        requireActivity().runOnUiThread {
             searchList.clear()
             searchList.addAll(track)
             searchAdapter.notifyDataSetChanged()
