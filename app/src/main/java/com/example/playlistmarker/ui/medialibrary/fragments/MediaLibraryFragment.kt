@@ -28,8 +28,8 @@ class MediaLibraryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupListeners()
 
-        val favouriteTrack = requireArguments().getString("favourite") ?: ""
-        val playlistTrack = requireArguments().getString("playlist") ?: ""
+        val favouriteTrack = arguments?.getString(ARGS_TRACK_FAVOURITE) ?: ""
+        val playlistTrack = arguments?.getString(ARGS_TRACK_PLAYLIST) ?: ""
 
         binding.viewPager.adapter = MediaLibraryViewPagerAdapter(
             this,
