@@ -26,7 +26,6 @@ class MediaLibraryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupListeners()
 
         val favouriteTrack = arguments?.getString(ARGS_TRACK_FAVOURITE) ?: ""
         val playlistTrack = arguments?.getString(ARGS_TRACK_PLAYLIST) ?: ""
@@ -49,12 +48,6 @@ class MediaLibraryFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         tabMediator.detach()
-    }
-
-    private fun setupListeners() {
-        binding.mediaLibraryToolbar.setNavigationOnClickListener {
-            requireActivity().finish()
-        }
     }
 
     companion object {

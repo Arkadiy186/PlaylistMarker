@@ -20,10 +20,6 @@ class SettingsFragment : Fragment() {
 
     private val settingsViewModel: SettingsViewModel by viewModel()
 
-    companion object {
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,10 +40,6 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        binding.settingsToolbar.setNavigationOnClickListener {
-            requireActivity().finish()
-        }
-
         binding.shareApp.setOnClickListener {
             onShareButtonClicked()
         }

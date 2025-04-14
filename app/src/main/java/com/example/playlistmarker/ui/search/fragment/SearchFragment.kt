@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
 import com.example.playlistmarker.databinding.FragmentSearchBinding
@@ -29,6 +30,7 @@ import com.example.playlistmarker.ui.search.utills.sharing.NavigationContractImp
 import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.UiState
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -76,13 +78,11 @@ class SearchFragment : Fragment() {
         binding.recyclerView.adapter = searchAdapter
 
         observeViewModels()
+
+
     }
 
     private fun setupListeners() {
-        binding.activitySearchToolbar.setNavigationOnClickListener {
-            requireActivity().finish()
-        }
-
         binding.historySearchButtonView.setOnClickListener {
             historyViewModel.clearHistory()
             historyTrack.clear()
@@ -105,9 +105,12 @@ class SearchFragment : Fragment() {
         }
 
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
             if (hasFocus && binding.searchEditText.text.isEmpty()) {
 
                 historyViewModel.loadHistory()
+
+                bottomNavigationView.visibility = View.GONE
 
                 historyViewModel.historyState.observe(viewLifecycleOwner) { history ->
 
@@ -119,6 +122,7 @@ class SearchFragment : Fragment() {
                     uiHistoryHandler.historySetVisibility(shouldShowHistory)
                 }
             } else {
+                bottomNavigationView.visibility = View.VISIBLE
                 uiHistoryHandler.historySetVisibility(false)
             }
         }
