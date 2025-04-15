@@ -63,7 +63,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:paddingTop">11dp</item>
-        <item name="android:paddingStart">@dimen/edit_text_icon</item>
+        <item name="android:paddingStart">@dimen/main_screen_padding_left_right</item>
         <item name="android:paddingBottom">11dp</item>
         <item name="android:drawableTint">@color/grey</item>
         <item name="android:background">@drawable/edit_text_corner</item>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/mediaLibraryFragment">
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.playlistmarker.ui.search.fragment.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_audioPlayerActivity"
+            app:destination="@id/audioPlayerActivity" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.playlistmarker.ui.settings.fragment.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/mediaLibraryFragment"
+        android:name="com.example.playlistmarker.ui.medialibrary.fragments.MediaLibraryFragment"
+        android:label="fragment_media_library"
+        tools:layout="@layout/fragment_media_library" />
+    <activity
+        android:id="@+id/audioPlayerActivity"
+        android:name="com.example.playlistmarker.ui.audioplayer.activity.AudioPlayerActivity"
+        android:label="audioplayer"
+        tools:layout="@layout/audioplayer" />
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.playlistmarker.ui.medialibrary.fragments.PlaylistFragment"
+        android:label="fragment_playlists"
+        tools:layout="@layout/fragment_playlists" />
+    <fragment
+        android:id="@+id/favouriteTracksFragment"
+        android:name="com.example.playlistmarker.ui.medialibrary.fragments.FavouriteTracksFragment"
+        android:label="fragment_favourite_tracks"
+        tools:layout="@layout/fragment_favourite_tracks" />
+</navigation>

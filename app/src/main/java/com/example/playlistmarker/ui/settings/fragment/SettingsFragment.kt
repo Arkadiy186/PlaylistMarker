@@ -1,30 +1,38 @@
-package com.example.playlistmarker.ui.settings.activity
+package com.example.playlistmarker.ui.settings.fragment
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
 import com.example.playlistmarker.R
-import com.example.playlistmarker.databinding.ActivitySettingsBinding
+import com.example.playlistmarker.databinding.FragmentSettingsBinding
 import com.example.playlistmarker.ui.settings.utills.sharing.ExternalNavigatorContract
 import com.example.playlistmarker.ui.settings.utills.sharing.ExternalNavigatorContractImpl
 import com.example.playlistmarker.ui.settings.viewmodel.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
-    private lateinit var binding: ActivitySettingsBinding
-    private val settingsViewModel: SettingsViewModel by viewModel()
+    private lateinit var binding: FragmentSettingsBinding
     private lateinit var externalNavigatorContract: ExternalNavigatorContract
 
+    private val settingsViewModel: SettingsViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        externalNavigatorContract = ExternalNavigatorContractImpl(this)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        externalNavigatorContract = ExternalNavigatorContractImpl(requireContext())
 
         setupListeners()
 
@@ -32,10 +40,6 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        binding.settingsToolbar.setNavigationOnClickListener {
-            finish()
-        }
-
         binding.shareApp.setOnClickListener {
             onShareButtonClicked()
         }
@@ -54,7 +58,8 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun onShareButtonClicked() {
-        externalNavigatorContract.shareApp(getString(R.string.recommend_android_developer), getString(R.string.share_application))
+        externalNavigatorContract.shareApp(getString(R.string.recommend_android_developer), getString(
+            R.string.share_application))
     }
 
     private fun onSupportImageButtonClicked() {
@@ -70,7 +75,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        settingsViewModel.themeState.observe(this) { isDarkTheme ->
+        settingsViewModel.themeState.observe(viewLifecycleOwner) { isDarkTheme ->
             binding.darkTheme.isChecked = isDarkTheme
             if (isDarkTheme) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

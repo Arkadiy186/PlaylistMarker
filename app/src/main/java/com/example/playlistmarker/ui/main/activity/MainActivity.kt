@@ -1,20 +1,19 @@
 package com.example.playlistmarker.ui.main.activity
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmarker.R
 import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
-import com.example.playlistmarker.ui.settings.activity.SettingsActivity
-import com.example.playlistmarker.ui.medialibrary.activity.MediaLibraryActivity
-import com.example.playlistmarker.ui.search.activity.SearchActivity
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.koin.android.ext.android.inject
 
-class MainActivity() : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val themeInteractor: ThemeInteractor by inject()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,14 +26,15 @@ class MainActivity() : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        setupButton(R.id.search, SearchActivity::class.java)
-        setupButton(R.id.settings, SettingsActivity::class.java)
-        setupButton(R.id.media_library, MediaLibraryActivity::class.java)
-    }
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
+        val navController = navHostFragment.navController
 
-    private fun <T> setupButton(buttonId: Int, targetActivity: Class<T>) {
-        findViewById<MaterialButton>(buttonId).setOnClickListener {
-            startActivity(Intent(this, targetActivity))
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setupWithNavController(navController)
+
+        val destination = intent.getStringExtra("navigate_to")
+        if (destination == "search") {
+            navController.navigate(R.id.searchFragment)
         }
     }
 }

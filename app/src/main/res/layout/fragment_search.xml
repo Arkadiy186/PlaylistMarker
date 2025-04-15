@@ -5,12 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.search.activity.SearchActivity">
+    android:background="@color/nav_background"
+    tools:context=".ui.search.fragment.SearchFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/activitySearchToolbar"
         style="@style/ToolbarStyle"
-        app:navigationIcon="@drawable/arrow_back_icon"
         app:title="@string/activity_search_title"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
