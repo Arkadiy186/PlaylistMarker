@@ -15,11 +15,11 @@ class TrackAdapter (private val tracks: MutableList<TrackInfoDetails>, private v
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         val track = tracks[position]
-        Log.d("TrackAdapter", "Binding track: ${track.trackName}")
         holder.bind(track)
 
         holder.itemView.setOnClickListener {
             onItemClickListener(track)
+            Log.d("Debounce", "Track clicked: ${track.trackName}")
         }
     }
 

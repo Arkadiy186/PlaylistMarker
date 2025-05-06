@@ -10,6 +10,7 @@ import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
 import com.example.playlistmarker.ui.audioplayer.viewmodel.AudioPlayerViewModel
 import com.example.playlistmarker.ui.medialibrary.viewmodel.FragmentFavouriteTrackViewModel
 import com.example.playlistmarker.ui.medialibrary.viewmodel.FragmentPlaylistViewModel
+import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
 import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
 import com.example.playlistmarker.ui.settings.viewmodel.SettingsViewModel
@@ -27,7 +28,7 @@ val viewModelModule = module {
     }
 
     factory {
-        SearchViewModel(get<TrackInteractor>(), get<NetworkInteractor>(), get<SearchStateInteractor>())
+        SearchViewModel(get<TrackInteractor>(), get<NetworkInteractor>(), get<SearchStateInteractor>(), get<DebounceHandler>())
     }
 
     //ACTIVITY PLAYER
@@ -43,4 +44,7 @@ val viewModelModule = module {
     factory { (trackId: String) ->
         FragmentFavouriteTrackViewModel(trackId)
     }
+
+    //UTILS
+    factory<DebounceHandler> {com.example.playlistmarker.creator.Creator.provideDebounceHandler()}
 }

@@ -31,6 +31,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("AudioPlayerActivity", "onCreate called")
         setContentView(R.layout.audioplayer)
         binding = AudioplayerBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -1,24 +1,24 @@
 package com.example.playlistmarker.ui.search.viewmodel.searchviewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmarker.R
-import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
 import com.example.playlistmarker.domain.search.model.Track
 import com.example.playlistmarker.domain.search.use_cases.NetworkInteractor
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.domain.search.use_cases.TrackInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
+import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
 
 class SearchViewModel (
     private val trackInteractor: TrackInteractor,
     private val networkInteractor: NetworkInteractor,
-    private val searchStateInteractor: SearchStateInteractor) : ViewModel() {
+    private val searchStateInteractor: SearchStateInteractor,
+    private val debounceHandler: DebounceHandler) : ViewModel() {
 
     private val _uiState = MutableLiveData<UiState>()
     val uiState: LiveData<UiState> = _uiState
@@ -36,6 +36,18 @@ class SearchViewModel (
 
         _combinedLiveData.addSource(searchState) { searchStateValue ->
             _combinedLiveData.value = Pair(uiState.value, searchStateValue)
+        }
+    }
+
+    private var latestSearchText: String? = null
+    private val trackSearchDebounce = debounceHandler.debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { query ->
+        searchTrack(query)
+    }
+
+    fun searchDebounce(changedText: String) {
+        if (latestSearchText != changedText) {
+            latestSearchText = changedText
+            trackSearchDebounce(changedText)
         }
     }
 
@@ -75,5 +87,9 @@ class SearchViewModel (
     fun restoreSearchState() {
         val restoreStateData = searchStateInteractor.restoreSearchState()
         _searchState.postValue(restoreStateData)
+    }
+
+    companion object {
+        const val SEARCH_DEBOUNCE_DELAY = 3000L
     }
 }
