@@ -11,8 +11,4 @@ class PositionTimeRepositoryImpl(private val positionTime: PositionTime) : Posit
     override fun saveCurrentPosition(position: Int) {
         positionTime.saveCurrentPosition(position)
     }
-
-    override fun resetPosition() {
-        positionTime.resetPosition()
-    }
 }

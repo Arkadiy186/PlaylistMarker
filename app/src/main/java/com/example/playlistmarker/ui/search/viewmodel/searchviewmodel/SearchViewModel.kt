@@ -1,5 +1,6 @@
 package com.example.playlistmarker.ui.search.viewmodel.searchviewmodel
 
+import android.provider.Contacts.Intents.UI
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,11 +9,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmarker.R
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
 import com.example.playlistmarker.domain.search.model.Track
+import com.example.playlistmarker.domain.search.repository.Resources
 import com.example.playlistmarker.domain.search.use_cases.NetworkInteractor
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.domain.search.use_cases.TrackInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
+import kotlinx.coroutines.launch
 
 class SearchViewModel (
     private val trackInteractor: TrackInteractor,
@@ -61,32 +64,35 @@ class SearchViewModel (
 
         _uiState.postValue(UiState.Loading(true))
 
-        trackInteractor.searchTrack(query, object : TrackInteractor.TrackConsumer {
-            override fun onTrackFound(tracks: List<Track>) {
-                _uiState.postValue(UiState.Loading(false))
 
-                if (tracks.isEmpty()) {
-                    _uiState.postValue(UiState.NotFound)
-                } else {
-                    val trackInfoDetails = tracks.map { TrackInfoDetailsMapper.map(it) }
-                    _uiState.postValue(UiState.Content(trackInfoDetails))
+        viewModelScope.launch {
+            trackInteractor
+                .searchTrack(query)
+                .collect { pair ->
+                    processResult(pair.first, pair.second)
                 }
-            }
-
-            override fun onError(error: Throwable) {
-                _uiState.postValue(UiState.Loading(false))
-                if (!networkInteractor.isInternetAvailable()) {
-                    _uiState.postValue(UiState.ErrorInternet(R.string.internet_problems))
-                }else {
-                    _uiState.postValue(UiState.NotFound)
-                }
-            }
-        })
+        }
     }
 
-    fun restoreSearchState() {
-        val restoreStateData = searchStateInteractor.restoreSearchState()
-        _searchState.postValue(restoreStateData)
+    private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
+        val tracks = foundTracks ?: emptyList()
+
+        when {
+            errorMessage != null -> {
+                renderState(UiState.ErrorInternet(R.string.internet_problems))
+            }
+            tracks.isEmpty() -> {
+                renderState(UiState.NotFound)
+            }
+            else -> {
+                val trackInfoDetails = tracks.map { TrackInfoDetailsMapper.map(it) }
+                _uiState.postValue(UiState.Content(trackInfoDetails))
+            }
+        }
+    }
+
+    private fun renderState(state: UiState) {
+        _uiState.postValue(state)
     }
 
     companion object {

@@ -1,10 +1,11 @@
 package com.example.playlistmarker.domain.player.use_cases.state
 
-enum class UiAudioPlayerState {
-    STATE_DEFAULT,
-    STATE_PREPARED,
-    STATE_PLAYING,
-    STATE_PAUSED,
-    STATE_COMPLETED,
-    STATE_STOPPED
+sealed class UiAudioPlayerState(val isPLayButtonClicked: Boolean, val buttonText: String, val progress: Int) {
+    class Default() : UiAudioPlayerState(false, "PLAY", 0)
+
+    class Prepared() : UiAudioPlayerState(false, "PLAY", 0)
+
+    class Playing(progress: Int) : UiAudioPlayerState(true, "PAUSE", progress)
+
+    class Paused(progress: Int) : UiAudioPlayerState(true, "PAUSE", progress)
 }
