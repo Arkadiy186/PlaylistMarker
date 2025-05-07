@@ -9,6 +9,7 @@ import com.example.playlistmarker.data.search.network.TrackAPI
 import com.example.playlistmarker.data.search.sharedpreferences.HistorySearch
 import com.example.playlistmarker.data.settings.sharedpreferences.ThemePreferences
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateManager
+import com.example.playlistmarker.domain.search.repository.utills.NetworkRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -48,7 +49,7 @@ val dataModule = module {
     }
 
     single<RetrofitClient> {
-        RetrofitClientImpl(get<TrackAPI>())
+        RetrofitClientImpl(get<TrackAPI>(), get<NetworkRepository>())
     }
 
     single {

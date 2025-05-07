@@ -31,6 +31,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("AudioPlayerActivity", "onCreate called")
         setContentView(R.layout.audioplayer)
         binding = AudioplayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -66,12 +67,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
                 binding.playTrackButton.setImageResource(
                     when(playerInfo.playerState) {
-                        UiAudioPlayerState.STATE_PLAYING -> R.drawable.ic_stop
-                        UiAudioPlayerState.STATE_STOPPED,
-                        UiAudioPlayerState.STATE_COMPLETED -> {
-                            audioPlayerViewModel.resetTrackTime()
-                            R.drawable.ic_play
-                        }
+                        is UiAudioPlayerState.Playing -> R.drawable.ic_stop
                         else -> R.drawable.ic_play
                     }
                 )
@@ -101,7 +97,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d("MediaPlayer", "onDestroy")
-        audioPlayerViewModel.resetTrackTime()
     }
 
     private fun setupListeners() {
@@ -116,7 +111,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             val track = audioPlayerViewModel.currentTrack.value
             if (track != null) {
                 when (audioPlayerViewModel.playerState.value) {
-                    UiAudioPlayerState.STATE_PLAYING -> audioPlayerViewModel.pauseTrack()
+                    is UiAudioPlayerState.Playing -> audioPlayerViewModel.pauseTrack()
                     else -> audioPlayerViewModel.playTrack()
                 }
             }

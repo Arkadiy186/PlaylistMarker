@@ -9,11 +9,8 @@ import com.example.playlistmarker.domain.player.repository.PositionTimeRepositor
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.PositionTimeInteractor
 import com.example.playlistmarker.ui.audioplayer.impl.AudioPlayerInteractorImpl
-import com.example.playlistmarker.ui.search.fragment.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
-import com.example.playlistmarker.ui.search.fragment.SearchFragment.Companion.SEARCH_DEBOUNCE_DELAY
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandlerImpl
-import com.example.playlistmarker.ui.search.utills.debounce.DebounceHelper
 import com.example.playlistmarker.ui.search.utills.hidekeyboard.HideKeyboardHelper
 
 @SuppressLint("StaticFieldLeak")
@@ -47,16 +44,8 @@ object Creator {
 
 
     //MARK - Provide Helpers (Debounce, State, etc.)
-    private fun provideClickDebounceHelper(): DebounceHelper {
-        return DebounceHelper(CLICK_DEBOUNCE_DELAY)
-    }
-
-    private fun provideSearchDebounceHelper(): DebounceHelper {
-        return DebounceHelper(SEARCH_DEBOUNCE_DELAY)
-    }
-
     fun provideDebounceHandler(): DebounceHandler {
-        return DebounceHandlerImpl(provideClickDebounceHelper(), provideSearchDebounceHelper())
+        return DebounceHandlerImpl()
     }
 
     fun provideHideKeyboardHelper(): HideKeyboardHelper {
