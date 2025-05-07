@@ -1,6 +1,5 @@
 package com.example.playlistmarker.ui.audioplayer.viewmodel
 
-import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -14,7 +13,6 @@ import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 class AudioPlayerViewModel (
     private val audioPlayerInteractor: AudioPlayerInteractor,
@@ -54,7 +52,7 @@ class AudioPlayerViewModel (
 
         val update = {
             _playerInfo.value = PlayerInfo(
-                _playerState.value ?: UiAudioPlayerState.Default(),
+                audioPlayerInteractor.getPlayerState(),
                 _currentTime.value ?: "00:00",
                 _currentTrack.value ?: track,
                 _savedPosition.value ?: 0
@@ -68,38 +66,46 @@ class AudioPlayerViewModel (
     }
 
     override fun onPlayerStateChanged(state: UiAudioPlayerState) {
-        try {
-            _playerState.postValue(state)
+        _playerState.postValue(state)
 
-            if (state is UiAudioPlayerState.Playing) {
-                startTimer()
-            } else {
+        when(state) {
+            is UiAudioPlayerState.Playing -> startTimer()
+            is UiAudioPlayerState.Completed -> {
                 stopTimer()
+                _currentTime.postValue("00:00")
+                _savedPosition.postValue(0)
+                _currentTrack.value?.let {
+                    audioPlayerInteractor.preparePlayer(it)
+                }
             }
-        } catch (e:Exception) {
-            Log.e("AudioPlayerViewModel", "Error in onPlayerStateChanged: ${e.message}")
-            e.printStackTrace()
+            else -> stopTimer()
         }
     }
 
     fun prepareTrack(track: TrackInfoDetails) {
         _currentTrack.value = track
         audioPlayerInteractor.preparePlayer(track)
-        _playerState.postValue(UiAudioPlayerState.Prepared())
     }
 
     fun playTrack() {
-        if (_playerState.value is UiAudioPlayerState.Playing) return
+        val playerState = audioPlayerInteractor.getPlayerState()
 
-        val saved = loadSavePosition()
-        audioPlayerInteractor.seekTo(saved)
+        if (playerState is UiAudioPlayerState.Playing) return
 
-        if (_playerState.value is UiAudioPlayerState.Paused) {
-            audioPlayerInteractor.startPlayer()
-            updateStateAsPlaying()
-        } else {
-            audioPlayerInteractor.stopPlayer()
-            updateStateAsPrepared()
+        val savedPosition = audioPlayerInteractor.getCurrentPosition()
+        audioPlayerInteractor.seekTo(savedPosition)
+        _savedPosition.postValue(currentPosition)
+
+        when(playerState) {
+            is UiAudioPlayerState.Prepared,
+                is UiAudioPlayerState.Paused,
+                     is UiAudioPlayerState.Completed -> {
+                    audioPlayerInteractor.startPlayer()
+                    updateStateAsPlaying()
+                }
+            else -> {
+                Log.e("AudioPlayer", "Invalid state to start playback: $playerState")
+            }
         }
     }
 
@@ -113,7 +119,7 @@ class AudioPlayerViewModel (
     fun stopTrack() {
         savePosition()
         audioPlayerInteractor.stopPlayer()
-        _playerState.postValue(UiAudioPlayerState.Prepared())
+        updateStateAsPrepared()
         stopTimer()
     }
 
@@ -138,16 +144,14 @@ class AudioPlayerViewModel (
         _playerState.postValue(UiAudioPlayerState.Prepared())
     }
 
-    private fun loadSavePosition(): Int {
-        val currentPosition = positionTimeInteractor.getCurrentPosition()
-        _savedPosition.postValue(currentPosition)
-        return currentPosition
-    }
-
     private fun startTimer() {
         timerJob = viewModelScope.launch {
-            while (_playerState.value is UiAudioPlayerState.Playing) {
+            while (true) {
                 delay(DELAY_TIMER)
+
+                val state = audioPlayerInteractor.getPlayerState()
+                if (state !is UiAudioPlayerState.Playing) break
+
                 currentPosition = audioPlayerInteractor.getCurrentPosition()
                 val formatted = formatTime(currentPosition)
                 _currentTime.postValue(formatted)

@@ -14,4 +14,8 @@ class PositionTime(private val sharedPreferences: SharedPreferences) {
     fun saveCurrentPosition(position: Int) {
         sharedPreferences.edit().putInt(POSITION_KEY, position).apply()
     }
+
+    fun resetPosition() {
+        sharedPreferences.edit().remove(POSITION_KEY).apply()
+    }
 }
