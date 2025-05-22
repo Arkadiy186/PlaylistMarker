@@ -1,17 +1,19 @@
 package com.example.playlistmarker.ui.audioplayer.impl
 
 import android.media.MediaPlayer
-import android.util.Log
+import com.example.playlistmarker.di.viewModelModule
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
 import com.example.playlistmarker.ui.audioplayer.viewmodel.AudioPlayerCallback
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AudioPlayerInteractorImpl : AudioPlayerInteractor {
 
     private val mediaPlayer = MediaPlayer()
     private var url = ""
-    private var currentState: UiAudioPlayerState = UiAudioPlayerState.STATE_DEFAULT
+    private var currentState: UiAudioPlayerState = UiAudioPlayerState.Default()
     private var callback: AudioPlayerCallback? = null
 
     override fun setCallback(callback: AudioPlayerCallback) {
@@ -34,34 +36,36 @@ class AudioPlayerInteractorImpl : AudioPlayerInteractor {
         }
 
         mediaPlayer.setOnPreparedListener {
-            Log.d("MediaPlayer", "onPrepared")
-            currentState = UiAudioPlayerState.STATE_PREPARED
+            currentState = UiAudioPlayerState.Prepared()
+            callback?.onPlayerStateChanged(currentState)
         }
 
         mediaPlayer.setOnCompletionListener {
-            currentState = UiAudioPlayerState.STATE_COMPLETED
-            callback?.onTrackCompletion()
+            currentState = UiAudioPlayerState.Completed()
             callback?.onPlayerStateChanged(currentState)
+            mediaPlayer.reset()
+            mediaPlayer.setDataSource(url)
+            mediaPlayer.prepareAsync()
         }
     }
 
     override fun startPlayer() {
         mediaPlayer.start()
-        currentState = UiAudioPlayerState.STATE_PLAYING
+        currentState = UiAudioPlayerState.Playing(getCurrentPosition())
+        callback?.onPlayerStateChanged(currentState)
     }
 
     override fun pausePlayer() {
         mediaPlayer.pause()
-        currentState = UiAudioPlayerState.STATE_PAUSED
+        currentState = UiAudioPlayerState.Paused(getCurrentPosition())
     }
 
     override fun stopPlayer() {
-        Log.d("MediaPlayer", "stopPlayer")
-        mediaPlayer.stop()
+        //mediaPlayer.stop()
         mediaPlayer.reset()
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
-        currentState = UiAudioPlayerState.STATE_PREPARED
+        currentState = UiAudioPlayerState.Prepared()
     }
 
     override fun seekTo(position: Int) {
@@ -75,4 +79,5 @@ class AudioPlayerInteractorImpl : AudioPlayerInteractor {
     override fun getCurrentPosition(): Int {
         return mediaPlayer.currentPosition
     }
+
 }

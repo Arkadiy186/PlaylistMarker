@@ -5,7 +5,6 @@ import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -61,17 +60,11 @@ class AudioPlayerActivity : AppCompatActivity() {
         audioPlayerViewModel.playerInfo.observe(this) { playerInfo ->
             val newPlayerState = playerInfo.playerState
             if (newPlayerState != lastPlayerState) {
-                Log.d("MediaPlayer", "state: ${playerInfo.playerState}")
                 lastPlayerState = newPlayerState
 
                 binding.playTrackButton.setImageResource(
                     when(playerInfo.playerState) {
-                        UiAudioPlayerState.STATE_PLAYING -> R.drawable.ic_stop
-                        UiAudioPlayerState.STATE_STOPPED,
-                        UiAudioPlayerState.STATE_COMPLETED -> {
-                            audioPlayerViewModel.resetTrackTime()
-                            R.drawable.ic_play
-                        }
+                        is UiAudioPlayerState.Playing -> R.drawable.ic_stop
                         else -> R.drawable.ic_play
                     }
                 )
@@ -100,8 +93,6 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("MediaPlayer", "onDestroy")
-        audioPlayerViewModel.resetTrackTime()
     }
 
     private fun setupListeners() {
@@ -116,7 +107,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             val track = audioPlayerViewModel.currentTrack.value
             if (track != null) {
                 when (audioPlayerViewModel.playerState.value) {
-                    UiAudioPlayerState.STATE_PLAYING -> audioPlayerViewModel.pauseTrack()
+                    is UiAudioPlayerState.Playing -> audioPlayerViewModel.pauseTrack()
                     else -> audioPlayerViewModel.playTrack()
                 }
             }
@@ -124,7 +115,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun setupTrackInfo(track: TrackInfoDetails) {
-        Log.d("AudioPlayerActivity", "Setting up track info for: ${track.trackName}")
 
         binding.titleCover.text = track.trackName
         binding.authorTrack.text = track.artistName
@@ -134,7 +124,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding.trackGenreCurrentInfo.text = track.primaryGenreName
         binding.trackCountryCurrentInfo.text = track.country
 
-        Log.d("AudioPlayerActivity", "Track setup complete: ${track.trackName}")
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {

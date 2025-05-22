@@ -1,6 +1,5 @@
 package com.example.playlistmarker.ui.search.recyclerview
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +14,6 @@ class TrackAdapter (private val tracks: MutableList<TrackInfoDetails>, private v
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         val track = tracks[position]
-        Log.d("TrackAdapter", "Binding track: ${track.trackName}")
         holder.bind(track)
 
         holder.itemView.setOnClickListener {

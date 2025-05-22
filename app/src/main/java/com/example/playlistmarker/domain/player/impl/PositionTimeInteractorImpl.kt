@@ -11,6 +11,7 @@ class PositionTimeInteractorImpl(private val positionTimeRepository: PositionTim
     override fun saveCurrentPosition(position: Int) {
         positionTimeRepository.saveCurrentPosition(position)
     }
+
     override fun resetPosition() {
         positionTimeRepository.resetPosition()
     }

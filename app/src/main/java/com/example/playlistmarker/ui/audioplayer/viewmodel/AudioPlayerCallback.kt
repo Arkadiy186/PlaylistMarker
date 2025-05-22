@@ -4,5 +4,4 @@ import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerSta
 
 interface AudioPlayerCallback {
     fun onPlayerStateChanged(state: UiAudioPlayerState)
-    fun onTrackCompletion()
 }

@@ -1,6 +1,5 @@
 package com.example.playlistmarker.ui.search.ui_state
 
-import android.util.Log
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.playlistmarker.databinding.FragmentSearchBinding
@@ -15,7 +14,6 @@ class UiHistoryHandlerImpl(
     override fun historySetVisibility(isVisible: Boolean) {
         fragment.requireActivity().runOnUiThread {
             if (isVisible) {
-                Log.d("UiHistoryHandler", "isVisible: {$isVisible}")
                 binding.recyclerView.adapter = historyAdapter
                 historyAdapter.notifyDataSetChanged()
                 binding.historySearchTextView.isVisible = true
