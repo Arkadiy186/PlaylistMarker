@@ -10,7 +10,7 @@ class HistoryInteractorImpl(private val historyRepository: HistoryRepository) : 
         historyRepository.addTrackHistory(track)
     }
 
-    override fun getTrackHistory(): List<Track> {
+    override suspend fun getTrackHistory(): List<Track> {
         return historyRepository.getHistory()
     }
 
@@ -18,16 +18,8 @@ class HistoryInteractorImpl(private val historyRepository: HistoryRepository) : 
         return historyRepository.clearHistory()
     }
 
-    override fun loadHistory(consumer: (List<Track>) -> Unit) {
+    override suspend fun loadHistory(consumer: (List<Track>) -> Unit) {
         val history = getTrackHistory()
         consumer(history)
-    }
-
-    override fun getTrackByNameAndArtist(trackName: String, artistName: String): List<Track> {
-        val history = getTrackHistory()
-        return history.filter { track ->
-            track.artistName.contains(artistName, ignoreCase = true) &&
-                    track.trackName.contains(trackName, ignoreCase = true)
-        }
     }
 }

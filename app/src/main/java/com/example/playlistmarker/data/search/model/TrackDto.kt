@@ -3,6 +3,7 @@ package com.example.playlistmarker.data.search.model
 import com.google.gson.annotations.SerializedName
 
 data class TrackDto (
+    @SerializedName("trackId") val id: Int,
     @SerializedName("trackName") val trackName: String,
     @SerializedName("artistName") val artistName: String,
     @SerializedName("trackTimeMillis") val trackTime: Long,

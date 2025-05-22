@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.playlistmarker.databinding.FragmentFavouriteTracksBinding
-import com.example.playlistmarker.ui.medialibrary.viewmodel.FragmentFavouriteTrackViewModel
+import com.example.playlistmarker.ui.medialibrary.viewmodel.favouritetracks.FragmentFavouriteTrackViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 

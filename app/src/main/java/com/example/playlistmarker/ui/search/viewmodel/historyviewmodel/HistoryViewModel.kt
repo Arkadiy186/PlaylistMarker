@@ -15,7 +15,7 @@ class HistoryViewModel(private val historyInteractor: HistoryInteractor): ViewMo
     private val _historyStateLiveData = MutableLiveData<List<TrackInfoDetails>>()
     val historyState: LiveData<List<TrackInfoDetails>> = _historyStateLiveData
 
-    fun loadHistory() {
+    suspend fun loadHistory() {
         historyInteractor.loadHistory { history ->
             val trackInfo = history.map { TrackInfoDetailsMapper.map(it) }
             _historyStateLiveData.postValue(trackInfo)

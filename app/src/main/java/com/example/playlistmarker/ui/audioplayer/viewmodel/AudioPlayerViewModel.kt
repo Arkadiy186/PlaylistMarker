@@ -5,9 +5,11 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmarker.domain.db.use_cases.TrackDbInteractor
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.PositionTimeInteractor
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
+import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -15,7 +17,9 @@ import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel (
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    private val positionTimeInteractor: PositionTimeInteractor) : ViewModel(), AudioPlayerCallback {
+    private val positionTimeInteractor: PositionTimeInteractor,
+    private val trackDbInteractor: TrackDbInteractor
+) : ViewModel(), AudioPlayerCallback {
 
     private val _playerState = MutableLiveData<UiAudioPlayerState>().apply { value = UiAudioPlayerState.Default() }
     val playerState: LiveData<UiAudioPlayerState> = _playerState
@@ -33,6 +37,7 @@ class AudioPlayerViewModel (
     val playerInfo: LiveData<PlayerInfo> = _playerInfo
 
     val track = TrackInfoDetails(
+        1,
         "",
         "",
         "",
@@ -41,7 +46,8 @@ class AudioPlayerViewModel (
         "",
         "",
         "",
-        "")
+        "",
+        false)
 
     private var timerJob: Job?= null
     private var currentPosition: Int = 0
@@ -125,6 +131,21 @@ class AudioPlayerViewModel (
         audioPlayerInteractor.seekTo(position)
         currentPosition = position
         _currentTime.postValue(formatTime(position))
+    }
+
+    fun onFavoriteClicked() {
+        val current = _currentTrack.value ?: return
+
+        viewModelScope.launch {
+            val domainTrack = TrackInfoDetailsMapper.mapToDomain(current)
+            if (domainTrack.isFavourite) {
+                trackDbInteractor.deleteTrack(domainTrack)
+            } else {
+                trackDbInteractor.insertTrack(domainTrack)
+            }
+            val updateTrack = current.copy(isFavourite = !current.isFavourite)
+            _currentTrack.postValue(updateTrack)
+        }
     }
 
     private fun updateState(state: (Int) -> UiAudioPlayerState) {

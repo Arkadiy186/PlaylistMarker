@@ -7,31 +7,28 @@ class DbConverters {
 
     fun mapToDomain(trackEntity: TrackEntity): Track {
         return Track(
-            trackEntity.id,
-            trackEntity.trackName,
-            trackEntity.artistName,
-            trackEntity.trackTime,
-            trackEntity.artworkUrl100,
-            trackEntity.collectionName,
-            trackEntity.releaseDate,
-            trackEntity.primaryGenreName,
-            trackEntity.country,
-            trackEntity.previewUrl,
-            trackEntity.isFavourite)
+            id = trackEntity.id,
+            trackName = trackEntity.trackName,
+            artistName = trackEntity.artistName,
+            trackTime = trackEntity.trackTime,
+            artworkUrl100 = trackEntity.artworkUrl100,
+            collectionName = trackEntity.collectionName,
+            releaseDate = trackEntity.releaseDate,
+            primaryGenreName = trackEntity.trackName,
+            country = trackEntity.country,
+            previewUrl = trackEntity.previewUrl)
     }
 
     fun mapToData(track: Track): TrackEntity {
         return TrackEntity(
-            track.id,
-            track.trackName,
-            track.artistName,
-            track.trackTime,
-            track.artworkUrl100,
-            track.collectionName,
-            track.releaseDate,
-            track.primaryGenreName,
-            track.country,
-            track.previewUrl,
-            track.isFavourite)
+            trackName = track.trackName,
+            artistName = track.artistName,
+            trackTime = track.trackTime,
+            artworkUrl100 = track.artworkUrl100,
+            collectionName = track.collectionName,
+            releaseDate = track.releaseDate,
+            primaryGenreName = track.primaryGenreName,
+            country = track.country,
+            previewUrl = track.previewUrl)
     }
 }

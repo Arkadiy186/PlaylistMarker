@@ -1,6 +1,5 @@
 package com.example.playlistmarker.ui.search.viewmodel.searchviewmodel
 
-import android.provider.Contacts.Intents.UI
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmarker.R
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
 import com.example.playlistmarker.domain.search.model.Track
-import com.example.playlistmarker.domain.search.repository.Resources
 import com.example.playlistmarker.domain.search.use_cases.NetworkInteractor
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.domain.search.use_cases.TrackInteractor
@@ -20,7 +18,6 @@ import kotlinx.coroutines.launch
 class SearchViewModel (
     private val trackInteractor: TrackInteractor,
     private val networkInteractor: NetworkInteractor,
-    private val searchStateInteractor: SearchStateInteractor,
     private val debounceHandler: DebounceHandler) : ViewModel() {
 
     private val _uiState = MutableLiveData<UiState>()

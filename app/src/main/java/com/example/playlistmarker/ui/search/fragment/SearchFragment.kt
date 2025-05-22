@@ -33,6 +33,7 @@ import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryVi
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.UiState
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -128,8 +129,9 @@ class SearchFragment : Fragment() {
             val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
             if (hasFocus && binding.searchEditText.text.isEmpty()) {
 
-                historyViewModel.loadHistory()
-
+                viewLifecycleOwner.lifecycleScope.launch {
+                    historyViewModel.loadHistory()
+                }
                 bottomNavigationView.visibility = View.GONE
 
                 historyViewModel.historyState.observe(viewLifecycleOwner) { history ->
