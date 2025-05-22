@@ -2,6 +2,8 @@ package com.example.playlistmarker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
+import com.example.playlistmarker.data.db.AppDatabase
 import com.example.playlistmarker.data.player.sharedpreferences.PositionTime
 import com.example.playlistmarker.data.search.network.RetrofitClient
 import com.example.playlistmarker.data.search.network.RetrofitClientImpl
@@ -64,5 +66,11 @@ val dataModule = module {
 
     single {
         PositionTime(get<SharedPreferences>(named("player_prefs")))
+    }
+
+    //DATABASE
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
     }
 }

@@ -1,6 +1,11 @@
-package com.example.playlistmarker.domain.search.model
+package com.example.playlistmarker.data.db.entitys
 
-data class Track (
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "track_table")
+data class TrackEntity(
+    @PrimaryKey
     val id: String,
     val trackName: String,
     val artistName: String,
