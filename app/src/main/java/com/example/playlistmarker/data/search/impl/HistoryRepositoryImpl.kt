@@ -1,20 +1,29 @@
 package com.example.playlistmarker.data.search.impl
 
+import com.example.playlistmarker.data.db.AppDatabase
 import com.example.playlistmarker.data.mappers.TrackDtoMapper
 import com.example.playlistmarker.data.search.sharedpreferences.HistorySearch
 import com.example.playlistmarker.domain.search.model.Track
 import com.example.playlistmarker.domain.search.repository.HistoryRepository
 
-class HistoryRepositoryImpl(private val historySearch: HistorySearch) : HistoryRepository {
+class HistoryRepositoryImpl(
+    private val historySearch: HistorySearch,
+    private val appDatabase: AppDatabase
+) : HistoryRepository {
 
     override fun addTrackHistory(track: Track) {
         val trackDto = TrackDtoMapper.toDto(track)
         historySearch.addTrackHistory(trackDto)
     }
 
-    override fun getHistory(): List<Track> {
+    override suspend fun getHistory(): List<Track> {
+        val favouriteIds = appDatabase.trackDao().getIdTracks()
         val trackDtoList = historySearch.getHistory()
-        return trackDtoList.map { TrackDtoMapper.mapToDomain(it) }
+        val mapDomainTrack = trackDtoList.map { TrackDtoMapper.mapToDomain(it) }
+        val updateTracks = mapDomainTrack.map { track ->
+            track.copy(isFavourite = favouriteIds.contains(track.id))
+        }
+        return updateTracks
     }
 
     override fun clearHistory() {

@@ -16,7 +16,8 @@ class DbConverters {
             trackEntity.releaseDate,
             trackEntity.primaryGenreName,
             trackEntity.country,
-            trackEntity.previewUrl)
+            trackEntity.previewUrl,
+            trackEntity.isFavourite)
     }
 
     fun mapToData(track: Track): TrackEntity {
@@ -30,6 +31,7 @@ class DbConverters {
             track.releaseDate,
             track.primaryGenreName,
             track.country,
-            track.previewUrl)
+            track.previewUrl,
+            track.isFavourite)
     }
 }
