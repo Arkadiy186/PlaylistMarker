@@ -1,7 +1,6 @@
 package com.example.playlistmarker.ui.audioplayer.impl
 
 import android.media.MediaPlayer
-import android.util.Log
 import com.example.playlistmarker.di.viewModelModule
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
@@ -25,7 +24,6 @@ class AudioPlayerInteractorImpl : AudioPlayerInteractor {
         url = track.previewUrl
 
         if (url == "") {
-            Log.e("AudioPlayerInteractor", "Invalid track URL")
             return
         }
 
@@ -34,12 +32,10 @@ class AudioPlayerInteractorImpl : AudioPlayerInteractor {
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
         }catch (e:Exception) {
-            Log.e("AudioPlayerInteractor", "Error preparing player: ${e.message}")
             e.printStackTrace()
         }
 
         mediaPlayer.setOnPreparedListener {
-            Log.d("MediaPlayer", "onPrepared")
             currentState = UiAudioPlayerState.Prepared()
             callback?.onPlayerStateChanged(currentState)
         }
@@ -65,7 +61,6 @@ class AudioPlayerInteractorImpl : AudioPlayerInteractor {
     }
 
     override fun stopPlayer() {
-        Log.d("MediaPlayer", "stopPlayer")
         //mediaPlayer.stop()
         mediaPlayer.reset()
         mediaPlayer.setDataSource(url)

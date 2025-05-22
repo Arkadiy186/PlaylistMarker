@@ -1,6 +1,5 @@
 package com.example.playlistmarker.ui.audioplayer.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -101,10 +100,9 @@ class AudioPlayerViewModel (
                 is UiAudioPlayerState.Paused,
                      is UiAudioPlayerState.Completed -> {
                     audioPlayerInteractor.startPlayer()
-                    updateStateAsPlaying()
+                    updateState { UiAudioPlayerState.Playing(it) }
                 }
             else -> {
-                Log.e("AudioPlayer", "Invalid state to start playback: $playerState")
             }
         }
     }
@@ -112,7 +110,7 @@ class AudioPlayerViewModel (
     fun pauseTrack() {
         savePosition()
         audioPlayerInteractor.pausePlayer()
-        updateStateAsPaused()
+        updateState { UiAudioPlayerState.Paused(it) }
         stopTimer()
     }
 
@@ -129,14 +127,9 @@ class AudioPlayerViewModel (
         _currentTime.postValue(formatTime(position))
     }
 
-    private fun updateStateAsPlaying() {
+    private fun updateState(state: (Int) -> UiAudioPlayerState) {
         currentPosition = audioPlayerInteractor.getCurrentPosition()
-        _playerState.postValue(UiAudioPlayerState.Playing(currentPosition))
-    }
-
-    private fun updateStateAsPaused() {
-        currentPosition = audioPlayerInteractor.getCurrentPosition()
-        _playerState.postValue(UiAudioPlayerState.Paused(currentPosition))
+        _playerState.postValue(state(currentPosition))
     }
 
     private fun updateStateAsPrepared() {

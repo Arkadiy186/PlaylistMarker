@@ -3,7 +3,6 @@ package com.example.playlistmarker.ui.search.fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,7 +73,6 @@ class SearchFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope,
             useLastParam = true
         ) { track ->
-            Log.d("Debounce", "clickDebounce")
             val domainTrack = TrackInfoDetailsMapper.mapToDomain(track)
             historyInteractor.addTrackHistory(domainTrack)
             navigationContract.openAudioPlayer(track)
@@ -152,7 +150,6 @@ class SearchFragment : Fragment() {
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Log.d("UiHistoryHandler", "textChanged")
                 handleSearchTextChange(s)
             }
             override fun afterTextChanged(s: Editable?) {}

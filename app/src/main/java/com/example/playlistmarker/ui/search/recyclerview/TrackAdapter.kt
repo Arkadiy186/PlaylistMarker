@@ -1,6 +1,5 @@
 package com.example.playlistmarker.ui.search.recyclerview
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +18,6 @@ class TrackAdapter (private val tracks: MutableList<TrackInfoDetails>, private v
 
         holder.itemView.setOnClickListener {
             onItemClickListener(track)
-            Log.d("Debounce", "Track clicked: ${track.trackName}")
         }
     }
 

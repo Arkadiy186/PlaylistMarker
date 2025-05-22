@@ -5,7 +5,6 @@ import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +30,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("AudioPlayerActivity", "onCreate called")
         setContentView(R.layout.audioplayer)
         binding = AudioplayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -62,7 +60,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         audioPlayerViewModel.playerInfo.observe(this) { playerInfo ->
             val newPlayerState = playerInfo.playerState
             if (newPlayerState != lastPlayerState) {
-                Log.d("MediaPlayer", "state: ${playerInfo.playerState}")
                 lastPlayerState = newPlayerState
 
                 binding.playTrackButton.setImageResource(
@@ -96,7 +93,6 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("MediaPlayer", "onDestroy")
     }
 
     private fun setupListeners() {
@@ -119,7 +115,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun setupTrackInfo(track: TrackInfoDetails) {
-        Log.d("AudioPlayerActivity", "Setting up track info for: ${track.trackName}")
 
         binding.titleCover.text = track.trackName
         binding.authorTrack.text = track.artistName
@@ -129,7 +124,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding.trackGenreCurrentInfo.text = track.primaryGenreName
         binding.trackCountryCurrentInfo.text = track.country
 
-        Log.d("AudioPlayerActivity", "Track setup complete: ${track.trackName}")
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {
