@@ -38,5 +38,9 @@
         android:id="@+id/favouriteTracksFragment"
         android:name="com.example.playlistmarker.ui.medialibrary.fragments.FavouriteTracksFragment"
         android:label="fragment_favourite_tracks"
-        tools:layout="@layout/fragment_favourite_tracks" />
+        tools:layout="@layout/fragment_favourite_tracks" >
+        <action
+            android:id="@+id/action_favouriteTracksFragment_to_audioPlayerActivity"
+            app:destination="@id/audioPlayerActivity" />
+    </fragment>
 </navigation>

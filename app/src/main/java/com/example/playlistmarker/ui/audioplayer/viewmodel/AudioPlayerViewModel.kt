@@ -9,6 +9,7 @@ import com.example.playlistmarker.domain.db.use_cases.TrackDbInteractor
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.PositionTimeInteractor
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
+import com.example.playlistmarker.ui.audioplayer.state.UiFavoriteButtonState
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import kotlinx.coroutines.Job
@@ -35,6 +36,9 @@ class AudioPlayerViewModel (
 
     private val _playerInfo = MediatorLiveData<PlayerInfo>()
     val playerInfo: LiveData<PlayerInfo> = _playerInfo
+
+    private val _favouriteButtonState = MediatorLiveData<UiFavoriteButtonState>()
+    val favouriteButtonState: LiveData<UiFavoriteButtonState> = _favouriteButtonState
 
     val track = TrackInfoDetails(
         1,
@@ -68,6 +72,14 @@ class AudioPlayerViewModel (
         _playerInfo.addSource(currentTime) {update()}
         _playerInfo.addSource(currentTrack) {update()}
         _playerInfo.addSource(savedPosition) {update()}
+
+        _favouriteButtonState.addSource(currentTrack) { track ->
+            _favouriteButtonState.value = if (track.isFavourite) {
+                UiFavoriteButtonState.IsFavourite()
+            } else {
+                UiFavoriteButtonState.NotFavourite()
+            }
+        }
     }
 
     override fun onPlayerStateChanged(state: UiAudioPlayerState) {

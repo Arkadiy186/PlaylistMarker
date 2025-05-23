@@ -9,15 +9,12 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
 import com.example.playlistmarker.databinding.FragmentSearchBinding
-import com.example.playlistmarker.domain.search.model.Track
 import com.example.playlistmarker.domain.search.use_cases.HistoryInteractor
-import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import com.example.playlistmarker.ui.search.recyclerview.TrackAdapter

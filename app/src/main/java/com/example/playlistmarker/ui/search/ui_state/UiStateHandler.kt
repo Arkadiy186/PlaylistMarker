@@ -4,6 +4,7 @@ interface UiStateHandler {
     fun showLoading(isLoading: Boolean)
     fun showErrorInternet(message: Int)
     fun showNotFound()
+    fun favouriteNotFound()
     fun placeholderSetVisibility(
         isHidden: Boolean,
         text: String = "",

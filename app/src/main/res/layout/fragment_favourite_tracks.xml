@@ -7,7 +7,7 @@
     tools:context=".ui.medialibrary.fragments.FavouriteTracksFragment">
 
     <LinearLayout
-        android:id="@+id/placeholder"
+        android:id="@+id/placeholderError"
         style="@style/placeholderErrorStyle"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"

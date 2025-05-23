@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.R
@@ -16,6 +16,8 @@ import com.example.playlistmarker.databinding.AudioplayerBinding
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
 import com.example.playlistmarker.ui.audioplayer.viewmodel.AudioPlayerViewModel
 import com.example.playlistmarker.ui.main.activity.MainActivity
+import com.example.playlistmarker.ui.medialibrary.viewmodel.favouritetracks.FavouriteTracksUiState
+import com.example.playlistmarker.ui.medialibrary.viewmodel.favouritetracks.FragmentFavouriteTrackViewModel
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
@@ -24,6 +26,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: AudioplayerBinding
     private val audioPlayerViewModel: AudioPlayerViewModel by viewModel()
+    private val favouriteTrackViewModel: FragmentFavouriteTrackViewModel by viewModel()
 
     private var lastPlayerState: UiAudioPlayerState? = null
 
@@ -78,6 +81,10 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.trackGenreCurrentInfo.text = playerInfo.currentTrack.primaryGenreName
             binding.trackCountryCurrentInfo.text = playerInfo.currentTrack.country
         }
+
+        audioPlayerViewModel.favouriteButtonState.observe(this) { state ->
+            binding.likeTrackButton.setImageResource(state.resId)
+        }
     }
 
     override fun onStop() {
@@ -111,6 +118,10 @@ class AudioPlayerActivity : AppCompatActivity() {
                     else -> audioPlayerViewModel.playTrack()
                 }
             }
+        }
+
+        binding.likeTrackButton.setOnClickListener {
+            audioPlayerViewModel.onFavoriteClicked()
         }
     }
 
