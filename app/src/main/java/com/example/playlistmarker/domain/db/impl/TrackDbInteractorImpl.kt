@@ -21,6 +21,10 @@ class TrackDbInteractorImpl(private val trackDbRepository: TrackDbRepository) : 
             .map { tracks -> sortReverseOrder(tracks) }
     }
 
+    override fun getAllFavouriteTracks(): Flow<List<Int>> {
+        return trackDbRepository.getAllFavouriteTracks()
+    }
+
     private fun sortReverseOrder(tracks: List<Track>): List<Track> {
         return tracks.sortedByDescending { it.id }
     }

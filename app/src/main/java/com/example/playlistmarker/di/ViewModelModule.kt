@@ -41,7 +41,7 @@ val viewModelModule = module {
         FragmentPlaylistViewModel(playlistId)
     }
 
-    factory { (trackId: String) ->
+    factory {
         FragmentFavouriteTrackViewModel(get<TrackDbInteractor>())
     }
 

@@ -69,7 +69,7 @@ val dataModule = module {
     }
 
     //DATABASE
-    single {
+    single<AppDatabase> {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
             .build()
     }

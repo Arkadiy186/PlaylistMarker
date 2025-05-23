@@ -26,6 +26,10 @@ class TrackDbRepositoryImpl(
         emit(converterTracksToDomain(tracks))
     }
 
+    override fun getAllFavouriteTracks(): Flow<List<Int>> = flow {
+        emit(appDatabase.trackDao().getIdTracks())
+    }
+
     private fun converterTracksToDomain(tracks: List<TrackEntity>): List<Track> {
         return tracks.map { track -> dbConverters.mapToDomain(track) }
     }

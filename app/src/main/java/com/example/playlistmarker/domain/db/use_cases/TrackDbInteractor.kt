@@ -7,4 +7,5 @@ interface TrackDbInteractor {
     suspend fun insertTrack(track: Track)
     suspend fun deleteTrack(track: Track)
     fun getFavouriteTracks(): Flow<List<Track>>
+    fun getAllFavouriteTracks(): Flow<List<Int>>
 }

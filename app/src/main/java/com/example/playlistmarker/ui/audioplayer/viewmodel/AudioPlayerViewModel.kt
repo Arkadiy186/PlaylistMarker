@@ -14,6 +14,7 @@ import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel (
@@ -100,8 +101,14 @@ class AudioPlayerViewModel (
     }
 
     fun prepareTrack(track: TrackInfoDetails) {
-        _currentTrack.value = track
-        audioPlayerInteractor.preparePlayer(track)
+        viewModelScope.launch {
+            val favouriteIds = trackDbInteractor.getAllFavouriteTracks().first()
+            val isFavourite = track.id in favouriteIds
+            val updateTrack = track.copy(isFavourite = isFavourite)
+
+            _currentTrack.postValue(updateTrack)
+            audioPlayerInteractor.preparePlayer(updateTrack)
+        }
     }
 
     fun playTrack() {

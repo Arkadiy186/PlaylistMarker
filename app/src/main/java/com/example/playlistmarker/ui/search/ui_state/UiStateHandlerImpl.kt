@@ -55,16 +55,6 @@
             }
         }
 
-        override fun favouriteNotFound() {
-            fragment.requireActivity().runOnUiThread {
-                placeholderSetVisibility(
-                    false,
-                    "",
-                    R.drawable.ic_placeholder_not_found,
-                    R.string.media_library_empty
-                )
-            }
-        }
 
          override fun placeholderSetVisibility(isHidden: Boolean, text: String, imageRes: Int, textRes: Int) {
              fragment.requireActivity().runOnUiThread {

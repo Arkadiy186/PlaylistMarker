@@ -18,9 +18,9 @@ class MyApp : Application() {
             androidContext(this@MyApp)
             modules(
                 dataModule,
-                viewModelModule,
                 repositoryModule,
-                useCasesModule
+                useCasesModule,
+                viewModelModule
             )
         }
     }
