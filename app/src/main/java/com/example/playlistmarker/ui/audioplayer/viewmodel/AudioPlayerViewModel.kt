@@ -92,9 +92,9 @@ class AudioPlayerViewModel (
             is UiAudioPlayerState.Completed -> {
                 stopTimer()
                 _currentTime.postValue("00:00")
-                _savedPosition.postValue(0)
                 _currentTrack.value?.let {
                     audioPlayerInteractor.preparePlayer(it)
+                    audioPlayerInteractor.startPlayer()
                 }
             }
             else -> stopTimer()
@@ -103,14 +103,12 @@ class AudioPlayerViewModel (
 
     fun prepareTrack(track: TrackInfoDetails) {
         viewModelScope.launch {
-            trackDbInteractor.getAllFavouriteTracks()
-                .collect { favouriteIds ->
-                    val isFavourite = track.id in favouriteIds
-                    val updateTrack = track.copy(isFavourite = isFavourite)
+            val favouriteIds = trackDbInteractor.getAllFavouriteTracks().first()
+            val isFavourite = track.id in favouriteIds
+            val updatedTrack = track.copy(isFavourite = isFavourite)
+            _currentTrack.postValue(updatedTrack)
 
-                    _currentTrack.postValue(updateTrack)
-                    audioPlayerInteractor.preparePlayer(updateTrack)
-                }
+            audioPlayerInteractor.preparePlayer(updatedTrack)
         }
     }
 
@@ -119,19 +117,14 @@ class AudioPlayerViewModel (
 
         if (playerState is UiAudioPlayerState.Playing) return
 
-        val savedPosition = audioPlayerInteractor.getCurrentPosition()
-        audioPlayerInteractor.seekTo(savedPosition)
-        _savedPosition.postValue(currentPosition)
-
         when(playerState) {
             is UiAudioPlayerState.Prepared,
-                is UiAudioPlayerState.Paused,
-                     is UiAudioPlayerState.Completed -> {
-                    audioPlayerInteractor.startPlayer()
-                    updateState { UiAudioPlayerState.Playing(it) }
-                }
-            else -> {
+            is UiAudioPlayerState.Paused -> {
+                audioPlayerInteractor.startPlayer()
             }
+            is UiAudioPlayerState.Completed -> {
+            }
+            else -> {}
         }
     }
 
@@ -165,13 +158,18 @@ class AudioPlayerViewModel (
             } else {
                 trackDbInteractor.insertTrack(domainTrack)
             }
-            val updatedTrack = current.copy(isFavourite = !current.isFavourite)
-            _currentTrack.postValue(updatedTrack)
+
+            _favouriteButtonState.postValue(
+                if (!current.isFavourite) UiFavoriteButtonState.IsFavourite()
+                else UiFavoriteButtonState.NotFavourite()
+            )
+
+            _currentTrack.value = current.copy(isFavourite = !current.isFavourite)
         }
     }
 
     private fun updateState(state: (Int) -> UiAudioPlayerState) {
-        currentPosition = audioPlayerInteractor.getCurrentPosition()
+        currentPosition = audioPlayerInteractor.getCurrentPositionPlayer()
         _playerState.postValue(state(currentPosition))
     }
 
@@ -188,7 +186,7 @@ class AudioPlayerViewModel (
                 val state = audioPlayerInteractor.getPlayerState()
                 if (state !is UiAudioPlayerState.Playing) break
 
-                currentPosition = audioPlayerInteractor.getCurrentPosition()
+                currentPosition = audioPlayerInteractor.getCurrentPositionPlayer()
                 val formatted = formatTime(currentPosition)
                 _currentTime.postValue(formatted)
                 _playerState.postValue(UiAudioPlayerState.Playing(currentPosition))

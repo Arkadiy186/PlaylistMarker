@@ -87,7 +87,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         audioPlayerViewModel.savePosition()
-        audioPlayerViewModel.stopTrack()
+        audioPlayerViewModel.pauseTrack()
     }
 
     override fun onPause() {
