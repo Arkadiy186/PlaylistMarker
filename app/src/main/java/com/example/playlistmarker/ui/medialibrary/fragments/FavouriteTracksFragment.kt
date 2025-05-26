@@ -1,12 +1,13 @@
 package com.example.playlistmarker.ui.medialibrary.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.databinding.FragmentFavouriteTracksBinding
@@ -19,6 +20,8 @@ import com.example.playlistmarker.ui.search.recyclerview.TrackAdapter
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
 import com.example.playlistmarker.ui.search.utills.sharing.NavigationContract
 import com.example.playlistmarker.ui.search.utills.sharing.NavigationContractImpl
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -67,21 +70,27 @@ class FavouriteTracksFragment : Fragment() {
         observeViewModels()
     }
 
+    override fun onResume() {
+        super.onResume()
+        favouriteTrackViewModel.refreshFavourites()
+    }
+
     private fun observeViewModels() {
-        favouriteTrackViewModel.favouriteTrackLivedata.observe(viewLifecycleOwner) { state ->
-            handleUiState(state)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                favouriteTrackViewModel.favouriteTrackLivedata.collect { state ->
+                    handleUiState(state)
+                }
+            }
         }
     }
 
     private fun handleUiState(favouriteTracksUiState: FavouriteTracksUiState) {
-        Log.d("FavouriteTracksFragment", "UI state: $favouriteTracksUiState")
         when(favouriteTracksUiState) {
             is FavouriteTracksUiState.Content -> {
-                Log.d("FavouriteTracksFragment", "Got ${favouriteTracksUiState.tracks.size} tracks")
                 showTracks(favouriteTracksUiState.tracks)
             }
             else -> {
-                Log.d("FavouriteTracksFragment", "No favourite tracks found")
                 uiStateFavouriteHandler.favouriteNotFound()
             }
         }

@@ -15,7 +15,8 @@ data class TrackInfoDetails(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String,
-    var isFavourite: Boolean = false
+    var isFavourite: Boolean = false,
+    var addedAt: Long = 0L
 ) : Parcelable {
 
     fun getCoverArtWork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")

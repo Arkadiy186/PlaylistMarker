@@ -5,6 +5,7 @@ import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity

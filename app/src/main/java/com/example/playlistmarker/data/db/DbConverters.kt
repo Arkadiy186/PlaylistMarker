@@ -21,6 +21,7 @@ class DbConverters {
 
     fun mapToData(track: Track): TrackEntity {
         return TrackEntity(
+            id = 0,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTime = track.trackTime,

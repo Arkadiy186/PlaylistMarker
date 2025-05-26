@@ -16,6 +16,8 @@ object TrackInfoDetailsMapper {
             primaryGenreName = track.primaryGenreName,
             country = track.country,
             previewUrl = track.previewUrl,
+            isFavourite = track.isFavourite,
+            addedAt = track.addedAt
         )
     }
 
@@ -31,6 +33,8 @@ object TrackInfoDetailsMapper {
             primaryGenreName = trackInfo.primaryGenreName,
             country = trackInfo.country,
             previewUrl = trackInfo.previewUrl,
+            isFavourite = trackInfo.isFavourite,
+            addedAt = trackInfo.addedAt
         )
     }
 }

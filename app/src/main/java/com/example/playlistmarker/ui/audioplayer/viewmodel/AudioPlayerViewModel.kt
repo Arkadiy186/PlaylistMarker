@@ -1,5 +1,6 @@
 package com.example.playlistmarker.ui.audioplayer.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -102,12 +103,14 @@ class AudioPlayerViewModel (
 
     fun prepareTrack(track: TrackInfoDetails) {
         viewModelScope.launch {
-            val favouriteIds = trackDbInteractor.getAllFavouriteTracks().first()
-            val isFavourite = track.id in favouriteIds
-            val updateTrack = track.copy(isFavourite = isFavourite)
+            trackDbInteractor.getAllFavouriteTracks()
+                .collect { favouriteIds ->
+                    val isFavourite = track.id in favouriteIds
+                    val updateTrack = track.copy(isFavourite = isFavourite)
 
-            _currentTrack.postValue(updateTrack)
-            audioPlayerInteractor.preparePlayer(updateTrack)
+                    _currentTrack.postValue(updateTrack)
+                    audioPlayerInteractor.preparePlayer(updateTrack)
+                }
         }
     }
 
@@ -156,14 +159,16 @@ class AudioPlayerViewModel (
         val current = _currentTrack.value ?: return
 
         viewModelScope.launch {
-            val domainTrack = TrackInfoDetailsMapper.mapToDomain(current)
-            if (domainTrack.isFavourite) {
+            val domainTrack = TrackInfoDetailsMapper.mapToDomain(current).copy(
+                addedAt = if (current.isFavourite) 0L else System.currentTimeMillis()
+            )
+            if (current.isFavourite) {
                 trackDbInteractor.deleteTrack(domainTrack)
             } else {
                 trackDbInteractor.insertTrack(domainTrack)
             }
-            val updateTrack = current.copy(isFavourite = !current.isFavourite)
-            _currentTrack.postValue(updateTrack)
+            val updatedTrack = current.copy(isFavourite = !current.isFavourite, addedAt = domainTrack.addedAt)
+            _currentTrack.postValue(updatedTrack)
         }
     }
 

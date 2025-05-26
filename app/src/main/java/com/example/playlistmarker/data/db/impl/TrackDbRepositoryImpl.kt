@@ -14,11 +14,17 @@ class TrackDbRepositoryImpl(
 ) : TrackDbRepository {
 
     override suspend fun insertTrack(track: Track) {
-        appDatabase.trackDao().insertTrack(convertTracksToData(track))
+        val existingTrack = appDatabase.trackDao().getTrackById(track.id)
+        if (existingTrack == null) {
+            appDatabase.trackDao().insertTrack(convertTracksToData(track))
+        }
     }
 
     override suspend fun deleteTrack(track: Track) {
-        appDatabase.trackDao().deleteTrack(convertTracksToData(track))
+        val entity = appDatabase.trackDao().getTrackById(track.id)
+        if (entity != null) {
+            appDatabase.trackDao().deleteTrack(entity)
+        }
     }
 
     override fun getFavouriteTracks(): Flow<List<Track>> = flow {
