@@ -159,15 +159,13 @@ class AudioPlayerViewModel (
         val current = _currentTrack.value ?: return
 
         viewModelScope.launch {
-            val domainTrack = TrackInfoDetailsMapper.mapToDomain(current).copy(
-                addedAt = if (current.isFavourite) 0L else System.currentTimeMillis()
-            )
+            val domainTrack = TrackInfoDetailsMapper.mapToDomain(current)
             if (current.isFavourite) {
                 trackDbInteractor.deleteTrack(domainTrack)
             } else {
                 trackDbInteractor.insertTrack(domainTrack)
             }
-            val updatedTrack = current.copy(isFavourite = !current.isFavourite, addedAt = domainTrack.addedAt)
+            val updatedTrack = current.copy(isFavourite = !current.isFavourite)
             _currentTrack.postValue(updatedTrack)
         }
     }

@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
 import com.example.playlistmarker.databinding.FragmentSearchBinding
@@ -29,7 +28,6 @@ import com.example.playlistmarker.ui.search.utills.sharing.NavigationContractImp
 import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.UiState
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -95,9 +93,6 @@ class SearchFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         binding.searchEditText.clearFocus()
-        binding.searchEditText.setText("")
-        searchList.clear()
-        searchAdapter.notifyDataSetChanged()
     }
 
     private fun setupListeners() {
@@ -123,26 +118,13 @@ class SearchFragment : Fragment() {
         }
 
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-            if (hasFocus && binding.searchEditText.text.isEmpty()) {
+            /*val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+            bottomNavigationView.visibility = if (hasFocus && binding.searchEditText.text.isEmpty()) View.GONE else View.VISIBLE*/
 
+            if (hasFocus && binding.searchEditText.text.isEmpty()) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     historyViewModel.loadHistory()
                 }
-                bottomNavigationView.visibility = View.GONE
-
-                historyViewModel.historyState.observe(viewLifecycleOwner) { history ->
-
-                    historyTrack.clear()
-                    historyTrack.addAll(history)
-                    historyAdapter.notifyDataSetChanged()
-
-                    val shouldShowHistory = history.isNotEmpty()
-                    uiHistoryHandler.historySetVisibility(shouldShowHistory)
-                }
-            } else {
-                bottomNavigationView.visibility = View.VISIBLE
-                uiHistoryHandler.historySetVisibility(false)
             }
         }
 
@@ -180,6 +162,16 @@ class SearchFragment : Fragment() {
         searchViewModel.combinedLiveData.observe(viewLifecycleOwner) { (uiState, searchState) ->
             uiState?.let { handleUiState(it) }
             searchState?.let { handleSearchState(it) }
+        }
+
+        historyViewModel.historyState.observe(viewLifecycleOwner) { history ->
+
+            historyTrack.clear()
+            historyTrack.addAll(history)
+            historyAdapter.notifyDataSetChanged()
+
+            val shouldShowHistory = history.isNotEmpty() && binding.searchEditText.text.isEmpty()
+            uiHistoryHandler.historySetVisibility(shouldShowHistory)
         }
     }
 

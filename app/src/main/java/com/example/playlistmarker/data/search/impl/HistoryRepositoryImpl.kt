@@ -5,6 +5,7 @@ import com.example.playlistmarker.data.mappers.TrackDtoMapper
 import com.example.playlistmarker.data.search.sharedpreferences.HistorySearch
 import com.example.playlistmarker.domain.search.model.Track
 import com.example.playlistmarker.domain.search.repository.HistoryRepository
+import kotlinx.coroutines.flow.first
 
 class HistoryRepositoryImpl(
     private val historySearch: HistorySearch,
@@ -17,7 +18,7 @@ class HistoryRepositoryImpl(
     }
 
     override suspend fun getHistory(): List<Track> {
-        val favouriteIds = appDatabase.trackDao().getIdTracks()
+        val favouriteIds = appDatabase.trackDao().getIdTracks().first()
         val trackDtoList = historySearch.getHistory()
         val mapDomainTrack = trackDtoList.map { TrackDtoMapper.mapToDomain(it) }
         val updateTracks = mapDomainTrack.map { track ->

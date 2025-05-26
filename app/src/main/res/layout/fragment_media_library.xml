@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/nav_background"
+    style="@style/FragmentBackgroundStyle"
     tools:context=".ui.medialibrary.fragments.MediaLibraryFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -19,7 +19,6 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         style="@style/tab_layout"
-        android:background="@color/nav_background"
         app:layout_constraintTop_toBottomOf="@id/mediaLibraryToolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

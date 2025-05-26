@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.playlistmarker.data.db.AppDatabase
+import com.example.playlistmarker.data.db.sharedpreferences.AddedAtStorage
 import com.example.playlistmarker.data.player.sharedpreferences.PositionTime
 import com.example.playlistmarker.data.search.network.RetrofitClient
 import com.example.playlistmarker.data.search.network.RetrofitClientImpl
@@ -17,6 +18,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.math.sin
 
 val dataModule = module {
     //ACTIVITY SETTINGS
@@ -73,5 +75,14 @@ val dataModule = module {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
             .fallbackToDestructiveMigration(true)
             .build()
+    }
+
+    // ADDED_AT storage
+    single<SharedPreferences>(named("added_at_prefs")) {
+        androidContext().getSharedPreferences("added_at_prefs", Context.MODE_PRIVATE)
+    }
+
+    single {
+        AddedAtStorage(get<SharedPreferences>(named("added_at_prefs")))
     }
 }

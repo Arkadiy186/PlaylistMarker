@@ -11,6 +11,7 @@ import com.example.playlistmarker.data.search.impl.SearchStateRepositoryImpl
 import com.example.playlistmarker.data.search.impl.TrackRepositoryImpl
 import com.example.playlistmarker.data.search.impl.utills.NetworkRepositoryImpl
 import com.example.playlistmarker.data.search.network.RetrofitClient
+import com.example.playlistmarker.data.db.sharedpreferences.AddedAtStorage
 import com.example.playlistmarker.data.search.sharedpreferences.HistorySearch
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateManager
 import com.example.playlistmarker.data.settings.impl.ThemeRepositoryImpl
@@ -40,7 +41,7 @@ val repositoryModule = module {
     }
 
     single<TrackRepository> {
-        TrackRepositoryImpl(get<RetrofitClient>(),get<AppDatabase>())
+        TrackRepositoryImpl(get<RetrofitClient>(),get<AppDatabase>(), get<AddedAtStorage>())
     }
 
     single<SearchStateRepository> {
@@ -56,6 +57,6 @@ val repositoryModule = module {
     factory { DbConverters() }
 
     single<TrackDbRepository> {
-        TrackDbRepositoryImpl(get<AppDatabase>(),get<DbConverters>())
+        TrackDbRepositoryImpl(get<AppDatabase>(),get<DbConverters>(), get<AddedAtStorage>())
     }
 }

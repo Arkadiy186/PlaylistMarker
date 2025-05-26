@@ -84,6 +84,8 @@ class SearchViewModel (
             else -> {
                 val trackInfoDetails = tracks.map { TrackInfoDetailsMapper.map(it) }
                 _uiState.postValue(UiState.Content(trackInfoDetails))
+
+
             }
         }
     }

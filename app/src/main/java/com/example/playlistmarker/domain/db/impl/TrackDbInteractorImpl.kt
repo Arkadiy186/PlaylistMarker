@@ -20,7 +20,7 @@ class TrackDbInteractorImpl(private val trackDbRepository: TrackDbRepository) : 
     override fun getFavouriteTracks(): Flow<List<Track>> {
         return trackDbRepository.getFavouriteTracks()
             .map { tracks ->
-                tracks.sortedByDescending { it.id } }
+                tracks.sortedByDescending { it.addedAt } }
     }
 
     override fun getAllFavouriteTracks(): Flow<List<Int>> {
