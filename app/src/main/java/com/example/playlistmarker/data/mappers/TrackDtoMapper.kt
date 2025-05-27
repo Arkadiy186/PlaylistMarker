@@ -7,6 +7,7 @@ object TrackDtoMapper {
 
     fun mapToDomain(trackDto: TrackDto): Track {
         return Track(
+            id = trackDto.id,
             trackName = trackDto.trackName,
             artistName = trackDto.artistName,
             trackTime = formatTrackTime(trackDto.trackTime),
@@ -21,6 +22,7 @@ object TrackDtoMapper {
 
     fun toDto(track: Track): TrackDto {
         return TrackDto(
+            id = track.id,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTime = parseTrackTime(track.trackTime),

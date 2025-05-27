@@ -12,5 +12,5 @@ interface AudioPlayerInteractor {
     fun stopPlayer()
     fun seekTo(position: Int)
     fun getPlayerState(): UiAudioPlayerState
-    fun getCurrentPosition(): Int
+    fun getCurrentPositionPlayer(): Int
 }

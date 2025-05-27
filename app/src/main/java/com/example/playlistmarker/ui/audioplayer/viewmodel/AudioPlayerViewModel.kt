@@ -1,21 +1,28 @@
 package com.example.playlistmarker.ui.audioplayer.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmarker.domain.db.use_cases.TrackDbInteractor
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.PositionTimeInteractor
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
+import com.example.playlistmarker.ui.audioplayer.state.UiFavoriteButtonState
+import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel (
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    private val positionTimeInteractor: PositionTimeInteractor) : ViewModel(), AudioPlayerCallback {
+    private val positionTimeInteractor: PositionTimeInteractor,
+    private val trackDbInteractor: TrackDbInteractor
+) : ViewModel(), AudioPlayerCallback {
 
     private val _playerState = MutableLiveData<UiAudioPlayerState>().apply { value = UiAudioPlayerState.Default() }
     val playerState: LiveData<UiAudioPlayerState> = _playerState
@@ -32,7 +39,11 @@ class AudioPlayerViewModel (
     private val _playerInfo = MediatorLiveData<PlayerInfo>()
     val playerInfo: LiveData<PlayerInfo> = _playerInfo
 
+    private val _favouriteButtonState = MediatorLiveData<UiFavoriteButtonState>()
+    val favouriteButtonState: LiveData<UiFavoriteButtonState> = _favouriteButtonState
+
     val track = TrackInfoDetails(
+        1,
         "",
         "",
         "",
@@ -41,7 +52,8 @@ class AudioPlayerViewModel (
         "",
         "",
         "",
-        "")
+        "",
+        false)
 
     private var timerJob: Job?= null
     private var currentPosition: Int = 0
@@ -62,6 +74,14 @@ class AudioPlayerViewModel (
         _playerInfo.addSource(currentTime) {update()}
         _playerInfo.addSource(currentTrack) {update()}
         _playerInfo.addSource(savedPosition) {update()}
+
+        _favouriteButtonState.addSource(currentTrack) { track ->
+            _favouriteButtonState.value = if (track.isFavourite) {
+                UiFavoriteButtonState.IsFavourite()
+            } else {
+                UiFavoriteButtonState.NotFavourite()
+            }
+        }
     }
 
     override fun onPlayerStateChanged(state: UiAudioPlayerState) {
@@ -72,9 +92,9 @@ class AudioPlayerViewModel (
             is UiAudioPlayerState.Completed -> {
                 stopTimer()
                 _currentTime.postValue("00:00")
-                _savedPosition.postValue(0)
                 _currentTrack.value?.let {
                     audioPlayerInteractor.preparePlayer(it)
+                    audioPlayerInteractor.startPlayer()
                 }
             }
             else -> stopTimer()
@@ -82,8 +102,14 @@ class AudioPlayerViewModel (
     }
 
     fun prepareTrack(track: TrackInfoDetails) {
-        _currentTrack.value = track
-        audioPlayerInteractor.preparePlayer(track)
+        viewModelScope.launch {
+            val favouriteIds = trackDbInteractor.getAllFavouriteTracks().first()
+            val isFavourite = track.id in favouriteIds
+            val updatedTrack = track.copy(isFavourite = isFavourite)
+            _currentTrack.postValue(updatedTrack)
+
+            audioPlayerInteractor.preparePlayer(updatedTrack)
+        }
     }
 
     fun playTrack() {
@@ -91,19 +117,14 @@ class AudioPlayerViewModel (
 
         if (playerState is UiAudioPlayerState.Playing) return
 
-        val savedPosition = audioPlayerInteractor.getCurrentPosition()
-        audioPlayerInteractor.seekTo(savedPosition)
-        _savedPosition.postValue(currentPosition)
-
         when(playerState) {
             is UiAudioPlayerState.Prepared,
-                is UiAudioPlayerState.Paused,
-                     is UiAudioPlayerState.Completed -> {
-                    audioPlayerInteractor.startPlayer()
-                    updateState { UiAudioPlayerState.Playing(it) }
-                }
-            else -> {
+            is UiAudioPlayerState.Paused -> {
+                audioPlayerInteractor.startPlayer()
             }
+            is UiAudioPlayerState.Completed -> {
+            }
+            else -> {}
         }
     }
 
@@ -127,8 +148,28 @@ class AudioPlayerViewModel (
         _currentTime.postValue(formatTime(position))
     }
 
+    fun onFavoriteClicked() {
+        val current = _currentTrack.value ?: return
+
+        viewModelScope.launch {
+            val domainTrack = TrackInfoDetailsMapper.mapToDomain(current)
+            if (current.isFavourite) {
+                trackDbInteractor.deleteTrack(domainTrack)
+            } else {
+                trackDbInteractor.insertTrack(domainTrack)
+            }
+
+            _favouriteButtonState.postValue(
+                if (!current.isFavourite) UiFavoriteButtonState.IsFavourite()
+                else UiFavoriteButtonState.NotFavourite()
+            )
+
+            _currentTrack.value = current.copy(isFavourite = !current.isFavourite)
+        }
+    }
+
     private fun updateState(state: (Int) -> UiAudioPlayerState) {
-        currentPosition = audioPlayerInteractor.getCurrentPosition()
+        currentPosition = audioPlayerInteractor.getCurrentPositionPlayer()
         _playerState.postValue(state(currentPosition))
     }
 
@@ -145,7 +186,7 @@ class AudioPlayerViewModel (
                 val state = audioPlayerInteractor.getPlayerState()
                 if (state !is UiAudioPlayerState.Playing) break
 
-                currentPosition = audioPlayerInteractor.getCurrentPosition()
+                currentPosition = audioPlayerInteractor.getCurrentPositionPlayer()
                 val formatted = formatTime(currentPosition)
                 _currentTime.postValue(formatted)
                 _playerState.postValue(UiAudioPlayerState.Playing(currentPosition))

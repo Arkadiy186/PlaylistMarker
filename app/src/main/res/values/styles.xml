@@ -51,7 +51,7 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="SettingsStyle">
+    <style name="FragmentBackgroundStyle">
         <item name="android:background">@color/white</item>
     </style>
 
@@ -273,6 +273,7 @@
         <item name="tabTextColor">@color/black_for_text</item>
         <item name="android:letterSpacing">0</item>
         <item name="tabTextAppearance">@style/CustomTabTextStyle</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="CustomTabTextStyle" parent="TextAppearance.Design.Tab">

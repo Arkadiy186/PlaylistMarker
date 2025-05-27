@@ -6,20 +6,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.medialibrary.fragments.FavouriteTracksFragment">
 
-    <ImageView
-        style="@style/placeholderErrorImageStyle"
-        android:id="@+id/placeholderErrorImage"
-        android:layout_marginTop="106dp"
-        android:src="@drawable/ic_placeholder_not_found"
-        app:layout_constraintEnd_toEndOf="parent"
+    <LinearLayout
+        android:id="@+id/placeholderError"
+        style="@style/placeholderErrorStyle"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints">
 
-    <TextView
-        style="@style/fragment_media_library_favourite_empty"
-        android:id="@+id/text_media_library_empty"
-        android:text="@string/media_library_empty"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/placeholderErrorImage"/>
+        <ImageView
+            style="@style/placeholderErrorImageStyle"
+            android:id="@+id/placeholderErrorImage"
+            android:layout_marginTop="106dp"
+            android:src="@drawable/ic_placeholder_not_found"/>
+
+        <TextView
+            style="@style/fragment_media_library_favourite_empty"
+            android:id="@+id/text_media_library_empty"
+            android:text="@string/media_library_empty" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

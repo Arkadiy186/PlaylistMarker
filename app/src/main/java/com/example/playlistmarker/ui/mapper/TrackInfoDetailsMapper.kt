@@ -6,6 +6,7 @@ import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 object TrackInfoDetailsMapper {
     fun map(track: Track): TrackInfoDetails {
         return TrackInfoDetails(
+            id = track.id,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTime = track.trackTime,
@@ -14,12 +15,15 @@ object TrackInfoDetailsMapper {
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
-            previewUrl = track.previewUrl
+            previewUrl = track.previewUrl,
+            isFavourite = track.isFavourite,
+            addedAt = track.addedAt
         )
     }
 
     fun mapToDomain(trackInfo: TrackInfoDetails): Track {
         return Track(
+            id = trackInfo.id,
             trackName = trackInfo.trackName,
             artistName = trackInfo.artistName,
             trackTime = trackInfo.trackTime,
@@ -28,7 +32,9 @@ object TrackInfoDetailsMapper {
             releaseDate = trackInfo.releaseDate,
             primaryGenreName = trackInfo.primaryGenreName,
             country = trackInfo.country,
-            previewUrl = trackInfo.previewUrl
+            previewUrl = trackInfo.previewUrl,
+            isFavourite = trackInfo.isFavourite,
+            addedAt = trackInfo.addedAt
         )
     }
 }

@@ -55,6 +55,7 @@
             }
         }
 
+
          override fun placeholderSetVisibility(isHidden: Boolean, text: String, imageRes: Int, textRes: Int) {
              fragment.requireActivity().runOnUiThread {
                  if (isHidden) {

@@ -5,10 +5,10 @@ import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.R
@@ -78,12 +78,16 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.trackGenreCurrentInfo.text = playerInfo.currentTrack.primaryGenreName
             binding.trackCountryCurrentInfo.text = playerInfo.currentTrack.country
         }
+
+        audioPlayerViewModel.favouriteButtonState.observe(this) { state ->
+            binding.likeTrackButton.setImageResource(state.resId)
+        }
     }
 
     override fun onStop() {
         super.onStop()
         audioPlayerViewModel.savePosition()
-        audioPlayerViewModel.stopTrack()
+        audioPlayerViewModel.pauseTrack()
     }
 
     override fun onPause() {
@@ -111,6 +115,10 @@ class AudioPlayerActivity : AppCompatActivity() {
                     else -> audioPlayerViewModel.playTrack()
                 }
             }
+        }
+
+        binding.likeTrackButton.setOnClickListener {
+            audioPlayerViewModel.onFavoriteClicked()
         }
     }
 

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.playlistmarker.databinding.FragmentPlaylistsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import com.example.playlistmarker.ui.medialibrary.viewmodel.FragmentPlaylistViewModel
+import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.FragmentPlaylistViewModel
 import org.koin.core.parameter.parametersOf
 
 class PlaylistFragment : Fragment() {
