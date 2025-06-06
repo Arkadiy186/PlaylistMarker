@@ -1,6 +1,7 @@
 package com.example.playlistmarker.ui.main.activity
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.fragment.NavHostFragment
@@ -35,6 +36,13 @@ class MainActivity : AppCompatActivity() {
         val destination = intent.getStringExtra("navigate_to")
         if (destination == "search") {
             navController.navigate(R.id.searchFragment)
+        }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when(destination.id) {
+                R.id.newPlaylistFragment -> bottomNavigationView.visibility = View.GONE
+                else -> bottomNavigationView.visibility = View.VISIBLE
+            }
         }
     }
 }
