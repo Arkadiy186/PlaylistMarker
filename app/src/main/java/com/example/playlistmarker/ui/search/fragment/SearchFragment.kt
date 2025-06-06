@@ -118,8 +118,6 @@ class SearchFragment : Fragment() {
         }
 
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            /*val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-            bottomNavigationView.visibility = if (hasFocus && binding.searchEditText.text.isEmpty()) View.GONE else View.VISIBLE*/
 
             if (hasFocus && binding.searchEditText.text.isEmpty()) {
                 viewLifecycleOwner.lifecycleScope.launch {

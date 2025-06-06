@@ -1,5 +1,6 @@
 package com.example.playlistmarker.ui.medialibrary.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,24 +8,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmarker.R
+import com.example.playlistmarker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmarker.databinding.FragmentPlaylistsBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.FragmentPlaylistViewModel
-import org.koin.core.parameter.parametersOf
+import com.example.playlistmarker.ui.main.activity.MainActivity
 
-class PlaylistFragment : Fragment() {
+class NewPlaylistFragment : Fragment() {
 
-    private lateinit var binding: FragmentPlaylistsBinding
-    private val playlistViewModel: FragmentPlaylistViewModel by viewModel {
-        parametersOf(requireArguments().getString(PLAYLIST_ID))
-    }
+    private lateinit var binding: FragmentNewPlaylistBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
+        binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -35,8 +32,8 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        binding.buttonNewPlaylist.setOnClickListener {
-            findNavController().navigate(R.id.newPlaylistFragment)
+        binding.Toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
         }
     }
 

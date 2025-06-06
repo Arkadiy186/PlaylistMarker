@@ -32,4 +32,7 @@
     <string name="media_library_empty">Your media library is empty</string>
     <string name="new_playlist">New playlist</string>
     <string name="not_created_playlist">You have not created any playlists</string>
+    <string name="title_new_playlist">Title*</string>
+    <string name="description_new_playlist">Description</string>
+    <string name="create_new_playlist">Create</string>
 </resources>
