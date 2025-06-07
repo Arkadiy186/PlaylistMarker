@@ -11,7 +11,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.R
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 
-class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     private val itemTrackName: TextView = itemView.findViewById(R.id.trackNameItem)
     private val itemTrackArtistAndTime: TextView = itemView.findViewById(R.id.trackArtistAndTimeItem)
@@ -28,7 +28,6 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         Glide.with(itemView)
             .load(url)
-            .fitCenter()
             .placeholder(R.drawable.ic_placeholder)
             .transform(RoundedCorners(cornerRadius))
             .into(itemImageViewTrack)

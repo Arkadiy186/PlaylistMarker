@@ -1,4 +1,4 @@
-package com.example.playlistmarker.ui.medialibrary.handler
+package com.example.playlistmarker.ui.medialibrary.handler.favouritetracks
 
 interface UiStateFavouriteHandler {
     fun favouriteNotFound()

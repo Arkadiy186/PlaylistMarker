@@ -1,26 +1,28 @@
 package com.example.playlistmarker.ui.medialibrary.fragments
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmarker.databinding.FragmentNewPlaylistBinding
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.setFragmentResult
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.R
 import com.example.playlistmarker.domain.db.model.Playlist
-import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.FragmentNewPlaylistViewModel
+import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.PlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -29,7 +31,7 @@ import java.io.FileOutputStream
 
 class NewPlaylistFragment : Fragment() {
 
-    private val viewModel: FragmentNewPlaylistViewModel by viewModel()
+    private val playlistViewModel: PlaylistViewModel by viewModel()
 
     private lateinit var binding: FragmentNewPlaylistBinding
     private var isPlaylistNameNotBlank: Boolean = false
@@ -54,7 +56,7 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.playlists.observe(viewLifecycleOwner) { playlist ->
+        playlistViewModel.playlistsState.observe(viewLifecycleOwner) { playlist ->
 
         }
     }
@@ -83,7 +85,7 @@ class NewPlaylistFragment : Fragment() {
                 counterTracks = counterTracks
             )
 
-            viewModel.createPlaylist(playlist)
+            playlistViewModel.createPlaylist(playlist)
 
             findNavController().previousBackStackEntry?.savedStateHandle?.set("playlist_created", playlist.name)
             findNavController().popBackStack()
@@ -111,10 +113,11 @@ class NewPlaylistFragment : Fragment() {
                 if (savedImagePath != null) {
                     selectedImageUri = Uri.fromFile(File(savedImagePath))
                 }
+                val cornerRadius = dpToPx(8f, requireContext())
                 Glide.with(this)
                     .load(selectedImageUri)
+                    .transform(CenterCrop(), RoundedCorners(cornerRadius))
                     .into(binding.playlistImageView)
-                saveImageToPrivateStorage(uri)
 
                 binding.playlistImageIcon.visibility = View.GONE
             }
@@ -125,6 +128,13 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
+    private fun dpToPx(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics).toInt()
+    }
+
     private fun saveImageToPrivateStorage(uri: Uri): String? {
         val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
 
@@ -132,7 +142,8 @@ class NewPlaylistFragment : Fragment() {
             filePath.mkdirs()
         }
 
-        val file = File(filePath, "first_cover.jpg")
+        val uniqueFileName = "cover_${System.currentTimeMillis()}.jpg"
+        val file = File(filePath, uniqueFileName)
 
         try {
             requireActivity().contentResolver.openInputStream(uri)?.use { inputStream ->

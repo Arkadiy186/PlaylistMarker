@@ -10,13 +10,11 @@ import com.example.playlistmarker.domain.search.use_cases.TrackInteractor
 import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
 import com.example.playlistmarker.ui.audioplayer.viewmodel.AudioPlayerViewModel
 import com.example.playlistmarker.ui.medialibrary.viewmodel.favouritetracks.FragmentFavouriteTrackViewModel
-import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.FragmentNewPlaylistViewModel
-import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.FragmentPlaylistViewModel
+import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.PlaylistViewModel
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
 import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
 import com.example.playlistmarker.ui.settings.viewmodel.SettingsViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
@@ -40,16 +38,12 @@ val viewModelModule = module {
     }
 
     //ACTIVITY MEDIA LIBRARY
-    factory { (playlistId: String) ->
-        FragmentPlaylistViewModel(playlistId)
-    }
-
     factory {
         FragmentFavouriteTrackViewModel(get<TrackDbInteractor>())
     }
 
     factory {
-        FragmentNewPlaylistViewModel(get<PlaylistDbInteractor>())
+        PlaylistViewModel(get<PlaylistDbInteractor>())
     }
 
     //UTILS

@@ -12,7 +12,7 @@ abstract class TrackDatabase : RoomDatabase() {
     abstract fun trackDao(): TrackDao
 }
 
-@Database(version = 1, entities = [PlaylistEntity::class])
+@Database(version = 2, entities = [PlaylistEntity::class])
 abstract class PlaylistDataBase : RoomDatabase() {
     abstract fun playlistDao(): PlaylistDao
 }

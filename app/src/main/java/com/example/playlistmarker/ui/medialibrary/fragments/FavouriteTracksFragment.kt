@@ -11,8 +11,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.databinding.FragmentFavouriteTracksBinding
-import com.example.playlistmarker.ui.medialibrary.handler.UiStateFavouriteHandler
-import com.example.playlistmarker.ui.medialibrary.handler.UiStateFavouriteHandlerImpl
+import com.example.playlistmarker.ui.medialibrary.handler.favouritetracks.UiStateFavouriteHandler
+import com.example.playlistmarker.ui.medialibrary.handler.favouritetracks.UiStateFavouriteHandlerImpl
 import com.example.playlistmarker.ui.medialibrary.viewmodel.favouritetracks.FavouriteTracksUiState
 import com.example.playlistmarker.ui.medialibrary.viewmodel.favouritetracks.FragmentFavouriteTrackViewModel
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
@@ -20,7 +20,6 @@ import com.example.playlistmarker.ui.search.recyclerview.TrackAdapter
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
 import com.example.playlistmarker.ui.search.utills.sharing.NavigationContract
 import com.example.playlistmarker.ui.search.utills.sharing.NavigationContractImpl
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -90,7 +89,7 @@ class FavouriteTracksFragment : Fragment() {
             is FavouriteTracksUiState.Content -> {
                 showTracks(favouriteTracksUiState.tracks)
             }
-            else -> {
+            is FavouriteTracksUiState.Placeholder -> {
                 uiStateFavouriteHandler.favouriteNotFound()
             }
         }

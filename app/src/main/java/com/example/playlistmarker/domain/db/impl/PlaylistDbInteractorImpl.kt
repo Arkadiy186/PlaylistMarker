@@ -1,5 +1,6 @@
 package com.example.playlistmarker.domain.db.impl
 
+import android.util.Log
 import com.example.playlistmarker.domain.db.model.Playlist
 import com.example.playlistmarker.domain.db.repository.PlaylistDbRepository
 import com.example.playlistmarker.domain.db.use_cases.PlaylistDbInteractor

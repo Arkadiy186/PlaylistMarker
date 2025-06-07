@@ -1,5 +1,6 @@
 package com.example.playlistmarker.ui.medialibrary.viewmodel.playlist
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,9 +9,9 @@ import com.example.playlistmarker.domain.db.model.Playlist
 import com.example.playlistmarker.domain.db.use_cases.PlaylistDbInteractor
 import kotlinx.coroutines.launch
 
-class FragmentNewPlaylistViewModel(private val playlistDbInteractor: PlaylistDbInteractor) : ViewModel() {
-    private val _playlists = MutableLiveData<List<Playlist>>()
-    val playlists: LiveData<List<Playlist>> = _playlists
+class PlaylistViewModel(private val playlistDbInteractor: PlaylistDbInteractor) : ViewModel() {
+    private val _playlistsState = MutableLiveData<PlaylistUiState>()
+    val playlistsState: LiveData<PlaylistUiState> = _playlistsState
 
     init {
         observeViewModel()
@@ -19,7 +20,11 @@ class FragmentNewPlaylistViewModel(private val playlistDbInteractor: PlaylistDbI
     private fun observeViewModel() {
         viewModelScope.launch {
             playlistDbInteractor.getPlaylists().collect { list ->
-                _playlists.postValue(list)
+                if (list.isEmpty()) {
+                    _playlistsState.postValue(PlaylistUiState.Placeholder)
+                } else {
+                    _playlistsState.postValue(PlaylistUiState.Content(list))
+                }
             }
         }
     }

@@ -17,20 +17,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/nobody_playlist"
-        style="@style/placeholderErrorImageStyle"
-        android:src="@drawable/ic_placeholder_not_found"
-        android:layout_marginTop="46dp"
+    <LinearLayout
+        android:id="@+id/placeholder_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/button_new_playlist"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent">
 
-    <TextView
-        android:id="@+id/text_nobody_created_playlist"
-        style="@style/fragment_media_library_favourite_empty"
-        android:text="@string/not_created_playlist"
-        app:layout_constraintTop_toBottomOf="@id/nobody_playlist"
+        <ImageView
+            android:id="@+id/nobody_playlist"
+            style="@style/placeholderErrorImageStyle"
+            android:src="@drawable/ic_placeholder_not_found"
+            android:layout_marginTop="46dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/text_nobody_created_playlist"
+            style="@style/fragment_media_library_favourite_empty"
+            android:text="@string/not_created_playlist"
+            app:layout_constraintTop_toBottomOf="@id/nobody_playlist"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlist_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/button_new_playlist"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
