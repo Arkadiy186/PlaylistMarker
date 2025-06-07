@@ -1,11 +1,11 @@
 package com.example.playlistmarker.data.search.impl
 
-import com.example.playlistmarker.data.db.AppDatabase
+import com.example.playlistmarker.data.db.TrackDatabase
 import com.example.playlistmarker.data.mappers.TrackDtoMapper
 import com.example.playlistmarker.data.search.model.TrackResponse
 import com.example.playlistmarker.data.search.network.RetrofitClient
 import com.example.playlistmarker.data.db.sharedpreferences.AddedAtStorage
-import com.example.playlistmarker.domain.search.model.Track
+import com.example.playlistmarker.domain.db.model.Track
 import com.example.playlistmarker.domain.search.repository.Resources
 import com.example.playlistmarker.domain.search.repository.TrackRepository
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flow
 
 class TrackRepositoryImpl(
     private val retrofitClient: RetrofitClient,
-    private val appDatabase: AppDatabase,
+    private val appDatabase: TrackDatabase,
     private val addedAtStorage: AddedAtStorage
 ) : TrackRepository {
     override fun searchTrack(query: String): Flow<Resources<List<Track>>> = flow {

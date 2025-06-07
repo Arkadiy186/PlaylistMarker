@@ -1,6 +1,6 @@
 package com.example.playlistmarker.domain.db.repository
 
-import com.example.playlistmarker.domain.search.model.Track
+import com.example.playlistmarker.domain.db.model.Track
 import kotlinx.coroutines.flow.Flow
 
 interface TrackDbRepository {

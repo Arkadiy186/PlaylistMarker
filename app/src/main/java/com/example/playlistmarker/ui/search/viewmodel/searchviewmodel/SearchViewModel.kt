@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmarker.R
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
-import com.example.playlistmarker.domain.search.model.Track
+import com.example.playlistmarker.domain.db.model.Track
 import com.example.playlistmarker.domain.search.use_cases.NetworkInteractor
 import com.example.playlistmarker.domain.search.use_cases.SearchStateInteractor
 import com.example.playlistmarker.domain.search.use_cases.TrackInteractor

@@ -1,6 +1,6 @@
 package com.example.playlistmarker.domain.search.impl
 
-import com.example.playlistmarker.domain.search.model.Track
+import com.example.playlistmarker.domain.db.model.Track
 import com.example.playlistmarker.domain.search.repository.Resources
 import com.example.playlistmarker.domain.search.repository.TrackRepository
 import com.example.playlistmarker.domain.search.use_cases.TrackInteractor

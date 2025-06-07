@@ -1,9 +1,9 @@
-package com.example.playlistmarker.data.db
+package com.example.playlistmarker.data.db.converters
 
 import com.example.playlistmarker.data.db.entitys.TrackEntity
-import com.example.playlistmarker.domain.search.model.Track
+import com.example.playlistmarker.domain.db.model.Track
 
-class DbConverters {
+class TrackDbConverter {
 
     fun mapToDomain(trackEntity: TrackEntity): Track {
         return Track(

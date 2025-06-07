@@ -3,7 +3,8 @@ package com.example.playlistmarker.di
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
-import com.example.playlistmarker.data.db.AppDatabase
+import com.example.playlistmarker.data.db.PlaylistDataBase
+import com.example.playlistmarker.data.db.TrackDatabase
 import com.example.playlistmarker.data.db.sharedpreferences.AddedAtStorage
 import com.example.playlistmarker.data.player.sharedpreferences.PositionTime
 import com.example.playlistmarker.data.search.network.RetrofitClient
@@ -71,8 +72,14 @@ val dataModule = module {
     }
 
     //DATABASE
-    single<AppDatabase> {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+    single<TrackDatabase> {
+        Room.databaseBuilder(androidContext(), TrackDatabase::class.java, "TrackDatabase.db")
+            .fallbackToDestructiveMigration(true)
+            .build()
+    }
+
+    single<PlaylistDataBase> {
+        Room.databaseBuilder(androidContext(), PlaylistDataBase::class.java, "PlaylistDatabase.db")
             .fallbackToDestructiveMigration(true)
             .build()
     }

@@ -1,4 +1,4 @@
-package com.example.playlistmarker.domain.search.model
+package com.example.playlistmarker.domain.db.model
 
 data class Track (
     val id: Int,
