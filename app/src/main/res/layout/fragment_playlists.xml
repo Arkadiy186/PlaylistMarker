@@ -12,7 +12,7 @@
         android:text="@string/new_playlist"
         android:paddingHorizontal="14dp"
         android:paddingVertical="10dp"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
