@@ -1,9 +1,12 @@
 package com.example.playlistmarker.ui.medialibrary.fragments
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -49,7 +52,17 @@ class PlaylistFragment : Fragment() {
 
         val navController = findNavController()
         navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("playlist_created")?.observe(viewLifecycleOwner) { playlistName ->
-            Toast.makeText(requireContext(), "Плейлист $playlistName создан", Toast.LENGTH_SHORT).show()
+            val toastLayout = layoutInflater.inflate(R.layout.custom_toast, null)
+            val toastText = toastLayout.findViewById<TextView>(R.id.toast_text)
+            toastText.text = "Плейлист \"$playlistName\" создан"
+
+            val toast = Toast(requireContext())
+            toast.duration = Toast.LENGTH_SHORT
+            toast.view = toastLayout
+            toast.setGravity(Gravity.FILL_HORIZONTAL or Gravity.BOTTOM, 0, 100)
+            toast.show()
+
+            navController.currentBackStackEntry?.savedStateHandle?.remove<String>("playlist_created")
         }
 
         onPlaylistClickDebounce = debounceHandler.debounce(
