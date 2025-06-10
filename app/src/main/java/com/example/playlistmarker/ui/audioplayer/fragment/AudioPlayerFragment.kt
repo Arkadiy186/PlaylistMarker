@@ -27,6 +27,7 @@ import com.example.playlistmarker.ui.audioplayer.recyclerview.AudioPlayerPlaylis
 import com.example.playlistmarker.ui.audioplayer.viewmodel.AudioPlayerViewModel
 import com.example.playlistmarker.ui.medialibrary.fragments.PlaylistFragment.Companion.CLICK_DEBOUNCE_DELAY
 import com.example.playlistmarker.ui.audioplayer.state.AddTrackToPlaylistState
+import com.example.playlistmarker.ui.audioplayer.viewmodel.PlayerInfo
 import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.PlaylistUiState
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
@@ -121,7 +122,6 @@ class AudioPlayerFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        audioPlayerViewModel.savePosition()
         audioPlayerViewModel.pauseTrack()
     }
 
@@ -139,22 +139,9 @@ class AudioPlayerFragment : Fragment() {
             val newPlayerState = playerInfo.playerState
             if (newPlayerState != lastPlayerState) {
                 lastPlayerState = newPlayerState
-
-                binding.playTrackButton.setImageResource(
-                    when(playerInfo.playerState) {
-                        is UiAudioPlayerState.Playing -> R.drawable.ic_stop
-                        else -> R.drawable.ic_play
-                    }
-                )
+                updatePlayButton(newPlayerState)
             }
-            binding.currentTimeTrack.text = playerInfo.currentTime
-            binding.titleCover.text = playerInfo.currentTrack.trackName
-            binding.authorTrack.text = playerInfo.currentTrack.artistName
-            binding.trackTimeCurrentInfo.text = playerInfo.currentTrack.trackTime
-            binding.trackAlbumCurrentInfo.text = playerInfo.currentTrack.collectionName
-            binding.trackReleaseDateCurrentInfo.text = formatReleaseDate(playerInfo.currentTrack.releaseDate)
-            binding.trackGenreCurrentInfo.text = playerInfo.currentTrack.primaryGenreName
-            binding.trackCountryCurrentInfo.text = playerInfo.currentTrack.country
+            bindTrackInfo(playerInfo)
         }
 
         audioPlayerViewModel.favouriteButtonState.observe(viewLifecycleOwner) { state ->
@@ -173,11 +160,11 @@ class AudioPlayerFragment : Fragment() {
         audioPlayerViewModel.addTrackState.observe(viewLifecycleOwner) { state ->
             when(state) {
                 is AddTrackToPlaylistState.TrackIsExists -> {
-                    Toast.makeText(requireContext(), "Трек уже добавлен в \"${state.playlist}\"", Toast.LENGTH_SHORT).show()
+                    showToast("Трек уже добавлен в \"${state.playlist}\"")
                 }
                 is AddTrackToPlaylistState.TrackAdded -> {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    Toast.makeText(requireContext(), "Добавлено в плейлист \"${state.playlist}\"", Toast.LENGTH_SHORT).show()
+                    showToast("Добавлено в плейлист \"${state.playlist}\"")
                 }
             }
         }
@@ -190,6 +177,29 @@ class AudioPlayerFragment : Fragment() {
                 binding.standardBottomSheet.setBackgroundResource(R.drawable.bottom_sheet_background)
             }
         }
+    }
+
+    private fun bindTrackInfo(playerInfo: PlayerInfo) = with(binding) {
+        currentTimeTrack.text = playerInfo.currentTime
+        titleCover.text = playerInfo.currentTrack.trackName
+        authorTrack.text = playerInfo.currentTrack.artistName
+        trackTimeCurrentInfo.text = playerInfo.currentTrack.trackTime
+        trackAlbumCurrentInfo.text = playerInfo.currentTrack.collectionName
+        trackReleaseDateCurrentInfo.text = formatReleaseDate(playerInfo.currentTrack.releaseDate)
+        trackGenreCurrentInfo.text = playerInfo.currentTrack.primaryGenreName
+        trackCountryCurrentInfo.text = playerInfo.currentTrack.country
+    }
+
+    private fun updatePlayButton(state: UiAudioPlayerState) {
+        val resId = when(state) {
+            is UiAudioPlayerState.Playing -> R.drawable.ic_stop
+            else -> R.drawable.ic_play
+        }
+        binding.playTrackButton.setImageResource(resId)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setupListeners() {
@@ -293,8 +303,9 @@ class AudioPlayerFragment : Fragment() {
         return try {
             val inputDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
             val outputDate = SimpleDateFormat("yyyy", Locale.getDefault())
-            val date = inputDate.parse(dateString)
-            outputDate.format(date!!)
+            inputDate.parse(dateString).let { date ->
+                outputDate.format(date)
+            } ?: dateString
         } catch (e: Exception) {
             dateString
         }

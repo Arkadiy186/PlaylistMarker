@@ -15,6 +15,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.window.OnBackInvokedCallback
+import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -70,6 +72,9 @@ class NewPlaylistFragment : Fragment() {
             }
             false
         }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            handleBackAction()
+        }
 
         binding.playlistNameEditText.setTextCursorDrawable(R.drawable.cursor)
     }
@@ -82,19 +87,15 @@ class NewPlaylistFragment : Fragment() {
 
     private fun setupListeners() {
         binding.Toolbar.setNavigationOnClickListener {
-            if (isPlaylistNameNotBlank || selectedImageUri != null) {
-                dialogToConfirmCreateNewPlaylist()
-            } else {
-                findNavController().popBackStack()
-            }
+            handleBackAction()
         }
 
         binding.newPlaylistCreate.setOnClickListener {
             val name = binding.playlistNameEditText.text.toString()
             val description = binding.playlistDescriptionEditText.text.toString()
             val pathPictureCover = selectedImageUri?.path ?: ""
-            val listIdTracks = "[]"
-            val counterTracks = 0
+            val listIdTracks = mutableListOf<String>()
+            val counterTracks = listIdTracks.size
             val playlist = Playlist(
                 id = 0L,
                 name = name,
@@ -210,16 +211,24 @@ class NewPlaylistFragment : Fragment() {
 
     private fun dialogToConfirmCreateNewPlaylist() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Завершить создание плейлиста?")
-            .setMessage("Все несохраненные данные будут потеряны")
-            .setNeutralButton("Отмена") { dialog, which ->
+            .setTitle(R.string.final_playlist_creation)
+            .setMessage(R.string.unsaved_data_be_lost)
+            .setNeutralButton(R.string.cancel_create_playlist) { dialog, which ->
                 dialog.dismiss()
             }
-            .setPositiveButton("Завершить") { dialog, which ->
+            .setPositiveButton(R.string.final_create_playlist) { dialog, which ->
                 dialog.dismiss()
                 findNavController().popBackStack()
             }
             .show()
+    }
+
+    private fun handleBackAction() {
+        if (isPlaylistNameNotBlank || selectedImageUri != null) {
+            dialogToConfirmCreateNewPlaylist()
+        } else {
+            findNavController().popBackStack()
+        }
     }
 
     companion object {

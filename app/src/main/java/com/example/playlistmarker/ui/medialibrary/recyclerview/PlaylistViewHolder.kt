@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -17,7 +18,7 @@ class PlaylistViewHolder(view: View): RecyclerView.ViewHolder(view) {
     private val title: TextView = itemView.findViewById(R.id.playlist_title_rw)
     private val songs: TextView = itemView.findViewById(R.id.counter_songs_playlist_rw)
     private val cover: ImageView = itemView.findViewById(R.id.cover_playlist_rw)
-    val rootLayout = itemView.findViewById<LinearLayout>(R.id.root_layout)
+    val rootLayout = itemView.findViewById<ConstraintLayout>(R.id.root_layout)
 
     fun bind(playlist: Playlist) {
         title.text = playlist.name

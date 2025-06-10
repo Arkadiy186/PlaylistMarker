@@ -10,12 +10,17 @@ class PlaylistDbConverter {
     private val gson = Gson()
 
     @TypeConverter
-    fun fromList(list: List<Int>): String = gson.toJson(list)
+    fun fromList(list: List<String>): String = gson.toJson(list)
 
     @TypeConverter
-    fun toList(data: String): List<Int> {
-        val type = object : TypeToken<List<Int>>() {}.type
-        return gson.fromJson(data, type)
+    fun toList(data: String): List<String> {
+        if (data.isNullOrBlank()) return emptyList()
+        return try {
+            val type = object : TypeToken<List<String>>() {}.type
+            gson.fromJson<List<String>>(data, type)
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     fun mapToDomain(playlistEntity: PlaylistEntity): Playlist {

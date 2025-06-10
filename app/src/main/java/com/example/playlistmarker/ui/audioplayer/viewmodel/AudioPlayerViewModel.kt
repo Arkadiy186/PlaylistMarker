@@ -207,14 +207,15 @@ class AudioPlayerViewModel (
 
     fun addTrackToPlaylist(playlist: Playlist, track: TrackInfoDetails) {
         viewModelScope.launch {
-            val idList = playlist.listIdTracks.split(",").mapNotNull { it.toIntOrNull() }.toMutableList()
+            val idList = playlist.listIdTracks.toMutableList()
 
-            if (idList.contains(track.id)) {
+            val trackIdStr = track.id.toString()
+            if (idList.contains(trackIdStr)) {
                 _addTrackState.postValue(AddTrackToPlaylistState.TrackIsExists(playlist.name))
             } else {
-                idList.add(track.id)
+                idList.add(trackIdStr)
                 val updatedPlaylist = playlist.copy(
-                    listIdTracks = idList.joinToString(","),
+                    listIdTracks = idList,
                     counterTracks = idList.size
                 )
 
