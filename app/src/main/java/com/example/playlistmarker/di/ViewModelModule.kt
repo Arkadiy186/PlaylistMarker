@@ -45,7 +45,7 @@ val viewModelModule = module {
     }
 
     factory {
-        PlaylistViewModel(get<PlaylistDbInteractor>())
+        PlaylistViewModel(get<PlaylistDbInteractor>(), get<ThemeInteractor>())
     }
 
     //UTILS

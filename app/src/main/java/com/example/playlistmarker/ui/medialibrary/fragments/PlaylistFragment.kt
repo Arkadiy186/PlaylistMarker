@@ -5,7 +5,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -23,7 +22,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.PlaylistUiState
 import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.PlaylistViewModel
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
-import org.koin.core.parameter.parametersOf
 
 class PlaylistFragment : Fragment() {
 
@@ -31,6 +29,7 @@ class PlaylistFragment : Fragment() {
     private lateinit var binding: FragmentPlaylistsBinding
     private lateinit var uiStatePlaylistHandler: UiStatePlaylistHandler
     private lateinit var onPlaylistClickDebounce: (Playlist) -> Unit
+    private var isDarkTheme: Boolean = false
 
     private val debounceHandler: DebounceHandler by lazy { Creator.provideDebounceHandler() }
     private val playlistViewModel: PlaylistViewModel by viewModel()
@@ -95,6 +94,10 @@ class PlaylistFragment : Fragment() {
     private fun observeViewModel() {
         playlistViewModel.playlistsState.observe(viewLifecycleOwner) { playlist ->
             handleUiState(playlist)
+        }
+
+        playlistViewModel.themeState.observe(viewLifecycleOwner) { isDark ->
+            isDarkTheme = isDark
         }
     }
 

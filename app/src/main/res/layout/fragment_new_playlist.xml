@@ -42,7 +42,7 @@
     </FrameLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/playlistNameLayout"
+        android:id="@+id/playlist_name_layout"
         style="@style/new_playlist_title_description_style"
         android:hint="@string/title_new_playlist"
         android:layout_marginTop="32dp"
@@ -60,16 +60,16 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/playlistDescriptionLayout"
+        android:id="@+id/playlist_description_layout"
         style="@style/new_playlist_title_description_style"
         android:hint="@string/description_new_playlist"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/playlistNameLayout"
+        app:layout_constraintTop_toBottomOf="@id/playlist_name_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/playlistDescriptionEditText"
+            android:id="@+id/playlist_description_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"

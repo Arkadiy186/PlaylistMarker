@@ -13,17 +13,8 @@
         android:layout_marginBottom="@dimen/main_screen_padding_left_right">
 
         <TextView
+            style="@style/custom_toast_text"
             android:id="@+id/toast_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            tools:text="текст"
-            android:fontFamily="@font/ys_display_regular"
-            android:gravity="center"
-            android:paddingVertical="@dimen/main_screen_padding_left_right"
-            android:paddingStart="@dimen/main_screen_padding_left_right"
-            android:paddingEnd="8dp"/>
+            tools:text="текст"/>
     </LinearLayout>
 </FrameLayout>

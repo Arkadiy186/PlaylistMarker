@@ -176,6 +176,7 @@ class AudioPlayerFragment : Fragment() {
                     Toast.makeText(requireContext(), "Трек уже добавлен в \"${state.playlist}\"", Toast.LENGTH_SHORT).show()
                 }
                 is AddTrackToPlaylistState.TrackAdded -> {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     Toast.makeText(requireContext(), "Добавлено в плейлист \"${state.playlist}\"", Toast.LENGTH_SHORT).show()
                 }
             }

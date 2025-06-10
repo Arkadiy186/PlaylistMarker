@@ -1,18 +1,23 @@
 package com.example.playlistmarker.ui.medialibrary.fragments
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.text.Editable
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmarker.databinding.FragmentNewPlaylistBinding
@@ -53,6 +58,20 @@ class NewPlaylistFragment : Fragment() {
         setupTextWatcher()
         setupPhotoPicker()
         observeViewModel()
+
+        view.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val currentFocusView = requireActivity().currentFocus
+                currentFocusView?.clearFocus()
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
+
+                v.performClick()
+            }
+            false
+        }
+
+        binding.playlistNameEditText.setTextCursorDrawable(R.drawable.cursor)
     }
 
     private fun observeViewModel() {
@@ -93,18 +112,44 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun setupTextWatcher() {
+        binding.playlistNameEditText.setOnFocusChangeListener { _, hasFocus ->
+            updateHintColor(hasFocus, binding.playlistNameEditText.text)
+        }
+
         binding.playlistNameEditText.addTextChangedListener { text ->
+            val hasFocus = binding.playlistNameEditText.hasFocus()
+            updateHintColor(hasFocus, text)
             val isNotBlank = !text.isNullOrBlank()
             isPlaylistNameNotBlank = isNotBlank
             binding.newPlaylistCreate.isEnabled = isNotBlank
 
-            if (isNotBlank) {
-                binding.newPlaylistCreate.setBackgroundResource(R.drawable.new_playlist_button_create_blue)
-            } else {
-                binding.newPlaylistCreate.setBackgroundResource(R.drawable.new_playlist_button_create_grey)
-            }
+            val color = ContextCompat.getColor(
+                requireContext(),
+                if (isNotBlank) R.color.blue else R.color.grey
+            )
+            binding.newPlaylistCreate.backgroundTintList = ColorStateList.valueOf(color)
         }
     }
+
+    private fun updateHintColor(hasFocus: Boolean, text: Editable?) {
+        playlistViewModel.themeState.observe(viewLifecycleOwner) { isDark ->
+            val context = requireContext()
+            val color = when {
+                hasFocus || !text.isNullOrBlank() -> ContextCompat.getColor(context, R.color.blue)
+                isDark -> ContextCompat.getColor(context, R.color.white)
+                else -> ContextCompat.getColor(context, R.color.black_for_text)
+            }
+
+            val hintColor = ColorStateList.valueOf(color)
+
+            binding.playlistNameLayout.hintTextColor = hintColor
+            binding.playlistDescriptionLayout.hintTextColor = hintColor
+            binding.playlistNameLayout.boxStrokeColor = color
+            binding.playlistDescriptionLayout.boxStrokeColor = color
+            binding.playlistNameEditText.setTextCursorDrawable(R.drawable.cursor)
+        }
+    }
+
 
     private fun setupPhotoPicker() {
         val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
