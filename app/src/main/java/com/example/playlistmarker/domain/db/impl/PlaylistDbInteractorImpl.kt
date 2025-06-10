@@ -1,7 +1,7 @@
 package com.example.playlistmarker.domain.db.impl
 
-import android.util.Log
 import com.example.playlistmarker.domain.db.model.Playlist
+import com.example.playlistmarker.domain.db.model.Track
 import com.example.playlistmarker.domain.db.repository.PlaylistDbRepository
 import com.example.playlistmarker.domain.db.use_cases.PlaylistDbInteractor
 import kotlinx.coroutines.flow.Flow
@@ -21,5 +21,9 @@ class PlaylistDbInteractorImpl(private val playlistDbRepository: PlaylistDbRepos
 
     override fun getPlaylists(): Flow<List<Playlist>> {
         return playlistDbRepository.getPlaylists()
+    }
+
+    override suspend fun insertTrack(track: Track) {
+        playlistDbRepository.insertTrack(track)
     }
 }

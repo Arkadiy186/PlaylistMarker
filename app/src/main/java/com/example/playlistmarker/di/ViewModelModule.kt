@@ -1,5 +1,7 @@
 package com.example.playlistmarker.di
 
+import android.content.res.Resources.Theme
+import com.example.playlistmarker.domain.db.model.Playlist
 import com.example.playlistmarker.domain.db.use_cases.PlaylistDbInteractor
 import com.example.playlistmarker.domain.db.use_cases.TrackDbInteractor
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
@@ -34,7 +36,7 @@ val viewModelModule = module {
 
     //ACTIVITY PLAYER
     factory {
-        AudioPlayerViewModel(get<AudioPlayerInteractor>(), get<PositionTimeInteractor>(), get<TrackDbInteractor>())
+        AudioPlayerViewModel(get<AudioPlayerInteractor>(), get<PositionTimeInteractor>(), get<TrackDbInteractor>(), get<PlaylistDbInteractor>(), get<ThemeInteractor>())
     }
 
     //ACTIVITY MEDIA LIBRARY

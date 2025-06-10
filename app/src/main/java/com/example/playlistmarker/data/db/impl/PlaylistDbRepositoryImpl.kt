@@ -1,15 +1,20 @@
 package com.example.playlistmarker.data.db.impl
 
 import com.example.playlistmarker.data.db.PlaylistDataBase
+import com.example.playlistmarker.data.db.PlaylistTrackDatabase
 import com.example.playlistmarker.data.db.converters.PlaylistDbConverter
+import com.example.playlistmarker.data.db.converters.PlaylistTrackDbConverter
 import com.example.playlistmarker.domain.db.model.Playlist
+import com.example.playlistmarker.domain.db.model.Track
 import com.example.playlistmarker.domain.db.repository.PlaylistDbRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class PlaylistDbRepositoryImpl(
     private val playlistDataBase: PlaylistDataBase,
-    private val playlistDbConverter: PlaylistDbConverter
+    private val playlistDbConverter: PlaylistDbConverter,
+    private val playlistTrackDatabase: PlaylistTrackDatabase,
+    private val playlistTrackDbConverter: PlaylistTrackDbConverter
 ) : PlaylistDbRepository {
     override suspend fun insertPlaylist(playlist: Playlist) {
         playlistDataBase.playlistDao().insertPlaylist(playlistDbConverter.mapToData(playlist))
@@ -33,5 +38,9 @@ class PlaylistDbRepositoryImpl(
                     playlistDbConverter.mapToDomain(track)
                 }
             }
+    }
+
+    override suspend fun insertTrack(track: Track) {
+        playlistTrackDatabase.playlistTrackDao().insertPlaylistTrack(playlistTrackDbConverter.mapToData(track))
     }
 }

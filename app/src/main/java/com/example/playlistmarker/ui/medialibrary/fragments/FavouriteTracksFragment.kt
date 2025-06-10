@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.databinding.FragmentFavouriteTracksBinding
 import com.example.playlistmarker.ui.medialibrary.handler.favouritetracks.UiStateFavouriteHandler
@@ -18,8 +20,6 @@ import com.example.playlistmarker.ui.medialibrary.viewmodel.favouritetracks.Frag
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import com.example.playlistmarker.ui.search.recyclerview.TrackAdapter
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
-import com.example.playlistmarker.ui.search.utills.sharing.NavigationContract
-import com.example.playlistmarker.ui.search.utills.sharing.NavigationContractImpl
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -27,7 +27,6 @@ import org.koin.core.parameter.parametersOf
 class FavouriteTracksFragment : Fragment() {
 
     private lateinit var binding: FragmentFavouriteTracksBinding
-    private lateinit var navigationContract: NavigationContract
     private lateinit var adapter: TrackAdapter
     private lateinit var uiStateFavouriteHandler: UiStateFavouriteHandler
     private lateinit var onTrackClickDebounce: (TrackInfoDetails) -> Unit
@@ -50,14 +49,12 @@ class FavouriteTracksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navigationContract = NavigationContractImpl(requireContext())
-
         onTrackClickDebounce = debounceHandler.debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             useLastParam = true
         ) { track ->
-            navigationContract.openAudioPlayer(track)
+            (parentFragment as? MediaLibraryFragment)?.navigateToAudioPlayer(track)
         }
 
         adapter = TrackAdapter(favouriteList) { track -> onTrackClickDebounce(track) }

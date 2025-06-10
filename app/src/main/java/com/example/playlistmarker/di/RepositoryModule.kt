@@ -2,9 +2,11 @@ package com.example.playlistmarker.di
 
 import android.content.Context
 import com.example.playlistmarker.data.db.PlaylistDataBase
-import com.example.playlistmarker.data.db.TrackDatabase
+import com.example.playlistmarker.data.db.FavouriteTrackDatabase
+import com.example.playlistmarker.data.db.PlaylistTrackDatabase
 import com.example.playlistmarker.data.db.converters.PlaylistDbConverter
-import com.example.playlistmarker.data.db.converters.TrackDbConverter
+import com.example.playlistmarker.data.db.converters.FavouriteTrackDbConverter
+import com.example.playlistmarker.data.db.converters.PlaylistTrackDbConverter
 import com.example.playlistmarker.data.db.impl.PlaylistDbRepositoryImpl
 import com.example.playlistmarker.data.db.impl.TrackDbRepositoryImpl
 import com.example.playlistmarker.data.player.impl.PositionTimeRepositoryImpl
@@ -37,7 +39,7 @@ val repositoryModule = module {
 
     //ACTIVITY SEARCH
     single<HistoryRepository> {
-        HistoryRepositoryImpl(get<HistorySearch>(),get<TrackDatabase>())
+        HistoryRepositoryImpl(get<HistorySearch>(),get<FavouriteTrackDatabase>())
     }
 
     single<NetworkRepository> {
@@ -45,7 +47,7 @@ val repositoryModule = module {
     }
 
     single<TrackRepository> {
-        TrackRepositoryImpl(get<RetrofitClient>(),get<TrackDatabase>(), get<AddedAtStorage>())
+        TrackRepositoryImpl(get<RetrofitClient>(),get<FavouriteTrackDatabase>(), get<AddedAtStorage>())
     }
 
     single<SearchStateRepository> {
@@ -58,15 +60,17 @@ val repositoryModule = module {
     }
 
     //DATABASE
-    factory { TrackDbConverter() }
+    factory { FavouriteTrackDbConverter() }
 
     single<TrackDbRepository> {
-        TrackDbRepositoryImpl(get<TrackDatabase>(),get<TrackDbConverter>(), get<AddedAtStorage>())
+        TrackDbRepositoryImpl(get<FavouriteTrackDatabase>(),get<FavouriteTrackDbConverter>(), get<AddedAtStorage>())
     }
 
     factory { PlaylistDbConverter() }
 
+    factory { PlaylistTrackDbConverter() }
+
     single<PlaylistDbRepository> {
-        PlaylistDbRepositoryImpl(get<PlaylistDataBase>(), get<PlaylistDbConverter>())
+        PlaylistDbRepositoryImpl(get<PlaylistDataBase>(), get<PlaylistDbConverter>(), get<PlaylistTrackDatabase>(), get<PlaylistTrackDbConverter>())
     }
 }

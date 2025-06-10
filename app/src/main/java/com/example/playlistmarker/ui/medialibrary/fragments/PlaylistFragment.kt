@@ -88,7 +88,7 @@ class PlaylistFragment : Fragment() {
 
     private fun setupListeners() {
         binding.buttonNewPlaylist.setOnClickListener {
-            findNavController().navigate(R.id.newPlaylistFragment)
+            (parentFragment as? MediaLibraryFragment)?.navigateToNewPlaylist()
         }
     }
 
@@ -110,12 +110,10 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun showPlaylists(playlists: List<Playlist>) {
-        requireActivity().runOnUiThread {
-            listPlaylists.clear()
-            listPlaylists.addAll(playlists)
-            playlistAdapter.notifyDataSetChanged()
-            uiStatePlaylistHandler.setPlaceholderVisibility(true)
-        }
+        listPlaylists.clear()
+        listPlaylists.addAll(playlists)
+        playlistAdapter.notifyDataSetChanged()
+        uiStatePlaylistHandler.setPlaceholderVisibility(true)
     }
 
     companion object {

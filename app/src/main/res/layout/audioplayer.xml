@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/audio_player_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/FragmentBackgroundStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.audioplayer.activity.AudioPlayerActivity">
+    tools:context=".ui.audioplayer.fragment.AudioPlayerFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -224,6 +226,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/standard_bottom_sheet"
         android:layout_width="match_parent"
@@ -250,6 +259,7 @@
             android:paddingBottom="@dimen/edit_text_padding_start">
 
             <TextView
+                android:id="@+id/add_to_playlist_text_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/add_to_playlist"
@@ -270,6 +280,7 @@
             android:layout_marginTop="16dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playlist_audio_player_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="24dp"/>

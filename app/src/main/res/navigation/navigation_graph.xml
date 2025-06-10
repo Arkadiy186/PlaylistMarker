@@ -11,8 +11,8 @@
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
         <action
-            android:id="@+id/action_searchFragment_to_audioPlayerActivity"
-            app:destination="@id/audioPlayerActivity" />
+            android:id="@+id/action_searchFragment_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -23,12 +23,27 @@
         android:id="@+id/mediaLibraryFragment"
         android:name="com.example.playlistmarker.ui.medialibrary.fragments.MediaLibraryFragment"
         android:label="fragment_media_library"
-        tools:layout="@layout/fragment_media_library" />
-    <activity
-        android:id="@+id/audioPlayerActivity"
-        android:name="com.example.playlistmarker.ui.audioplayer.activity.AudioPlayerActivity"
+        tools:layout="@layout/fragment_media_library" >
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/audioPlayerFragment"
+        android:name="com.example.playlistmarker.ui.audioplayer.fragment.AudioPlayerFragment"
         android:label="audioplayer"
-        tools:layout="@layout/audioplayer" />
+        tools:layout="@layout/audioplayer">
+        <argument
+            android:name="track"
+            app:argType="com.example.playlistmarker.ui.search.model.TrackInfoDetails"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_audioPlayerFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+    </fragment>
     <fragment
         android:id="@+id/playlistFragment"
         android:name="com.example.playlistmarker.ui.medialibrary.fragments.PlaylistFragment"
@@ -42,11 +57,7 @@
         android:id="@+id/favouriteTracksFragment"
         android:name="com.example.playlistmarker.ui.medialibrary.fragments.FavouriteTracksFragment"
         android:label="fragment_favourite_tracks"
-        tools:layout="@layout/fragment_favourite_tracks" >
-        <action
-            android:id="@+id/action_favouriteTracksFragment_to_audioPlayerActivity"
-            app:destination="@id/audioPlayerActivity" />
-    </fragment>
+        tools:layout="@layout/fragment_favourite_tracks" />
     <fragment
         android:id="@+id/newPlaylistFragment"
         android:name="com.example.playlistmarker.ui.medialibrary.fragments.NewPlaylistFragment"
