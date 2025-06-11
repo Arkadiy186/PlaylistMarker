@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.audioplayer.activity.AudioPlayerActivity"
+            android:name=".ui.audioplayer.fragment.AudioPlayerFragment"
             android:exported="false" />
     </application>
 

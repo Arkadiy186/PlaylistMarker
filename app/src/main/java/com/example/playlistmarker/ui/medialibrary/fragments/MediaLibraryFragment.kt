@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmarker.R
 import com.example.playlistmarker.databinding.FragmentMediaLibraryBinding
 import com.example.playlistmarker.ui.medialibrary.viewpageradapter.MediaLibraryViewPagerAdapter
+import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MediaLibraryFragment : Fragment() {
@@ -48,6 +50,16 @@ class MediaLibraryFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         tabMediator.detach()
+    }
+
+    fun navigateToAudioPlayer(track: TrackInfoDetails) {
+        val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToAudioPlayerFragment(track)
+        findNavController().navigate(action)
+    }
+
+    fun navigateToNewPlaylist() {
+        val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToNewPlaylistFragment()
+        findNavController().navigate(action)
     }
 
     companion object {

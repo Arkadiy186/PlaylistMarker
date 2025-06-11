@@ -1,5 +1,8 @@
 package com.example.playlistmarker.di
 
+import android.content.res.Resources.Theme
+import com.example.playlistmarker.domain.db.model.Playlist
+import com.example.playlistmarker.domain.db.use_cases.PlaylistDbInteractor
 import com.example.playlistmarker.domain.db.use_cases.TrackDbInteractor
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.PositionTimeInteractor
@@ -9,7 +12,7 @@ import com.example.playlistmarker.domain.search.use_cases.TrackInteractor
 import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
 import com.example.playlistmarker.ui.audioplayer.viewmodel.AudioPlayerViewModel
 import com.example.playlistmarker.ui.medialibrary.viewmodel.favouritetracks.FragmentFavouriteTrackViewModel
-import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.FragmentPlaylistViewModel
+import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.PlaylistViewModel
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
 import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
@@ -33,16 +36,16 @@ val viewModelModule = module {
 
     //ACTIVITY PLAYER
     factory {
-        AudioPlayerViewModel(get<AudioPlayerInteractor>(), get<PositionTimeInteractor>(), get<TrackDbInteractor>())
+        AudioPlayerViewModel(get<AudioPlayerInteractor>(), get<PositionTimeInteractor>(), get<TrackDbInteractor>(), get<PlaylistDbInteractor>(), get<ThemeInteractor>())
     }
 
     //ACTIVITY MEDIA LIBRARY
-    factory { (playlistId: String) ->
-        FragmentPlaylistViewModel(playlistId)
+    factory {
+        FragmentFavouriteTrackViewModel(get<TrackDbInteractor>())
     }
 
     factory {
-        FragmentFavouriteTrackViewModel(get<TrackDbInteractor>())
+        PlaylistViewModel(get<PlaylistDbInteractor>(), get<ThemeInteractor>())
     }
 
     //UTILS

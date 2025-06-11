@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmarker.R
 import com.example.playlistmarker.creator.Creator
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateData
 import com.example.playlistmarker.databinding.FragmentSearchBinding
@@ -23,8 +25,6 @@ import com.example.playlistmarker.ui.search.ui_state.UiStateHandler
 import com.example.playlistmarker.ui.search.ui_state.UiStateHandlerImpl
 import com.example.playlistmarker.ui.search.utills.debounce.DebounceHandler
 import com.example.playlistmarker.ui.search.utills.hidekeyboard.HideKeyboardHelper
-import com.example.playlistmarker.ui.search.utills.sharing.NavigationContract
-import com.example.playlistmarker.ui.search.utills.sharing.NavigationContractImpl
 import com.example.playlistmarker.ui.search.viewmodel.historyviewmodel.HistoryViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.SearchViewModel
 import com.example.playlistmarker.ui.search.viewmodel.searchviewmodel.UiState
@@ -39,7 +39,6 @@ class SearchFragment : Fragment() {
     private val historyViewModel: HistoryViewModel by viewModel()
     private lateinit var uiHistoryHandler: UiHistoryHandler
     private lateinit var uiStateHandler: UiStateHandler
-    private lateinit var navigationContract: NavigationContract
     private lateinit var onTrackClickDebounce: (TrackInfoDetails) -> Unit
 
     private val historyInteractor: HistoryInteractor by inject()
@@ -63,15 +62,17 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navigationContract = NavigationContractImpl(requireContext())
 
-        onTrackClickDebounce = debounceHandler.debounce(CLICK_DEBOUNCE_DELAY,
+        onTrackClickDebounce = debounceHandler.debounce(
+            CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             useLastParam = true
         ) { track ->
             val domainTrack = TrackInfoDetailsMapper.mapToDomain(track)
             historyInteractor.addTrackHistory(domainTrack)
-            navigationContract.openAudioPlayer(track)
+
+            val action = SearchFragmentDirections.actionSearchFragmentToAudioPlayerFragment(track)
+            findNavController().navigate(action)
         }
 
         searchAdapter = TrackAdapter(searchList) { track -> onTrackClickDebounce(track) }
@@ -93,6 +94,9 @@ class SearchFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         binding.searchEditText.clearFocus()
+        if (binding.searchEditText.text.isEmpty()) {
+            uiHistoryHandler.historySetVisibility(false)
+        }
     }
 
     private fun setupListeners() {
@@ -118,8 +122,6 @@ class SearchFragment : Fragment() {
         }
 
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            /*val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-            bottomNavigationView.visibility = if (hasFocus && binding.searchEditText.text.isEmpty()) View.GONE else View.VISIBLE*/
 
             if (hasFocus && binding.searchEditText.text.isEmpty()) {
                 viewLifecycleOwner.lifecycleScope.launch {

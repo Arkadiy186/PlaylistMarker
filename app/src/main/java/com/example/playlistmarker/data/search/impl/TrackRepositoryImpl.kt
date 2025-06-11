@@ -1,11 +1,11 @@
 package com.example.playlistmarker.data.search.impl
 
-import com.example.playlistmarker.data.db.AppDatabase
+import com.example.playlistmarker.data.db.FavouriteTrackDatabase
 import com.example.playlistmarker.data.mappers.TrackDtoMapper
 import com.example.playlistmarker.data.search.model.TrackResponse
 import com.example.playlistmarker.data.search.network.RetrofitClient
 import com.example.playlistmarker.data.db.sharedpreferences.AddedAtStorage
-import com.example.playlistmarker.domain.search.model.Track
+import com.example.playlistmarker.domain.db.model.Track
 import com.example.playlistmarker.domain.search.repository.Resources
 import com.example.playlistmarker.domain.search.repository.TrackRepository
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flow
 
 class TrackRepositoryImpl(
     private val retrofitClient: RetrofitClient,
-    private val appDatabase: AppDatabase,
+    private val appDatabase: FavouriteTrackDatabase,
     private val addedAtStorage: AddedAtStorage
 ) : TrackRepository {
     override fun searchTrack(query: String): Flow<Resources<List<Track>>> = flow {
@@ -25,7 +25,7 @@ class TrackRepositoryImpl(
                 emit(Resources.Error("Проверьте подключение к интеренету"))
             }
             200 -> {
-                val favoriteIds = appDatabase.trackDao().getIdTracks().first()
+                val favoriteIds = appDatabase.favouriteTrackDao().getIdTracks().first()
                 val trackResponse = response as TrackResponse
                 val domainTracks = trackResponse.results.map { dto ->
                     TrackDtoMapper.mapToDomain(dto)

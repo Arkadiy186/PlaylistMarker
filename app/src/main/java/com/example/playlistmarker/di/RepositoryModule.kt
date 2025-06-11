@@ -1,8 +1,13 @@
 package com.example.playlistmarker.di
 
 import android.content.Context
-import com.example.playlistmarker.data.db.AppDatabase
-import com.example.playlistmarker.data.db.DbConverters
+import com.example.playlistmarker.data.db.PlaylistDataBase
+import com.example.playlistmarker.data.db.FavouriteTrackDatabase
+import com.example.playlistmarker.data.db.PlaylistTrackDatabase
+import com.example.playlistmarker.data.db.converters.PlaylistDbConverter
+import com.example.playlistmarker.data.db.converters.FavouriteTrackDbConverter
+import com.example.playlistmarker.data.db.converters.PlaylistTrackDbConverter
+import com.example.playlistmarker.data.db.impl.PlaylistDbRepositoryImpl
 import com.example.playlistmarker.data.db.impl.TrackDbRepositoryImpl
 import com.example.playlistmarker.data.player.impl.PositionTimeRepositoryImpl
 import com.example.playlistmarker.data.player.sharedpreferences.PositionTime
@@ -16,6 +21,7 @@ import com.example.playlistmarker.data.search.sharedpreferences.HistorySearch
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateManager
 import com.example.playlistmarker.data.settings.impl.ThemeRepositoryImpl
 import com.example.playlistmarker.data.settings.sharedpreferences.ThemePreferences
+import com.example.playlistmarker.domain.db.repository.PlaylistDbRepository
 import com.example.playlistmarker.domain.db.repository.TrackDbRepository
 import com.example.playlistmarker.domain.player.repository.PositionTimeRepository
 import com.example.playlistmarker.domain.search.repository.HistoryRepository
@@ -33,7 +39,7 @@ val repositoryModule = module {
 
     //ACTIVITY SEARCH
     single<HistoryRepository> {
-        HistoryRepositoryImpl(get<HistorySearch>(),get<AppDatabase>())
+        HistoryRepositoryImpl(get<HistorySearch>(),get<FavouriteTrackDatabase>())
     }
 
     single<NetworkRepository> {
@@ -41,7 +47,7 @@ val repositoryModule = module {
     }
 
     single<TrackRepository> {
-        TrackRepositoryImpl(get<RetrofitClient>(),get<AppDatabase>(), get<AddedAtStorage>())
+        TrackRepositoryImpl(get<RetrofitClient>(),get<FavouriteTrackDatabase>(), get<AddedAtStorage>())
     }
 
     single<SearchStateRepository> {
@@ -54,9 +60,17 @@ val repositoryModule = module {
     }
 
     //DATABASE
-    factory { DbConverters() }
+    factory { FavouriteTrackDbConverter() }
 
     single<TrackDbRepository> {
-        TrackDbRepositoryImpl(get<AppDatabase>(),get<DbConverters>(), get<AddedAtStorage>())
+        TrackDbRepositoryImpl(get<FavouriteTrackDatabase>(),get<FavouriteTrackDbConverter>(), get<AddedAtStorage>())
+    }
+
+    factory { PlaylistDbConverter() }
+
+    factory { PlaylistTrackDbConverter() }
+
+    single<PlaylistDbRepository> {
+        PlaylistDbRepositoryImpl(get<PlaylistDataBase>(), get<PlaylistDbConverter>(), get<PlaylistTrackDatabase>(), get<PlaylistTrackDbConverter>())
     }
 }

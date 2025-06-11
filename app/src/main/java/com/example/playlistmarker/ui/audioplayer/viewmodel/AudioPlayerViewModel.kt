@@ -1,17 +1,21 @@
 package com.example.playlistmarker.ui.audioplayer.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmarker.domain.db.model.Playlist
+import com.example.playlistmarker.domain.db.use_cases.PlaylistDbInteractor
 import com.example.playlistmarker.domain.db.use_cases.TrackDbInteractor
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.PositionTimeInteractor
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
+import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
 import com.example.playlistmarker.ui.audioplayer.state.UiFavoriteButtonState
 import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
+import com.example.playlistmarker.ui.audioplayer.state.AddTrackToPlaylistState
+import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.PlaylistUiState
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,7 +25,9 @@ import kotlinx.coroutines.launch
 class AudioPlayerViewModel (
     private val audioPlayerInteractor: AudioPlayerInteractor,
     private val positionTimeInteractor: PositionTimeInteractor,
-    private val trackDbInteractor: TrackDbInteractor
+    private val trackDbInteractor: TrackDbInteractor,
+    private val playlistDbInteractor: PlaylistDbInteractor,
+    private val themeInteractor: ThemeInteractor
 ) : ViewModel(), AudioPlayerCallback {
 
     private val _playerState = MutableLiveData<UiAudioPlayerState>().apply { value = UiAudioPlayerState.Default() }
@@ -41,6 +47,18 @@ class AudioPlayerViewModel (
 
     private val _favouriteButtonState = MediatorLiveData<UiFavoriteButtonState>()
     val favouriteButtonState: LiveData<UiFavoriteButtonState> = _favouriteButtonState
+
+    private val _showPlaylistEvent = MutableLiveData<TrackInfoDetails>()
+    val showPlaylistEvent: LiveData<TrackInfoDetails> = _showPlaylistEvent
+
+    private val _playlistUiState = MutableLiveData<PlaylistUiState>()
+    val playlistUiState: LiveData<PlaylistUiState> = _playlistUiState
+
+    private val _addTrackState = MutableLiveData<AddTrackToPlaylistState>()
+    val addTrackState: LiveData<AddTrackToPlaylistState> = _addTrackState
+
+    private val _uiThemeLiveData = MutableLiveData<Boolean>()
+    val themeState: LiveData<Boolean> = _uiThemeLiveData
 
     val track = TrackInfoDetails(
         1,
@@ -82,6 +100,8 @@ class AudioPlayerViewModel (
                 UiFavoriteButtonState.NotFavourite()
             }
         }
+
+        _uiThemeLiveData.postValue(themeInteractor.getTheme())
     }
 
     override fun onPlayerStateChanged(state: UiAudioPlayerState) {
@@ -167,6 +187,46 @@ class AudioPlayerViewModel (
             _currentTrack.value = current.copy(isFavourite = !current.isFavourite)
         }
     }
+
+    fun addToPlaylistClicked() {
+        val current = _currentTrack.value ?: return
+        _showPlaylistEvent.postValue(current)
+    }
+
+    fun observeAddPlaylistViewModel() {
+        viewModelScope.launch {
+            playlistDbInteractor.getPlaylists().collect { list ->
+                if (list.isEmpty()) {
+                    _playlistUiState.postValue(PlaylistUiState.Placeholder)
+                } else {
+                    _playlistUiState.postValue(PlaylistUiState.Content(list))
+                }
+            }
+        }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist, track: TrackInfoDetails) {
+        viewModelScope.launch {
+            val idList = playlist.listIdTracks.toMutableList()
+
+            val trackIdStr = track.id.toString()
+            if (idList.contains(trackIdStr)) {
+                _addTrackState.postValue(AddTrackToPlaylistState.TrackIsExists(playlist.name))
+            } else {
+                idList.add(trackIdStr)
+                val updatedPlaylist = playlist.copy(
+                    listIdTracks = idList,
+                    counterTracks = idList.size
+                )
+
+                playlistDbInteractor.updatePlaylist(updatedPlaylist)
+                playlistDbInteractor.insertTrack(TrackInfoDetailsMapper.mapToDomain(track))
+
+                _addTrackState.postValue(AddTrackToPlaylistState.TrackAdded((playlist.name)))
+            }
+        }
+    }
+
 
     private fun updateState(state: (Int) -> UiAudioPlayerState) {
         currentPosition = audioPlayerInteractor.getCurrentPositionPlayer()

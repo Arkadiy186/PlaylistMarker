@@ -1,4 +1,4 @@
-package com.example.playlistmarker.ui.medialibrary.handler
+package com.example.playlistmarker.ui.medialibrary.handler.favouritetracks
 
 import android.view.View
 import androidx.fragment.app.Fragment

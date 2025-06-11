@@ -1,6 +1,6 @@
 package com.example.playlistmarker.ui.mapper
 
-import com.example.playlistmarker.domain.search.model.Track
+import com.example.playlistmarker.domain.db.model.Track
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 
 object TrackInfoDetailsMapper {

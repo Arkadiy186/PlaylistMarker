@@ -239,10 +239,6 @@
         <item name="android:lineHeight">16.41sp</item>
     </style>
 
-    <style name="audioPlayerMainScreenStyle">
-        <item name="android:background">@color/white</item>
-    </style>
-    
     <style name="progressBarStyle">
         <item name="android:layout_width">@dimen/progressBar</item>
         <item name="android:layout_height">@dimen/progressBar</item>
@@ -279,4 +275,64 @@
     <style name="CustomTabTextStyle" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
     </style>
+
+    <style name="new_playlist_title_description_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">@dimen/main_screen_padding_left_right</item>
+        <item name="android:textSize">@dimen/settings_screen</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxBackgroundColor">@color/white</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/main_margin_top_bottom</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/main_margin_top_bottom</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/main_margin_top_bottom</item>
+        <item name="boxCornerRadiusTopStart">@dimen/main_margin_top_bottom</item>
+    </style>
+
+    <style name="new_playlist_create_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">17dp</item>
+        <item name="android:layout_marginBottom">32dp</item>
+        <item name="android:paddingVertical">12.5dp</item>
+        <item name="android:backgroundTint">@color/grey</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">@dimen/settings_screen</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+    </style>
+
+    <style name="title_and_counter_tracks_playlist_rw_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineHeight">@dimen/settings_screen</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">@color/black_for_text</item>
+    </style>
+
+    <style name="custom_toast_text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingVertical">@dimen/main_screen_padding_left_right</item>
+        <item name="android:paddingStart">@dimen/main_screen_padding_left_right</item>
+        <item name="android:paddingEnd">8dp</item>
+    </style>
+
 </resources>

@@ -1,11 +1,10 @@
-package com.example.playlistmarker.data.db
+package com.example.playlistmarker.data.db.converters
 
-import com.example.playlistmarker.data.db.entitys.TrackEntity
-import com.example.playlistmarker.domain.search.model.Track
+import com.example.playlistmarker.data.db.entitys.TrackPlaylistEntity
+import com.example.playlistmarker.domain.db.model.Track
 
-class DbConverters {
-
-    fun mapToDomain(trackEntity: TrackEntity): Track {
+class PlaylistTrackDbConverter {
+    fun mapToDomain(trackEntity: TrackPlaylistEntity): Track {
         return Track(
             id = trackEntity.id,
             trackName = trackEntity.trackName,
@@ -19,8 +18,8 @@ class DbConverters {
             previewUrl = trackEntity.previewUrl)
     }
 
-    fun mapToData(track: Track): TrackEntity {
-        return TrackEntity(
+    fun mapToData(track: Track): TrackPlaylistEntity {
+        return TrackPlaylistEntity(
             id = track.id,
             trackName = track.trackName,
             artistName = track.artistName,
