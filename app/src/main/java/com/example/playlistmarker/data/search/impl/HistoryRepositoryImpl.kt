@@ -20,7 +20,9 @@ class HistoryRepositoryImpl(
     override suspend fun getHistory(): List<Track> {
         val favouriteIds = appDatabase.favouriteTrackDao().getIdTracks().first()
         val trackDtoList = historySearch.getHistory()
-        val mapDomainTrack = trackDtoList.map { TrackDtoMapper.mapToDomain(it) }
+        val mapDomainTrack = trackDtoList.map { dto ->
+            TrackDtoMapper.mapToDomain(dto, playlistId = 0L)
+        }
         val updateTracks = mapDomainTrack.map { track ->
             track.copy(isFavourite = favouriteIds.contains(track.id))
         }

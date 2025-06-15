@@ -2,6 +2,7 @@ package com.example.playlistmarker.domain.db.model
 
 data class Track (
     val id: Int,
+    val playlistId: Long,
     val trackName: String,
     val artistName: String,
     val trackTime: String,

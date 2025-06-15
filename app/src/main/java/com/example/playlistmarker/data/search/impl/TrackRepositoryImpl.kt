@@ -28,7 +28,7 @@ class TrackRepositoryImpl(
                 val favoriteIds = appDatabase.favouriteTrackDao().getIdTracks().first()
                 val trackResponse = response as TrackResponse
                 val domainTracks = trackResponse.results.map { dto ->
-                    TrackDtoMapper.mapToDomain(dto)
+                    TrackDtoMapper.mapToDomain(dto, playlistId = 0L)
                 }
                 val updatedTracks = domainTracks.map { track ->
                     track.copy(

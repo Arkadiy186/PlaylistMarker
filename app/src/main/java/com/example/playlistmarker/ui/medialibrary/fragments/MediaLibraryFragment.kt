@@ -62,6 +62,11 @@ class MediaLibraryFragment : Fragment() {
         findNavController().navigate(action)
     }
 
+    fun navigateToCurrentPlaylist() {
+        val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToCurrentPlaylistFragment2()
+        findNavController().navigate(action)
+    }
+
     companion object {
         private const val ARGS_TRACK_FAVOURITE = "track_id"
         private const val ARGS_TRACK_PLAYLIST = "playlist_id"

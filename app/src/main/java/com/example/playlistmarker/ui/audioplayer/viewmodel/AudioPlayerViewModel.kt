@@ -62,6 +62,7 @@ class AudioPlayerViewModel (
 
     val track = TrackInfoDetails(
         1,
+        0L,
         "",
         "",
         "",

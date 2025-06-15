@@ -8,6 +8,8 @@ interface PlaylistDbRepository {
     suspend fun insertPlaylist(playlist: Playlist)
     suspend fun deletePlaylist(playlist: Playlist)
     suspend fun updatePlaylist(playlist: Playlist)
+    fun getPlaylistId(playlistId: Long): Flow<Playlist>
     fun getPlaylists(): Flow<List<Playlist>>
+    fun getTracksForPlaylist(playlistId: Long): Flow<List<Track>>
     suspend fun insertTrack(track: Track)
 }

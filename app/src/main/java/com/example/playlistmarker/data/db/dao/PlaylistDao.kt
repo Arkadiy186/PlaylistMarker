@@ -21,7 +21,7 @@ interface PlaylistDao {
     fun getPlaylists(): Flow<List<PlaylistEntity>>
 
     @Query("SELECT * FROM playlist_table WHERE id = :playlistId LIMIT 1")
-    suspend fun getPlaylistById(playlistId: Long): PlaylistEntity?
+    fun getPlaylistById(playlistId: Long): Flow<PlaylistEntity>
 
     @Update
     suspend fun updatePlaylist(playlist: PlaylistEntity)

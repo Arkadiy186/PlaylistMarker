@@ -7,6 +7,7 @@ object TrackInfoDetailsMapper {
     fun map(track: Track): TrackInfoDetails {
         return TrackInfoDetails(
             id = track.id,
+            playlistId = track.playlistId,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTime = track.trackTime,
@@ -24,6 +25,7 @@ object TrackInfoDetailsMapper {
     fun mapToDomain(trackInfo: TrackInfoDetails): Track {
         return Track(
             id = trackInfo.id,
+            playlistId = trackInfo.playlistId,
             trackName = trackInfo.trackName,
             artistName = trackInfo.artistName,
             trackTime = trackInfo.trackTime,

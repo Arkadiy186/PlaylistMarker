@@ -21,10 +21,7 @@ class PlaylistDbRepositoryImpl(
     }
 
     override suspend fun deletePlaylist(playlist: Playlist) {
-        val playlistEntity = playlistDataBase.playlistDao().getPlaylistById(playlist.id)
-        if (playlistEntity != null) {
-            playlistDataBase.playlistDao().deletePlaylist(playlistDbConverter.mapToData(playlist))
-        }
+        playlistDataBase.playlistDao().deletePlaylist(playlistDbConverter.mapToData(playlist))
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {
@@ -36,6 +33,23 @@ class PlaylistDbRepositoryImpl(
             .map { entityList ->
                 entityList.map { track ->
                     playlistDbConverter.mapToDomain(track)
+                }
+            }
+    }
+
+    override fun getPlaylistId(playlistId: Long): Flow<Playlist> {
+        return playlistDataBase.playlistDao()
+            .getPlaylistById(playlistId)
+            .map { entity ->
+                entity.let { playlistDbConverter.mapToDomain(it) }
+            }
+    }
+
+    override fun getTracksForPlaylist(playlistId: Long): Flow<List<Track>> {
+        return playlistTrackDatabase.playlistTrackDao()
+            .getTracksForPlaylist(playlistId).map { list ->
+                list.map { entity ->
+                    playlistTrackDbConverter.mapToDomain(entity)
                 }
             }
     }

@@ -7,6 +7,7 @@ class PlaylistTrackDbConverter {
     fun mapToDomain(trackEntity: TrackPlaylistEntity): Track {
         return Track(
             id = trackEntity.id,
+            playlistId = trackEntity.playlistId,
             trackName = trackEntity.trackName,
             artistName = trackEntity.artistName,
             trackTime = trackEntity.trackTime,
@@ -21,6 +22,7 @@ class PlaylistTrackDbConverter {
     fun mapToData(track: Track): TrackPlaylistEntity {
         return TrackPlaylistEntity(
             id = track.id,
+            playlistId = track.playlistId,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTime = track.trackTime,

@@ -68,8 +68,8 @@ class PlaylistFragment : Fragment() {
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             useLastParam = true
-        ) { playlist ->
-
+        ) { _ ->
+            (parentFragment as? MediaLibraryFragment)?.navigateToCurrentPlaylist()
         }
 
         playlistAdapter = PlaylistAdapter(listPlaylists) { playlist -> onPlaylistClickDebounce(playlist)}
