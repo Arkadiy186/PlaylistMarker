@@ -6,13 +6,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmarker.domain.db.model.Playlist
 import com.example.playlistmarker.domain.db.use_cases.PlaylistDbInteractor
+import com.example.playlistmarker.domain.db.use_cases.TrackDbInteractor
+import com.example.playlistmarker.domain.db.use_cases.TrackPlaylistDbInteractor
 import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
+import com.example.playlistmarker.ui.mapper.TrackInfoDetailsMapper
 import com.example.playlistmarker.ui.medialibrary.viewmodel.currentplaylist.UiStateCurrentPlaylistTracks
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
     private val playlistDbInteractor: PlaylistDbInteractor,
+    private val trackPlaylistDbInteractor: TrackPlaylistDbInteractor,
     private val themeInteractor: ThemeInteractor
 ) : ViewModel() {
 
@@ -60,16 +66,24 @@ class PlaylistViewModel(
         }
     }
 
+    fun deleteTrackFromPlaylist(trackId: Long, playlist: Playlist) {
+        viewModelScope.launch {
+            trackPlaylistDbInteractor.deleteTrack(trackId, playlist.id)
+            loadPlaylistWithTracks(playlist.id)
+        }
+    }
+
     fun loadPlaylistWithTracks(playlistId: Long) {
         viewModelScope.launch {
-            val playlistFlow = playlistDbInteractor.getPlaylistId(playlistId)
-            val tracksFlow = playlistDbInteractor.getTracksForPlaylist(playlistId)
+            val playlistFlow = playlistDbInteractor.getPlaylistId(playlistId).first()
 
-            playlistFlow.combine(tracksFlow) { playlist, tracks ->
-                UiStateCurrentPlaylistTracks.Content(playlist, tracks)
-            }.collect {
-                _playlistDetailsState.postValue(it)
-            }
+            val tracksFlow = trackPlaylistDbInteractor.getTracksForPlaylist(playlistId).map { list ->
+                list.map { track ->
+                    TrackInfoDetailsMapper.map(track)
+                }
+            }.first()
+
+            _playlistDetailsState.postValue(UiStateCurrentPlaylistTracks.Content(playlistFlow, tracksFlow))
         }
     }
 

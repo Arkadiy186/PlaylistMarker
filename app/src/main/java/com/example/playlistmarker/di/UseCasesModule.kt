@@ -17,10 +17,13 @@ import com.example.playlistmarker.domain.settings.use_cases.ThemeInteractor
 import com.example.playlistmarker.data.search.sharedpreferences.SearchStateManager
 import com.example.playlistmarker.domain.db.impl.PlaylistDbInteractorImpl
 import com.example.playlistmarker.domain.db.impl.TrackDbInteractorImpl
+import com.example.playlistmarker.domain.db.impl.TrackPlaylistDbInteractorImpl
 import com.example.playlistmarker.domain.db.repository.PlaylistDbRepository
 import com.example.playlistmarker.domain.db.repository.TrackDbRepository
+import com.example.playlistmarker.domain.db.repository.TrackPlaylistDbRepository
 import com.example.playlistmarker.domain.db.use_cases.PlaylistDbInteractor
 import com.example.playlistmarker.domain.db.use_cases.TrackDbInteractor
+import com.example.playlistmarker.domain.db.use_cases.TrackPlaylistDbInteractor
 import com.example.playlistmarker.domain.player.impl.PositionTimeInteractorImpl
 import com.example.playlistmarker.domain.player.repository.PositionTimeRepository
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
@@ -68,5 +71,9 @@ val useCasesModule = module {
 
     factory<PlaylistDbInteractor> {
         PlaylistDbInteractorImpl(get<PlaylistDbRepository>())
+    }
+
+    factory<TrackPlaylistDbInteractor> {
+        TrackPlaylistDbInteractorImpl(get<TrackPlaylistDbRepository>())
     }
 }

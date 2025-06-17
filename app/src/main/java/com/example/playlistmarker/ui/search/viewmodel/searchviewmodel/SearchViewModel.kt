@@ -71,6 +71,12 @@ class SearchViewModel (
         }
     }
 
+    fun insertTrackToDatabase(track: Track) {
+        viewModelScope.launch {
+            trackInteractor.insertTrack(track)
+        }
+    }
+
     private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
         val tracks = foundTracks ?: emptyList()
 

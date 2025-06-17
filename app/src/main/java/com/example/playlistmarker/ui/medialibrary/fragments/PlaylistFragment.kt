@@ -17,7 +17,7 @@ import com.example.playlistmarker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmarker.domain.db.model.Playlist
 import com.example.playlistmarker.ui.medialibrary.handler.playlists.UiStatePlaylistHandler
 import com.example.playlistmarker.ui.medialibrary.handler.playlists.UiStatePlaylistsHandlerImpl
-import com.example.playlistmarker.ui.medialibrary.recyclerview.PlaylistAdapter
+import com.example.playlistmarker.ui.medialibrary.recyclerview.playlist.PlaylistAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.PlaylistUiState
 import com.example.playlistmarker.ui.medialibrary.viewmodel.playlist.PlaylistViewModel
@@ -68,8 +68,8 @@ class PlaylistFragment : Fragment() {
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             useLastParam = true
-        ) { _ ->
-            (parentFragment as? MediaLibraryFragment)?.navigateToCurrentPlaylist()
+        ) { playlist ->
+            (parentFragment as? MediaLibraryFragment)?.navigateToCurrentPlaylist(playlist.id)
         }
 
         playlistAdapter = PlaylistAdapter(listPlaylists) { playlist -> onPlaylistClickDebounce(playlist)}

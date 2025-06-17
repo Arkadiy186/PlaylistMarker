@@ -20,9 +20,9 @@ interface FavouriteTrackDao {
     @Query("SELECT * FROM favourite_track_table")
     fun getTracks(): Flow<List<FavouriteTrackEntity>>
 
-    @Query("SELECT id FROM favourite_track_table")
-    fun getIdTracks(): Flow<List<Int>>
+    @Query("SELECT trackId FROM favourite_track_table")
+    fun getIdTracks(): Flow<List<Long>>
 
-    @Query("SELECT * FROM favourite_track_table WHERE id = :trackId LIMIT 1")
-    suspend fun getTrackById(trackId: Int): FavouriteTrackEntity?
+    @Query("SELECT * FROM favourite_track_table WHERE trackId = :trackId LIMIT 1")
+    suspend fun getTrackById(trackId: Long): FavouriteTrackEntity?
 }

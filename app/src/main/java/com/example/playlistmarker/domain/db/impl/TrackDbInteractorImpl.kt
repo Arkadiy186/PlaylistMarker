@@ -16,13 +16,13 @@ class TrackDbInteractorImpl(private val trackDbRepository: TrackDbRepository) : 
         trackDbRepository.deleteTrack(track)
     }
 
-    override fun getFavouriteTracks(): Flow<List<Track>> {
-        return trackDbRepository.getFavouriteTracks()
+    override fun getAllFavouriteTrackDetails(): Flow<List<Track>> {
+        return trackDbRepository.getAllFavouriteTrackDetails()
             .map { tracks ->
                 tracks.sortedByDescending { it.addedAt } }
     }
 
-    override fun getAllFavouriteTracks(): Flow<List<Int>> {
-        return trackDbRepository.getAllFavouriteTracks()
+    override fun getFavouriteTrackIds(): Flow<List<Long>> {
+        return trackDbRepository.getFavouriteTrackIds()
     }
 }

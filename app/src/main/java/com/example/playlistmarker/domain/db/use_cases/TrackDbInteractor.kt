@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface TrackDbInteractor {
     suspend fun insertTrack(track: Track)
     suspend fun deleteTrack(track: Track)
-    fun getFavouriteTracks(): Flow<List<Track>>
-    fun getAllFavouriteTracks(): Flow<List<Int>>
+    fun getAllFavouriteTrackDetails(): Flow<List<Track>>
+    fun getFavouriteTrackIds(): Flow<List<Long>>
 }

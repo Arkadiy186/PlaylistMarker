@@ -43,7 +43,10 @@
     <string name="unsaved_data_be_lost">Все несохраненные данные будут потеряны</string>
     <string name="cancel_create_playlist">Отмена</string>
     <string name="final_create_playlist">Завершить</string>
-    <string name="playlist_time_and_count">%1$d минут • %2$s</string>
+    <string name="playlist_time_and_count">%1$s минут • %2$s</string>
+    <string name="dialog_title_remove_track_from_playlist">Хотите удалить трек?</string>
+    <string name="dialog_confirm_remove_track_from_playlist">Да</string>
+    <string name="dialog_failure_remove_track_from_playlist">Нет</string>
     
     <plurals name="tracks_count">
         <item quantity="one">%d трек</item>

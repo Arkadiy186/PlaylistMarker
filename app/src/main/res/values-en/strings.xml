@@ -40,10 +40,13 @@
     <string name="unsaved_data_be_lost">All unsaved data will be lost</string>
     <string name="cancel_create_playlist">Cancel</string>
     <string name="final_create_playlist">Complete</string>
-    <string name="playlist_time_and_count">%1$d minutes • %2$s</string>
+    <string name="playlist_time_and_count">%s • %s</string>
 
     <plurals name="tracks_count">
         <item quantity="one">%d track</item>
         <item quantity="other">%d tracks</item>
     </plurals>
+    <string name="dialog_title_remove_track_from_playlist">Do you want to delete a track?</string>
+    <string name="dialog_confirm_remove_track_from_playlist">Yes</string>
+    <string name="dialog_failure_remove_track_from_playlist">No</string>
 </resources>

@@ -3,8 +3,8 @@ package com.example.playlistmarker.data.db.entitys
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "favourite_track_table")
-data class FavouriteTrackEntity(
+@Entity(tableName = "track_table")
+data class TrackEntity(
     @PrimaryKey
     val trackId: Long,
     val trackName: String,
@@ -15,5 +15,5 @@ data class FavouriteTrackEntity(
     val releaseDate: String,
     val primaryGenreName: String,
     val country: String,
-    val previewUrl: String,
+    val previewUrl: String
 )

@@ -1,11 +1,10 @@
 package com.example.playlistmarker.data.db.converters
 
-import com.example.playlistmarker.data.db.entitys.FavouriteTrackEntity
+import com.example.playlistmarker.data.db.entitys.TrackEntity
 import com.example.playlistmarker.domain.db.model.Track
 
-class FavouriteTrackDbConverter {
-
-    fun mapToDomain(trackEntity: FavouriteTrackEntity): Track {
+class TrackDbConverter {
+    fun mapToDomain(trackEntity: TrackEntity): Track {
         return Track(
             id = trackEntity.trackId,
             trackName = trackEntity.trackName,
@@ -16,11 +15,14 @@ class FavouriteTrackDbConverter {
             releaseDate = trackEntity.releaseDate,
             primaryGenreName = trackEntity.primaryGenreName,
             country = trackEntity.country,
-            previewUrl = trackEntity.previewUrl)
+            previewUrl = trackEntity.previewUrl,
+            isFavourite = false,
+            addedAt = 0L
+        )
     }
 
-    fun mapToData(track: Track): FavouriteTrackEntity {
-        return FavouriteTrackEntity(
+    fun mapToData(track: Track): TrackEntity {
+        return TrackEntity(
             trackId = track.id,
             trackName = track.trackName,
             artistName = track.artistName,
@@ -30,6 +32,7 @@ class FavouriteTrackDbConverter {
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
-            previewUrl = track.previewUrl)
+            previewUrl = track.previewUrl,
+        )
     }
 }

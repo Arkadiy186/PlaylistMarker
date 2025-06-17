@@ -213,10 +213,10 @@ class NewPlaylistFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.final_playlist_creation)
             .setMessage(R.string.unsaved_data_be_lost)
-            .setNeutralButton(R.string.cancel_create_playlist) { dialog, which ->
+            .setNeutralButton(R.string.cancel_create_playlist) { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton(R.string.final_create_playlist) { dialog, which ->
+            .setPositiveButton(R.string.final_create_playlist) { dialog, _ ->
                 dialog.dismiss()
                 findNavController().popBackStack()
             }

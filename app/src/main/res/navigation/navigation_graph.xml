@@ -66,5 +66,13 @@
         android:id="@+id/currentPlaylistFragment2"
         android:name="com.example.playlistmarker.ui.medialibrary.fragments.CurrentPlaylistFragment"
         android:label="fragment_current_playlist"
-        tools:layout="@layout/fragment_current_playlist" />
+        tools:layout="@layout/fragment_current_playlist">
+
+        <argument
+            android:name="id"
+            app:argType="long"/>
+        <action
+            android:id="@+id/action_currentPlaylistFragment2_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
+    </fragment>
 </navigation>

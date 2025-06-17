@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmarker.R
 import com.example.playlistmarker.databinding.FragmentMediaLibraryBinding
+import com.example.playlistmarker.domain.db.model.Playlist
 import com.example.playlistmarker.ui.medialibrary.viewpageradapter.MediaLibraryViewPagerAdapter
 import com.example.playlistmarker.ui.search.model.TrackInfoDetails
 import com.google.android.material.tabs.TabLayoutMediator
@@ -62,8 +63,8 @@ class MediaLibraryFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    fun navigateToCurrentPlaylist() {
-        val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToCurrentPlaylistFragment2()
+    fun navigateToCurrentPlaylist(id: Long) {
+        val action = MediaLibraryFragmentDirections.actionMediaLibraryFragmentToCurrentPlaylistFragment2(id)
         findNavController().navigate(action)
     }
 

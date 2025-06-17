@@ -8,7 +8,6 @@ object TrackDtoMapper {
     fun mapToDomain(trackDto: TrackDto, playlistId: Long): Track {
         return Track(
             id = trackDto.id,
-            playlistId = playlistId,
             trackName = trackDto.trackName,
             artistName = trackDto.artistName,
             trackTime = formatTrackTime(trackDto.trackTime),
