@@ -171,7 +171,7 @@ class AudioPlayerFragment : Fragment() {
 
         audioPlayerViewModel.themeState.observe(viewLifecycleOwner) { isDark ->
             if (isDark) {
-                binding.standardBottomSheet.setBackgroundResource(R.drawable.bottom_sheet_background_dark)
+                binding.standardBottomSheet.setBackgroundResource(R.drawable.bottom_sheet_background)
                 binding.addToPlaylistTextTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
             } else {
                 binding.standardBottomSheet.setBackgroundResource(R.drawable.bottom_sheet_background)
@@ -269,7 +269,7 @@ class AudioPlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                overlay.alpha = slideOffset.coerceIn(1f, 2f)
+                overlay.alpha = slideOffset.coerceIn(0f, 1f)
             }
         })
     }

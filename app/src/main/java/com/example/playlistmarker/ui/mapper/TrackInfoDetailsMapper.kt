@@ -7,6 +7,7 @@ object TrackInfoDetailsMapper {
     fun map(track: Track): TrackInfoDetails {
         return TrackInfoDetails(
             id = track.id,
+            playlistId = 0L,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTime = track.trackTime,

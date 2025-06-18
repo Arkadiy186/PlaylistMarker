@@ -1,5 +1,6 @@
 package com.example.playlistmarker.ui.audioplayer.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmarker.domain.db.model.Playlist
 import com.example.playlistmarker.domain.db.use_cases.PlaylistDbInteractor
 import com.example.playlistmarker.domain.db.use_cases.TrackDbInteractor
+import com.example.playlistmarker.domain.db.use_cases.TrackPlaylistDbInteractor
 import com.example.playlistmarker.domain.player.use_cases.AudioPlayerInteractor
 import com.example.playlistmarker.domain.player.use_cases.PositionTimeInteractor
 import com.example.playlistmarker.domain.player.use_cases.state.UiAudioPlayerState
@@ -27,6 +29,7 @@ class AudioPlayerViewModel (
     private val positionTimeInteractor: PositionTimeInteractor,
     private val trackDbInteractor: TrackDbInteractor,
     private val playlistDbInteractor: PlaylistDbInteractor,
+    private val trackPlaylistDbInteractor: TrackPlaylistDbInteractor,
     private val themeInteractor: ThemeInteractor
 ) : ViewModel(), AudioPlayerCallback {
 
@@ -62,6 +65,7 @@ class AudioPlayerViewModel (
 
     val track = TrackInfoDetails(
         1,
+        0L,
         "",
         "",
         "",
@@ -123,7 +127,7 @@ class AudioPlayerViewModel (
 
     fun prepareTrack(track: TrackInfoDetails) {
         viewModelScope.launch {
-            val favouriteIds = trackDbInteractor.getAllFavouriteTracks().first()
+            val favouriteIds = trackDbInteractor.getFavouriteTrackIds().first()
             val isFavourite = track.id in favouriteIds
             val updatedTrack = track.copy(isFavourite = isFavourite)
             _currentTrack.postValue(updatedTrack)
@@ -207,23 +211,18 @@ class AudioPlayerViewModel (
 
     fun addTrackToPlaylist(playlist: Playlist, track: TrackInfoDetails) {
         viewModelScope.launch {
-            val idList = playlist.listIdTracks.toMutableList()
-
             val trackIdStr = track.id.toString()
-            if (idList.contains(trackIdStr)) {
+
+            if (playlist.listIdTracks.contains(trackIdStr)) {
                 _addTrackState.postValue(AddTrackToPlaylistState.TrackIsExists(playlist.name))
-            } else {
-                idList.add(trackIdStr)
-                val updatedPlaylist = playlist.copy(
-                    listIdTracks = idList,
-                    counterTracks = idList.size
-                )
-
-                playlistDbInteractor.updatePlaylist(updatedPlaylist)
-                playlistDbInteractor.insertTrack(TrackInfoDetailsMapper.mapToDomain(track))
-
-                _addTrackState.postValue(AddTrackToPlaylistState.TrackAdded((playlist.name)))
+                return@launch
             }
+
+            val domainTrack = TrackInfoDetailsMapper.mapToDomain(track)
+
+            trackPlaylistDbInteractor.insertTrack(domainTrack, playlist.id)
+
+            _addTrackState.postValue(AddTrackToPlaylistState.TrackAdded(playlist.name))
         }
     }
 

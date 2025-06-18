@@ -1,15 +1,13 @@
-package com.example.playlistmarker.ui.medialibrary.recyclerview
+package com.example.playlistmarker.ui.medialibrary.recyclerview.playlist
 
 import android.content.Context
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.R
 import com.example.playlistmarker.domain.db.model.Playlist

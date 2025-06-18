@@ -20,4 +20,8 @@ class TrackInteractorImpl(private val trackRepository: TrackRepository) : TrackI
             }
         }
     }
+
+    override suspend fun insertTrack(track: Track) {
+        trackRepository.insertTrack(track)
+    }
 }

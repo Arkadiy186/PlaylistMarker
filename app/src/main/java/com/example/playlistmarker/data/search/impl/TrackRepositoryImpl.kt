@@ -1,6 +1,7 @@
 package com.example.playlistmarker.data.search.impl
 
-import com.example.playlistmarker.data.db.FavouriteTrackDatabase
+import com.example.playlistmarker.data.db.AppDatabase
+import com.example.playlistmarker.data.db.converters.TrackDbConverter
 import com.example.playlistmarker.data.mappers.TrackDtoMapper
 import com.example.playlistmarker.data.search.model.TrackResponse
 import com.example.playlistmarker.data.search.network.RetrofitClient
@@ -14,8 +15,9 @@ import kotlinx.coroutines.flow.flow
 
 class TrackRepositoryImpl(
     private val retrofitClient: RetrofitClient,
-    private val appDatabase: FavouriteTrackDatabase,
-    private val addedAtStorage: AddedAtStorage
+    private val addedAtStorage: AddedAtStorage,
+    private val trackDbConverter: TrackDbConverter,
+    private val appDatabase: AppDatabase,
 ) : TrackRepository {
     override fun searchTrack(query: String): Flow<Resources<List<Track>>> = flow {
         val response = retrofitClient.doRequest(query)
@@ -28,7 +30,7 @@ class TrackRepositoryImpl(
                 val favoriteIds = appDatabase.favouriteTrackDao().getIdTracks().first()
                 val trackResponse = response as TrackResponse
                 val domainTracks = trackResponse.results.map { dto ->
-                    TrackDtoMapper.mapToDomain(dto)
+                    TrackDtoMapper.mapToDomain(dto, playlistId = 0L)
                 }
                 val updatedTracks = domainTracks.map { track ->
                     track.copy(
@@ -41,5 +43,9 @@ class TrackRepositoryImpl(
                 emit(Resources.Error("Ошибка сервера"))
             }
         }
+    }
+
+    override suspend fun insertTrack(track: Track) {
+        appDatabase.trackDao().insertTrack(trackDbConverter.mapToData(track))
     }
 }

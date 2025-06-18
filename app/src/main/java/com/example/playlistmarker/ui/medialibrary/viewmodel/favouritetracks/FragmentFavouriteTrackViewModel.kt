@@ -17,7 +17,7 @@ class FragmentFavouriteTrackViewModel(private val trackDbInteractor: TrackDbInte
 
     fun refreshFavourites() {
         viewModelScope.launch {
-            trackDbInteractor.getFavouriteTracks()
+            trackDbInteractor.getAllFavouriteTrackDetails()
                 .collect { trackList ->
                     val uiList = trackList.map { TrackInfoDetailsMapper.map(it) }
 

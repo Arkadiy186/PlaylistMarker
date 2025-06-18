@@ -12,7 +12,6 @@
         android:id="@+id/cover_playlist_rw"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_placeholder"
         app:layout_constraintTop_toTopOf="parent"

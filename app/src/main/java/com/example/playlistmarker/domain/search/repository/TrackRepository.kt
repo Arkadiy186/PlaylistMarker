@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrackRepository {
     fun searchTrack(query: String): Flow<Resources<List<Track>>>
+    suspend fun insertTrack(track: Track)
 }

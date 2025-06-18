@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -71,12 +72,14 @@ class SearchFragment : Fragment() {
             val domainTrack = TrackInfoDetailsMapper.mapToDomain(track)
             historyInteractor.addTrackHistory(domainTrack)
 
+            searchViewModel.insertTrackToDatabase(TrackInfoDetailsMapper.mapToDomain(track))
+
             val action = SearchFragmentDirections.actionSearchFragmentToAudioPlayerFragment(track)
             findNavController().navigate(action)
         }
 
-        searchAdapter = TrackAdapter(searchList) { track -> onTrackClickDebounce(track) }
-        historyAdapter = TrackAdapter(historyTrack) { track -> onTrackClickDebounce(track) }
+        searchAdapter = TrackAdapter(searchList, onItemClickListener = { track -> onTrackClickDebounce(track) })
+        historyAdapter = TrackAdapter(historyTrack, onItemClickListener = { track -> onTrackClickDebounce(track) })
 
         uiHistoryHandler = UiHistoryHandlerImpl(binding, this, historyAdapter, searchAdapter)
         uiStateHandler = UiStateHandlerImpl(binding, this)

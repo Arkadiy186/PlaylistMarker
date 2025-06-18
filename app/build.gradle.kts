@@ -46,7 +46,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation("com.google.android.material:material:1.12.0")
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
@@ -59,7 +59,6 @@ dependencies {
     implementation(libs.androidx.core.ktx.v190)
     implementation(libs.koin.android)
     implementation(libs.androidx.fragment.ktx)
-    implementation(libs.material)
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")

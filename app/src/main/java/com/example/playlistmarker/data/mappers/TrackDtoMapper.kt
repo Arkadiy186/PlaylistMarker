@@ -5,7 +5,7 @@ import com.example.playlistmarker.domain.db.model.Track
 
 object TrackDtoMapper {
 
-    fun mapToDomain(trackDto: TrackDto): Track {
+    fun mapToDomain(trackDto: TrackDto, playlistId: Long): Track {
         return Track(
             id = trackDto.id,
             trackName = trackDto.trackName,

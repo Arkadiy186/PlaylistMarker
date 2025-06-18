@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrackInteractor {
     fun searchTrack(query: String): Flow<Pair<List<Track>?, String?>>
+    suspend fun insertTrack(track: Track)
 }

@@ -1,4 +1,4 @@
-package com.example.playlistmarker.ui.medialibrary.recyclerview
+package com.example.playlistmarker.ui.medialibrary.recyclerview.playlist
 
 import android.content.Context
 import android.util.TypedValue
