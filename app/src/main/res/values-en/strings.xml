@@ -49,4 +49,9 @@
     <string name="dialog_title_remove_track_from_playlist">Do you want to delete a track?</string>
     <string name="dialog_confirm_remove_track_from_playlist">Yes</string>
     <string name="dialog_failure_remove_track_from_playlist">No</string>
+    <string name="notify_not_have_tracks">This playlist does not have a list of tracks that can be shared</string>
+    <string name="share_playlist">Share playlist</string>
+    <string name="current_playlist_menu_share">Share</string>
+    <string name="current_playlist_menu_edit_info">Edit information</string>
+    <string name="current_playlist_menu_remove_playlist">Delete playlist</string>
 </resources>

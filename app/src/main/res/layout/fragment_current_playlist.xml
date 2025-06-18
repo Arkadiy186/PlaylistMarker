@@ -135,7 +135,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@drawable/bottom_sheet_background"
-        app:behavior_hideable="false"
+        app:behavior_hideable="true"
         app:behavior_peekHeight="266dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -151,5 +151,46 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="12dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_sheet_menu_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/bottom_sheet_background"
+        android:visibility="gone"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="383dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:layout_width="50dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/main_margin_top_bottom"
+            android:background="@drawable/bottom_sheet_view"/>
+
+        <include
+            android:id="@+id/included_playlist_item"
+            layout="@layout/item_playlist_in_current_playlist"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/share_playlist"
+            style="@style/ActivitySettingsStyle"
+            android:textColor="@color/black_for_text"
+            android:text="@string/current_playlist_menu_share"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/edit_playlist"
+            style="@style/ActivitySettingsStyle"
+            android:textColor="@color/black_for_text"
+            android:text="@string/current_playlist_menu_edit_info"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/remove_playlist"
+            style="@style/ActivitySettingsStyle"
+            android:textColor="@color/black_for_text"
+            android:text="@string/current_playlist_menu_remove_playlist"/>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
