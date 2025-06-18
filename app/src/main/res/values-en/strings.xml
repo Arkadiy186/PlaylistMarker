@@ -54,4 +54,6 @@
     <string name="current_playlist_menu_share">Share</string>
     <string name="current_playlist_menu_edit_info">Edit information</string>
     <string name="current_playlist_menu_remove_playlist">Delete playlist</string>
+    <string name="save_edit_playlist">Save</string>
+    <string name="edit_playlist_title">Edit</string>
 </resources>

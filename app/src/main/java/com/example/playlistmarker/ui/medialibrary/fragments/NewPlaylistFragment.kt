@@ -36,13 +36,13 @@ import java.io.File
 import java.io.FileOutputStream
 
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
 
     private val playlistViewModel: PlaylistViewModel by viewModel()
 
-    private lateinit var binding: FragmentNewPlaylistBinding
-    private var isPlaylistNameNotBlank: Boolean = false
-    private var selectedImageUri: Uri? = null
+    internal lateinit var binding: FragmentNewPlaylistBinding
+    internal var isPlaylistNameNotBlank: Boolean = false
+    internal var selectedImageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,7 +76,8 @@ class NewPlaylistFragment : Fragment() {
             handleBackAction()
         }
 
-        binding.playlistNameEditText.setTextCursorDrawable(R.drawable.cursor)
+        binding.playlistNameLayout.cursorColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue))
+        binding.playlistDescriptionLayout.cursorColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue))
     }
 
     private fun observeViewModel() {
@@ -85,7 +86,7 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
-    private fun setupListeners() {
+    protected open fun setupListeners() {
         binding.Toolbar.setNavigationOnClickListener {
             handleBackAction()
         }
@@ -117,19 +118,33 @@ class NewPlaylistFragment : Fragment() {
             updateHintColor(hasFocus, binding.playlistNameEditText.text)
         }
 
+        binding.playlistDescriptionEditText.setOnFocusChangeListener { _, hasFocus ->
+            updateHintColor(hasFocus, binding.playlistNameEditText.text)
+        }
+
         binding.playlistNameEditText.addTextChangedListener { text ->
             val hasFocus = binding.playlistNameEditText.hasFocus()
-            updateHintColor(hasFocus, text)
             val isNotBlank = !text.isNullOrBlank()
             isPlaylistNameNotBlank = isNotBlank
             binding.newPlaylistCreate.isEnabled = isNotBlank
 
-            val color = ContextCompat.getColor(
-                requireContext(),
-                if (isNotBlank) R.color.blue else R.color.grey
-            )
+            val blueColor = ContextCompat.getColor(requireContext(), R.color.blue)
+            val greyColor = ContextCompat.getColor(requireContext(), R.color.grey)
+
+            val color = when {
+                hasFocus -> blueColor
+                isNotBlank -> blueColor
+                else -> greyColor
+            }
+
+            val hintColor = ColorStateList.valueOf(color)
+            binding.playlistNameLayout.hintTextColor = hintColor
+            binding.playlistNameLayout.boxStrokeColor = color
+
             binding.newPlaylistCreate.backgroundTintList = ColorStateList.valueOf(color)
         }
+
+
     }
 
     private fun updateHintColor(hasFocus: Boolean, text: Editable?) {
@@ -174,7 +189,7 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
-    private fun dpToPx(dp: Float, context: Context): Int {
+    internal fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,

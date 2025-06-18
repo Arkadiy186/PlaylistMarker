@@ -33,20 +33,24 @@ class PlaylistDbRepositoryImpl(
             }
     }
 
-    override fun getPlaylistId(playlistId: Long): Flow<Playlist> {
-        return combine(
-            appDatabase.playlistDao().getPlaylistById(playlistId),
-            appDatabase.trackPlaylistDao().getTracksForPlaylist(playlistId)
-        ) { playlistEntity, trackEntities ->
-            val listTrackIds = trackEntities.map { it.trackId.toString() }
-            Playlist(
-                id = playlistEntity.playlistId,
-                name = playlistEntity.name,
-                description = playlistEntity.description,
-                pathPictureCover = playlistEntity.pathPictureCover,
-                listIdTracks = listTrackIds,
-                counterTracks = listTrackIds.size
-            )
-        }
+    override fun getPlaylistId(playlistId: Long): Flow<Playlist?> {
+        val playlistFlow = appDatabase.playlistDao().getPlaylistById(playlistId)
+        val tracksFlow = appDatabase.trackPlaylistDao().getTracksForPlaylist(playlistId)
+
+        return playlistFlow
+            .combine(tracksFlow) { playlistEntity, trackEntities ->
+                if (playlistEntity == null) return@combine null
+
+                val listTrackIds = trackEntities.map { it.trackId.toString() }
+
+                Playlist(
+                    id = playlistEntity.playlistId,
+                    name = playlistEntity.name,
+                    description = playlistEntity.description,
+                    pathPictureCover = playlistEntity.pathPictureCover,
+                    listIdTracks = listTrackIds,
+                    counterTracks = listTrackIds.size
+                )
+            }
     }
 }

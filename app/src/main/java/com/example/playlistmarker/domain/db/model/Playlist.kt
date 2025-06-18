@@ -1,5 +1,9 @@
 package com.example.playlistmarker.domain.db.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Playlist (
     val id: Long,
     val name: String,
@@ -7,4 +11,4 @@ data class Playlist (
     val pathPictureCover: String,
     val listIdTracks: List<String>,
     val counterTracks: Int
-)
+) : Parcelable

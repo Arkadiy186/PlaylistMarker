@@ -37,23 +37,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/current_playlist_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintDimensionRatio="1:1">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <ImageView
                 android:id="@+id/current_playlist_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:scaleType="center"/>
 
             <ImageView
-                android:id="@+id/current_playlist_image_placeholder"
+                android:id="@+id/current_playlist_placeholder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginVertical="24dp"
-                android:src="@drawable/ic_placeholder"/>
+                android:layout_margin="24dp"
+                android:src="@drawable/placeholder"/>
         </FrameLayout>
 
         <TextView
@@ -178,19 +177,16 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/share_playlist"
             style="@style/ActivitySettingsStyle"
-            android:textColor="@color/black_for_text"
             android:text="@string/current_playlist_menu_share"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/edit_playlist"
             style="@style/ActivitySettingsStyle"
-            android:textColor="@color/black_for_text"
             android:text="@string/current_playlist_menu_edit_info"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/remove_playlist"
             style="@style/ActivitySettingsStyle"
-            android:textColor="@color/black_for_text"
             android:text="@string/current_playlist_menu_remove_playlist"/>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

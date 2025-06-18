@@ -152,6 +152,11 @@ class CurrentPlaylistFragment : Fragment() {
                 })
         }
 
+        binding.editPlaylist.setOnClickListener {
+            val action = CurrentPlaylistFragmentDirections.actionCurrentPlaylistFragment2ToEditPlaylistFragment(currentPlaylist)
+            findNavController().navigate(action)
+        }
+
     }
 
     private fun observeViewModel() {
@@ -230,13 +235,11 @@ class CurrentPlaylistFragment : Fragment() {
     }
 
     private fun showPlaylistCover(coverPath: String) {
-        if (coverPath.isNotEmpty()) {
-            Glide.with(requireContext())
-                .load(coverPath)
-                .into(binding.currentPlaylistImagePlaceholder)
-        } else {
-            binding.currentPlaylistImagePlaceholder.setImageResource(R.drawable.ic_playlist)
-        }
+        Glide.with(requireContext())
+            .load(coverPath)
+            .into(binding.currentPlaylistImage)
+
+        binding.currentPlaylistPlaceholder.visibility = if (coverPath.isBlank()) View.VISIBLE else View.GONE
     }
 
     private fun showPlaylistTextInfo(name: String, description: String) {

@@ -74,5 +74,16 @@
         <action
             android:id="@+id/action_currentPlaylistFragment2_to_audioPlayerFragment"
             app:destination="@id/audioPlayerFragment" />
+        <action
+            android:id="@+id/action_currentPlaylistFragment2_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.example.playlistmarker.ui.medialibrary.fragments.EditPlaylistFragment"
+        android:label="EditPlaylistFragment">
+        <argument
+            android:name="playlist"
+            app:argType="com.example.playlistmarker.domain.db.model.Playlist" />
     </fragment>
 </navigation>

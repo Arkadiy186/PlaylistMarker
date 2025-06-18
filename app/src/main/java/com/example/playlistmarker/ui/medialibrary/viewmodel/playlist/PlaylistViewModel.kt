@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class PlaylistViewModel(
+open class PlaylistViewModel(
     private val playlistDbInteractor: PlaylistDbInteractor,
     private val trackPlaylistDbInteractor: TrackPlaylistDbInteractor,
     private val themeInteractor: ThemeInteractor
@@ -83,7 +83,10 @@ class PlaylistViewModel(
                 }
             }.first()
 
-            _playlistDetailsState.postValue(UiStateCurrentPlaylistTracks.Content(playlistFlow, tracksFlow))
+            _playlistDetailsState.postValue(playlistFlow?.let {
+                UiStateCurrentPlaylistTracks.Content(
+                    it, tracksFlow)
+            })
         }
     }
 

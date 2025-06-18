@@ -18,7 +18,7 @@ class PlaylistDbInteractorImpl(private val playlistDbRepository: PlaylistDbRepos
         playlistDbRepository.updatePlaylist(playlist)
     }
 
-    override fun getPlaylistId(playlistId: Long): Flow<Playlist> {
+    override fun getPlaylistId(playlistId: Long): Flow<Playlist?> {
         return playlistDbRepository.getPlaylistId(playlistId)
     }
 
