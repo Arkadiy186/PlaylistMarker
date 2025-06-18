@@ -40,13 +40,20 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class CurrentPlaylistFragment : Fragment() {
 
     private lateinit var binding: FragmentCurrentPlaylistBinding
     private lateinit var bottomSheetBehaviorTrack: BottomSheetBehavior<LinearLayout>
     private lateinit var bottomSheetBehaviorMenu: BottomSheetBehavior<LinearLayout>
-    private lateinit var adapter: TrackAdapter
+    private val adapter by lazy {
+        TrackAdapter(
+            listTracks,
+            onItemClickListener = { onTrackClickDebounce(it) },
+            onItemLongClickListener = { showDeleteDialog(it) }
+        )
+    }
     private lateinit var onTrackClickDebounce: (TrackInfoDetails) -> Unit
     private lateinit var utilsCurrentPlaylist: UtilsCurrentPlaylist
     private lateinit var currentPlaylist: Playlist
@@ -85,19 +92,6 @@ class CurrentPlaylistFragment : Fragment() {
         setupListeners()
         setupBottomSheet()
 
-        adapter = TrackAdapter(listTracks,
-            onItemClickListener = { track ->
-                onTrackClickDebounce(track)
-            },
-            onItemLongClickListener = { track ->
-                showConfirmationDialog(
-                    title = getString(R.string.dialog_title_remove_track_from_playlist),
-                    positiveTextResId = R.string.dialog_confirm_remove_track_from_playlist,
-                    negativeTextResId = R.string.dialog_failure_remove_track_from_playlist,
-                    onConfirm = {
-                        playlistViewModel.deleteTrackFromPlaylist(track.id, currentPlaylist)
-                    })
-            })
         binding.currentPlaylistSongs.layoutManager = LinearLayoutManager(requireContext())
         binding.currentPlaylistSongs.adapter = adapter
 
@@ -183,7 +177,7 @@ class CurrentPlaylistFragment : Fragment() {
 
         bottomSheetBehaviorTrack = BottomSheetBehavior.from(bottomSheetContainerTrack).apply {
             state = BottomSheetBehavior.STATE_COLLAPSED
-            isHideable = true
+            isHideable = false
         }
 
         bottomSheetBehaviorMenu = BottomSheetBehavior.from(bottomSheetContainerMenu).apply {
@@ -256,7 +250,8 @@ class CurrentPlaylistFragment : Fragment() {
         )
         val totalDurationMillis = tracks.sumOf { utilsCurrentPlaylist.parseTrackTimeMillis(it.trackTime) }
 
-        val formatter = SimpleDateFormat("mm", Locale.getDefault()).format(totalDurationMillis)
+        val formatter = formatMillisToMinutes(totalDurationMillis)
+
 
         val fullTimeAndCountTracks = getString(R.string.playlist_time_and_count, formatter, trackCountText)
         binding.timeAndCounterSongsCurrentPlaylist.text = fullTimeAndCountTracks
@@ -267,6 +262,11 @@ class CurrentPlaylistFragment : Fragment() {
         listTracks.addAll(track)
         adapter.notifyDataSetChanged()
      }
+
+    private fun formatMillisToMinutes(millis: Long): String {
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
+        return "$minutes"
+    }
 
     private fun showConfirmationDialog(
         title: String,
@@ -314,6 +314,17 @@ class CurrentPlaylistFragment : Fragment() {
         )
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
             ContextCompat.getColor(requireContext(), R.color.blue)
+        )
+    }
+
+    private fun showDeleteDialog(track: TrackInfoDetails) {
+        showConfirmationDialog(
+            title = getString(R.string.dialog_title_remove_track_from_playlist),
+            positiveTextResId = R.string.dialog_confirm_remove_track_from_playlist,
+            negativeTextResId = R.string.dialog_failure_remove_track_from_playlist,
+            onConfirm = {
+                playlistViewModel.deleteTrackFromPlaylist(track.id, currentPlaylist)
+            }
         )
     }
 
