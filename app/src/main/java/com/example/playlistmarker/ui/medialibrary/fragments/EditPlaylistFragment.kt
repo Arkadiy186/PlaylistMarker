@@ -1,14 +1,10 @@
 package com.example.playlistmarker.ui.medialibrary.fragments
 
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -16,7 +12,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmarker.R
 import com.example.playlistmarker.domain.db.model.Playlist
 import com.example.playlistmarker.ui.medialibrary.viewmodel.editplaylist.EditPlaylistViewModel
-import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EditPlaylistFragment : NewPlaylistFragment() {

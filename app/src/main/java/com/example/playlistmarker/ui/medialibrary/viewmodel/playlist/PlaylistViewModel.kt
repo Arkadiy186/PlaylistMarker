@@ -1,5 +1,6 @@
 package com.example.playlistmarker.ui.medialibrary.viewmodel.playlist
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -76,13 +77,12 @@ open class PlaylistViewModel(
     fun loadPlaylistWithTracks(playlistId: Long) {
         viewModelScope.launch {
             val playlistFlow = playlistDbInteractor.getPlaylistId(playlistId).first()
-
             val tracksFlow = trackPlaylistDbInteractor.getTracksForPlaylist(playlistId).map { list ->
                 list.map { track ->
                     TrackInfoDetailsMapper.map(track)
                 }
             }.first()
-
+            Log.d("CoverBlya", "${playlistFlow?.pathPictureCover} файл")
             _playlistDetailsState.postValue(playlistFlow?.let {
                 UiStateCurrentPlaylistTracks.Content(
                     it, tracksFlow)

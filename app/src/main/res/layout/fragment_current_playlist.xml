@@ -28,6 +28,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/Toolbar"
             style="@style/ToolbarStyle"
+            app:navigationIconTint="@color/black_for_text"
             app:navigationIcon="@drawable/arrow_back_icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
@@ -35,17 +36,18 @@
         <FrameLayout
             android:id="@+id/current_playlist_image_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="360dp"
             android:background="@drawable/current_playlist_background"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="1:1">
 
             <ImageView
                 android:id="@+id/current_playlist_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="center"/>
+                android:scaleType="center" />
 
             <ImageView
                 android:id="@+id/current_playlist_placeholder"

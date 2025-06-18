@@ -239,7 +239,7 @@ class CurrentPlaylistFragment : Fragment() {
             .load(coverPath)
             .into(binding.currentPlaylistImage)
 
-        binding.currentPlaylistPlaceholder.visibility = if (coverPath.isBlank()) View.VISIBLE else View.GONE
+        binding.currentPlaylistPlaceholder.visibility = if (coverPath.isNullOrBlank()) View.VISIBLE else View.GONE
     }
 
     private fun showPlaylistTextInfo(name: String, description: String) {
